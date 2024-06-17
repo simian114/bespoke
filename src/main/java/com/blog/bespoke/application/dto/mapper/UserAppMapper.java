@@ -10,7 +10,8 @@ public class UserAppMapper {
         return User.builder()
                 .email(requestDto.getEmail())
                 .nickname(requestDto.getNickname())
-                .nickname(requestDto.getName())
+                .name(requestDto.getName())
+                .password(requestDto.getPassword())
                 .build();
     }
 }
