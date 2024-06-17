@@ -1,4 +1,4 @@
-create table user
+create table users
 (
     user_id bigint primary key auto_increment,
     email varchar(50) not null unique,
