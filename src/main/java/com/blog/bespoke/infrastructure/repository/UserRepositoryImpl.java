@@ -2,7 +2,6 @@ package com.blog.bespoke.infrastructure.repository;
 
 import com.blog.bespoke.domain.model.User;
 import com.blog.bespoke.domain.repository.UserRepository;
-import com.blog.bespoke.infrastructure.entity.jpa.UserEntity;
 import com.blog.bespoke.infrastructure.entity.jpa.mapper.UserEntityMapper;
 import com.blog.bespoke.infrastructure.repository.jpa.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +17,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User user) {
-        UserEntity entity = userEntityMapper.toEntity(user);
-        return userEntityMapper.toDomain(userJpaRepository.save(entity));
+        return userEntityMapper.toDomain(userJpaRepository.save(userEntityMapper.toEntity(user)));
     }
 
     @Override
