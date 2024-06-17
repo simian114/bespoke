@@ -16,8 +16,12 @@ public class UserEntity extends TimeStamp {
     @Column(name = "user_id")
     private Long id;
 
+    @Column(unique = true)
     private String email;
+
     private String password;
+
+    @Column(unique = true)
     private String nickname;
     private String name;
 
