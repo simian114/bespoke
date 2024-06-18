@@ -12,46 +12,47 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserUseCaseUnitTest {
 
-    private final UserAppMapper userAppMapper = new UserAppMapper();
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private UserAppMapper userAppMapper;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private UserUseCase userUseCase;
 
     @BeforeEach
     void setup() {
-        userUseCase = new UserUseCase(userRepository, userAppMapper);
+        // TODO: password encoder 넣고 테스트 해야함
+        userUseCase = new UserUseCase(userRepository, userAppMapper, passwordEncoder);
     }
 
     @Test
-    @DisplayName("회원가입 테스트")
-    void signup_test() {
+    @DisplayName("회원가입 시 password 를 encoding 해야함")
+    void signup_password_encoding_test() {
         // given
         UserSignupRequestDto requestDto = mock(UserSignupRequestDto.class);
-
-        User mockUser = User.builder()
-                .id(1L)
-                .nickname("nickname")
-                .password("password")
-                .name("name")
-                .email("email@gmail.com")
-                .build();
-
         given(userRepository.save(Mockito.any()))
-                .willReturn(mockUser);
+                .willReturn(mock(User.class));
+        given(requestDto.getPassword())
+                .willReturn("hello");
 
         // when
-        User user = userUseCase.signup(requestDto);
+        userUseCase.signup(requestDto);
 
         // then
-        assertThat(user.getEmail()).isEqualTo("email@gmail.com");
+        verify(passwordEncoder, times(1))
+                .encode(anyString());
     }
 }
