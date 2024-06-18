@@ -1,10 +1,9 @@
 package com.blog.bespoke.domain.service;
 
 import com.blog.bespoke.domain.model.User;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +18,8 @@ public class JwtService {
     public static final String CLAIM_EMAIL = "email";
     public static final String CLAIM_NAME = "name";
     public static final String CLAIM_NICKNAME = "nickname";
+    public static final String AUTH_HEADER = "Authorization";
+    public static final String AUTH_SCHEME = "Bearer";
 
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
@@ -59,5 +60,10 @@ public class JwtService {
                 .name(claims.get(JwtService.CLAIM_NAME, String.class))
                 .nickname(claims.get(JwtService.CLAIM_NICKNAME, String.class))
                 .build();
+    }
+
+    public void checkAccessTokenValidity(String accessToken) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException {
+        Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(accessToken);
     }
 }

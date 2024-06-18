@@ -1,5 +1,8 @@
 package com.blog.bespoke.infrastructure.security.config;
 
+import com.blog.bespoke.domain.service.JwtService;
+import com.blog.bespoke.infrastructure.security.filter.JwtAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,9 +11,17 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
+    private final JwtService jwtService;
+
+    @Bean
+    JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtService);
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
@@ -41,7 +52,7 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
         );
 
-        // TODO: authentication filter 추가할것
+        http.addFilterAt(jwtAuthenticationFilter(), BasicAuthenticationFilter.class);
 
         return http.build();
     }
