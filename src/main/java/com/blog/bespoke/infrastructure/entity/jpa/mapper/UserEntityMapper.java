@@ -3,7 +3,7 @@ package com.blog.bespoke.infrastructure.entity.jpa.mapper;
 import com.blog.bespoke.domain.model.User;
 import com.blog.bespoke.infrastructure.entity.jpa.UserEntity;
 
-public class UserJpaEntityMapper {
+public class UserEntityMapper {
     public UserEntity toEntity(User user) {
         return UserEntity.builder()
                 .id(user.getId())
