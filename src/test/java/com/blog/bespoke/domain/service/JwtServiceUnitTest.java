@@ -2,7 +2,6 @@ package com.blog.bespoke.domain.service;
 
 import com.blog.bespoke.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,22 +10,26 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 class JwtServiceUnitTest {
-    private final JwtService jwtService = new JwtService();
+    @InjectMocks
+    private JwtService jwtService;
 
-    // NOTE: reflection 을 이용한 테스트
+    /*
+    Reflection 을 이용해서 테스트 진행하고 있음.
+    Mockito 를 사용하도록 변경할 수 없을까?
+     */
     @BeforeEach
     void init() {
-        // Mockito 로 하는 방법은 없을까?
         String jwtSecretKey = "7Iqk7YyM66W07YOA7L2U65Sp7YG065+9U3ByaW5n6rCV7J2Y7Yqc7YSw7LWc7JuQ67mI7J6F64uI64ukLg==";
         ReflectionTestUtils.setField(jwtService, "jwtSecretKey", jwtSecretKey);
         ReflectionTestUtils.invokeMethod(jwtService, "init");
     }
 
     @Test
-    @DisplayName("access token 발급 테스트")
     void create_access_token_test() {
         // given
         User user = User.builder()
@@ -44,7 +47,6 @@ class JwtServiceUnitTest {
     }
 
     @Test
-    @DisplayName("parse access token 테스트")
     void parseAccessTokenToUserTest() {
         // given
         User user = User.builder()
@@ -63,5 +65,20 @@ class JwtServiceUnitTest {
         assertThat(userFromToken.getEmail()).isEqualTo(user.getEmail());
         assertThat(userFromToken.getName()).isEqualTo(user.getName());
         assertThat(userFromToken.getNickname()).isEqualTo(user.getNickname());
+    }
+
+    @Test
+    void checkAccessTokenValidityTest() {
+        // given
+        User user = User.builder()
+                .id(1L)
+                .name("name")
+                .nickname("nickname")
+                .email("email@gmail.com")
+                .build();
+        String accessToken = jwtService.createAccessToken(user);
+
+        // when & then
+        assertDoesNotThrow(() -> jwtService.checkAccessTokenValidity(accessToken));
     }
 }
