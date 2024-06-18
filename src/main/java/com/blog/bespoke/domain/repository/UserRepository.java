@@ -11,6 +11,8 @@ public interface UserRepository {
     User save(User user);
     Optional<User> findById(Long id);
     User getById(Long id); // TODO: throw exception
+    Optional<User> findByEmail(String email);
+    User getByEmail(String email);
     void deleteById(Long id);
     void delete(User user);
 }

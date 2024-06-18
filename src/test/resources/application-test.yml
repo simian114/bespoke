@@ -1,12 +1,9 @@
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
 spring:
   application:
     name: bespoke
   datasource:
-    #  datasource:
-    #    driver-class-name: org.h2.Driver
-    #    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
-    #    username: sa
-    #    password:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:23306/bespoke
     username: root
