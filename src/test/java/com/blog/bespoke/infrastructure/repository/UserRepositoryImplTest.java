@@ -1,9 +1,8 @@
 package com.blog.bespoke.infrastructure.repository;
 
 import com.blog.bespoke.domain.model.User;
-import com.blog.bespoke.infrastructure.entity.jpa.mapper.UserEntityMapper;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import com.blog.bespoke.domain.repository.UserRepository;
+import com.blog.bespoke.infrastructure.repository.config.RepositoryConfig;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,21 +19,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DataJpaTest(includeFilters = @ComponentScan.Filter(
         type = FilterType.ASSIGNABLE_TYPE,
         classes = {
-                UserRepositoryImpl.class, UserEntityMapper.class
+                RepositoryConfig.class
         })
 )
 @Transactional
 class UserRepositoryImplTest {
     @Autowired
-    private UserRepositoryImpl userRepository;
-
-    @PersistenceContext
-    private EntityManager em;
+    private UserRepository userRepository;
 
     @Test
     @DisplayName("save test")
     void save_test() {
-        // give
+        // given
         User user = User.builder()
                 .email("email@gmail.com")
                 .nickname("nickname")
@@ -58,7 +54,7 @@ class UserRepositoryImplTest {
     @DisplayName("email, nickname 중복 안됨")
     @Transactional
     void email_duplication_test() {
-        // give
+        // given
         User user = User.builder().email("email@gmail.com").nickname("nickname").name("name").password("password").build();
         User userB = User.builder().email("email@gmail.com").nickname("nicknameB").name("name").password("password").build();
         User userC = User.builder().email("emailC@gmail.com").nickname("nickname").name("name").password("password").build();

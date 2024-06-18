@@ -1,11 +1,9 @@
-package com.blog.bespoke.infrastructure.entity.jpa.mapper;
+package com.blog.bespoke.infrastructure.entity.jdcb.mapper;
 
 import com.blog.bespoke.domain.model.User;
-import com.blog.bespoke.infrastructure.entity.jpa.UserEntity;
-import org.springframework.stereotype.Component;
+import com.blog.bespoke.infrastructure.entity.jdcb.UserEntity;
 
-@Component
-public class UserEntityMapper {
+public class UserJdbcEntityMapper {
     public UserEntity toEntity(User user) {
         return UserEntity.builder()
                 .id(user.getId())
