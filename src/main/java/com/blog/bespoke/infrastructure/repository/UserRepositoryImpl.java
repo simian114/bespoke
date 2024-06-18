@@ -2,18 +2,16 @@ package com.blog.bespoke.infrastructure.repository;
 
 import com.blog.bespoke.domain.model.User;
 import com.blog.bespoke.domain.repository.UserRepository;
-import com.blog.bespoke.infrastructure.entity.jpa.mapper.UserEntityMapper;
+import com.blog.bespoke.infrastructure.entity.jpa.mapper.UserJpaEntityMapper;
 import com.blog.bespoke.infrastructure.repository.jpa.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
     private final UserJpaRepository userJpaRepository;
-    private final UserEntityMapper userEntityMapper;
+    private final UserJpaEntityMapper userEntityMapper;
 
     @Override
     public User save(User user) {
