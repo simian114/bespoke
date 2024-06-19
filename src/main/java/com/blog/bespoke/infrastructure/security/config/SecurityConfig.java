@@ -1,6 +1,8 @@
 package com.blog.bespoke.infrastructure.security.config;
 
 import com.blog.bespoke.domain.service.JwtService;
+import com.blog.bespoke.infrastructure.security.exception.AccessDeniedHandlerImpl;
+import com.blog.bespoke.infrastructure.security.exception.AuthenticationEntryPointImpl;
 import com.blog.bespoke.infrastructure.security.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +12,9 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
@@ -29,6 +33,16 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return new AuthenticationEntryPointImpl();
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new AccessDeniedHandlerImpl();
+    }
+
+    @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // 기본 로그인 방법 무효화
         http.formLogin(AbstractHttpConfigurer::disable);
@@ -42,11 +56,12 @@ public class SecurityConfig {
 
         /*
         TODO: 401, 403 exception handling
+         */
         http.exceptionHandling(e -> e
                 .authenticationEntryPoint(authenticationEntryPoint()) // 401
                 .accessDeniedHandler(accessDeniedHandler()) // 403
         );
-         */
+
         http.authorizeHttpRequests(requests -> requests
                 // TODO: 추가해야함
                 .anyRequest().permitAll()
