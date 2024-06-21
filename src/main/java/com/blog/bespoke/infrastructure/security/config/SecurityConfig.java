@@ -4,6 +4,7 @@ import com.blog.bespoke.domain.service.JwtService;
 import com.blog.bespoke.infrastructure.security.exception.AccessDeniedHandlerImpl;
 import com.blog.bespoke.infrastructure.security.exception.AuthenticationEntryPointImpl;
 import com.blog.bespoke.infrastructure.security.filter.JwtAuthenticationFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtService jwtService;
+    private final ObjectMapper objectMapper;
 
     @Bean
     JwtAuthenticationFilter jwtAuthenticationFilter() {
@@ -34,12 +36,12 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
-        return new AuthenticationEntryPointImpl();
+        return new AuthenticationEntryPointImpl(objectMapper);
     }
 
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
-        return new AccessDeniedHandlerImpl();
+        return new AccessDeniedHandlerImpl(objectMapper);
     }
 
     @Bean
