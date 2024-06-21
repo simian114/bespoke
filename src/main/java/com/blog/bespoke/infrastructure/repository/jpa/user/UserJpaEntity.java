@@ -1,7 +1,7 @@
-package com.blog.bespoke.infrastructure.entity.jpa;
+package com.blog.bespoke.infrastructure.repository.jpa.user;
 
 import com.blog.bespoke.domain.model.User;
-import com.blog.bespoke.infrastructure.entity.jpa.common.TimeStamp;
+import com.blog.bespoke.infrastructure.repository.jpa.common.TimeStamp;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity extends TimeStamp {
+public class UserJpaEntity extends TimeStamp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")

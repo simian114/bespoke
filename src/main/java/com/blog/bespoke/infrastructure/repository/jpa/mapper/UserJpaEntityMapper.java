@@ -1,11 +1,11 @@
-package com.blog.bespoke.infrastructure.entity.jpa.mapper;
+package com.blog.bespoke.infrastructure.repository.jpa.mapper;
 
 import com.blog.bespoke.domain.model.User;
-import com.blog.bespoke.infrastructure.entity.jpa.UserEntity;
+import com.blog.bespoke.infrastructure.repository.jpa.user.UserJpaEntity;
 
-public class UserEntityMapper {
-    public UserEntity toEntity(User user) {
-        return UserEntity.builder()
+public class UserJpaEntityMapper {
+    public UserJpaEntity toEntity(User user) {
+        return UserJpaEntity.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
@@ -17,7 +17,7 @@ public class UserEntityMapper {
                 .build();
     }
 
-    public User toDomain(UserEntity userEntity) {
+    public User toDomain(UserJpaEntity userEntity) {
         return userEntity.toDomain();
     }
 }
