@@ -1,4 +1,4 @@
-package com.blog.bespoke.infrastructure.entity.jpa.common;
+package com.blog.bespoke.infrastructure.repository.jpa.common;
 
 
 import jakarta.persistence.*;

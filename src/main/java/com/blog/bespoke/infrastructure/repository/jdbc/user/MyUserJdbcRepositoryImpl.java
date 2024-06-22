@@ -1,27 +1,31 @@
-package com.blog.bespoke.infrastructure.repository;
+package com.blog.bespoke.infrastructure.repository.jdbc.user;
 
 import com.blog.bespoke.domain.model.User;
 import com.blog.bespoke.domain.repository.UserRepository;
-import com.blog.bespoke.infrastructure.entity.jpa.UserEntity;
-import com.blog.bespoke.infrastructure.entity.jpa.mapper.UserEntityMapper;
-import com.blog.bespoke.infrastructure.repository.jpa.UserJpaRepository;
+import com.blog.bespoke.infrastructure.repository.jdbc.mapper.UserJdbcEntityMapper;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class UserRepositoryImpl implements UserRepository {
-    private final UserJpaRepository userJpaRepository;
-    private final UserEntityMapper userEntityMapper;
+public class MyUserJdbcRepositoryImpl implements UserRepository {
+    private final UserJdbcRepository userJdbcRepository;
+    private final UserJdbcEntityMapper userEntityMapper;
 
     @Override
     public User save(User user) {
-        return userEntityMapper.toDomain(userJpaRepository.save(userEntityMapper.toEntity(user)));
+        return userEntityMapper.toDomain(
+                userJdbcRepository.save(
+                        userEntityMapper.toEntity(user)
+                )
+        );
     }
 
     @Override
     public Optional<User> findById(Long id) {
-        return userJpaRepository.findById(id).map(userEntityMapper::toDomain);
+        Optional<UserJdbcEntity> byId = userJdbcRepository.findById(id);
+        return userJdbcRepository.findById(id)
+                .map(userEntityMapper::toDomain);
     }
 
     @Override
@@ -32,17 +36,17 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void deleteById(Long id) {
-        userJpaRepository.deleteById(id);
+        userJdbcRepository.deleteById(id);
     }
 
     @Override
     public void delete(User user) {
-        userJpaRepository.delete(userEntityMapper.toEntity(user));
+        userJdbcRepository.delete(userEntityMapper.toEntity(user));
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return userJpaRepository.findByEmail(email).map(userEntityMapper::toDomain);
+        return userJdbcRepository.findByEmail(email).map(userEntityMapper::toDomain);
     }
 
     @Override

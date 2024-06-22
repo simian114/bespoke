@@ -1,26 +1,22 @@
 package com.blog.bespoke.infrastructure.repository.config;
 
 import com.blog.bespoke.domain.repository.UserRepository;
-import com.blog.bespoke.infrastructure.entity.jpa.mapper.UserEntityMapper;
-import com.blog.bespoke.infrastructure.repository.UserRepositoryImpl;
-import com.blog.bespoke.infrastructure.repository.jpa.UserJpaRepository;
+import com.blog.bespoke.infrastructure.repository.jdbc.mapper.UserJdbcEntityMapper;
+import com.blog.bespoke.infrastructure.repository.jdbc.user.MyUserJdbcRepositoryImpl;
+import com.blog.bespoke.infrastructure.repository.jdbc.user.UserJdbcRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jdbc.repository.config.EnableJdbcAuditing;
 
-// mapper & repository impl
+@EnableJdbcAuditing
 @Configuration
 @RequiredArgsConstructor
 public class RepositoryConfig {
-    private final UserJpaRepository userJpaRepository;
-
-    @Bean
-    public UserEntityMapper userEntityMapper() {
-        return new UserEntityMapper();
-    }
+    private final UserJdbcRepository userJdbcRepository;
 
     @Bean
     public UserRepository userRepository() {
-        return new UserRepositoryImpl(userJpaRepository, userEntityMapper());
+        return new MyUserJdbcRepositoryImpl(userJdbcRepository, new UserJdbcEntityMapper());
     }
 }
