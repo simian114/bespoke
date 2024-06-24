@@ -4,6 +4,7 @@ import com.blog.bespoke.domain.service.JwtService;
 import com.blog.bespoke.infrastructure.security.exception.AccessDeniedHandlerImpl;
 import com.blog.bespoke.infrastructure.security.exception.AuthenticationEntryPointImpl;
 import com.blog.bespoke.infrastructure.security.filter.JwtAuthenticationFilter;
+import com.blog.bespoke.infrastructure.web.filter.transaction.TransactionFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -69,6 +70,7 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
         );
 
+        http.addFilterBefore(new TransactionFilter(), BasicAuthenticationFilter.class);
         http.addFilterAt(jwtAuthenticationFilter(), BasicAuthenticationFilter.class);
 
         return http.build();

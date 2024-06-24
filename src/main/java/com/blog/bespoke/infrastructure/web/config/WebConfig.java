@@ -1,6 +1,6 @@
-package com.blog.bespoke.presentation.web.config;
+package com.blog.bespoke.infrastructure.web.config;
 
-import com.blog.bespoke.presentation.web.argumentResolver.LoginUser;
+import com.blog.bespoke.infrastructure.web.argumentResolver.LoginUser;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

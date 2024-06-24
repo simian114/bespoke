@@ -1,4 +1,4 @@
-package com.blog.bespoke.presentation.web.argumentResolver.annotation;
+package com.blog.bespoke.infrastructure.web.argumentResolver.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

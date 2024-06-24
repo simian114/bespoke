@@ -1,4 +1,4 @@
-package com.blog.bespoke.presentation.web.argumentResolver;
+package com.blog.bespoke.infrastructure.web.argumentResolver;
 
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.security.principal.UserPrincipal;
@@ -14,7 +14,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 public class LoginUser implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.hasParameterAnnotation(com.blog.bespoke.presentation.web.argumentResolver.annotation.LoginUser.class)
+        return parameter.hasParameterAnnotation(com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser.class)
                 && parameter.getParameterType().equals(User.class);
     }
 
