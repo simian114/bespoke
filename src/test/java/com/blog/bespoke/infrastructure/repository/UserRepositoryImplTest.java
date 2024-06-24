@@ -1,13 +1,13 @@
 package com.blog.bespoke.infrastructure.repository;
 
-import com.blog.bespoke.domain.model.User;
+import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.UserRepository;
 import com.blog.bespoke.infrastructure.repository.config.RepositoryConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.test.context.ActiveProfiles;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ActiveProfiles("test")
-@DataJdbcTest(includeFilters = @ComponentScan.Filter(
+@DataJpaTest(includeFilters = @ComponentScan.Filter(
         type = FilterType.ASSIGNABLE_TYPE,
         classes = {
                 RepositoryConfig.class,
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 // 이걸 안하면 db 세팅이 embedded 로 되어버림
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
-class UserJdbcRepositoryImplTest {
+class UserRepositoryImplTest {
     @Autowired
     private UserRepository userRepository;
 

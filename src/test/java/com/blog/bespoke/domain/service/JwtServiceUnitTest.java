@@ -1,6 +1,6 @@
 package com.blog.bespoke.domain.service;
 
-import com.blog.bespoke.domain.model.User;
+import com.blog.bespoke.domain.model.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

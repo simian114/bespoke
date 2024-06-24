@@ -1,6 +1,6 @@
 package com.blog.bespoke.infrastructure.security.filter;
 
-import com.blog.bespoke.domain.model.User;
+import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.service.JwtService;
 import com.blog.bespoke.infrastructure.security.principal.UserPrincipal;
 import io.jsonwebtoken.ExpiredJwtException;

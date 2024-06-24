@@ -1,6 +1,6 @@
 package com.blog.bespoke.infrastructure.security.principal;
 
-import com.blog.bespoke.domain.model.User;
+import com.blog.bespoke.domain.model.user.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

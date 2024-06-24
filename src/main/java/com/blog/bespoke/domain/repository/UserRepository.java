@@ -1,7 +1,8 @@
 package com.blog.bespoke.domain.repository;
 
 
-import com.blog.bespoke.domain.model.User;
+import com.blog.bespoke.domain.model.user.User;
+import com.blog.bespoke.domain.model.user.role.Role;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -15,4 +16,10 @@ public interface UserRepository {
     User getByEmail(String email);
     void deleteById(Long id);
     void delete(User user);
+
+
+    // role
+     Optional<Role> findRoleByCode(Role.CODE code);
+
+    Role getRoleByCode(Role.CODE code);
 }
