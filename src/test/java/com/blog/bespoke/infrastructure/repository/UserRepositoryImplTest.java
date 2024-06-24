@@ -31,24 +31,6 @@ class UserRepositoryImplTest {
     private UserRepository userRepository;
 
     @Test
-    @DisplayName("role")
-    void role_test() {
-        // given
-        User user = User.builder()
-                .email("email@gmail.com")
-                .nickname("nickname")
-                .name("name")
-                .password("password")
-                .build();
-
-        // when
-        User savedUser = userRepository.save(user);
-        User foundUser = userRepository.getById(savedUser.getId());
-
-        // then
-    }
-
-    @Test
     @DisplayName("save test")
     void save_test() {
         // given
