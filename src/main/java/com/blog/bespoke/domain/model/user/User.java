@@ -35,6 +35,13 @@ public class User extends TimeStamp {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserRole> roles;
 
+
+    @Enumerated(EnumType.STRING)
+    private STATUS status = STATUS.INACTIVE;
+    public void setStatus(STATUS status) {
+        this.status = status;
+    }
+
     @Transient
     public void addRole(UserRole role) {
         if (roles == null) {
@@ -46,5 +53,14 @@ public class User extends TimeStamp {
     @Transient
     public void changePassword(String password) {
         this.password = password;
+    }
+
+    public boolean isActive() {
+        return status == STATUS.ACTIVE;
+    }
+
+    public enum STATUS {
+        INACTIVE,
+        ACTIVE
     }
 }

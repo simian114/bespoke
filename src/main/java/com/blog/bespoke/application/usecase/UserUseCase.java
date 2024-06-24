@@ -25,6 +25,7 @@ public class UserUseCase {
     @Transactional
     public User signup(UserSignupRequestDto requestDto) {
         User user = UserRequestMapper.INSTANCE.toDomain(requestDto);
+        user.setStatus(User.STATUS.INACTIVE);
         user.changePassword(userService.encodePassword(user.getPassword()));
         userService.addRole(user, Role.CODE.USER);
 
