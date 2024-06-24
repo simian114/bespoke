@@ -1,4 +1,4 @@
-package com.blog.bespoke.presentation.web.exception;
+package com.blog.bespoke.infrastructure.web.exception;
 
 import lombok.Builder;
 import lombok.Getter;

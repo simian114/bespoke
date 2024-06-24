@@ -1,4 +1,4 @@
-package com.blog.bespoke.presentation.web.exception.handler;
+package com.blog.bespoke.infrastructure.web.exception.handler;
 
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.infrastructure.aop.ResponseEnvelope.EnvelopeResponse;
