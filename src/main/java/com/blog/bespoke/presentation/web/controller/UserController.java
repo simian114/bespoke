@@ -2,7 +2,7 @@ package com.blog.bespoke.presentation.web.controller;
 
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
 import com.blog.bespoke.application.usecase.UserUseCase;
-import com.blog.bespoke.infrastructure.web.dto.response.UserResponseDto;
+import com.blog.bespoke.presentation.web.dto.response.UserResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

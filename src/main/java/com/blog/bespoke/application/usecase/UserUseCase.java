@@ -1,6 +1,6 @@
 package com.blog.bespoke.application.usecase;
 
-import com.blog.bespoke.application.dto.mapper.UserAppMapper;
+import com.blog.bespoke.application.dto.mapper.UserRequestMapper;
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.model.user.role.Role;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 public class UserUseCase {
     private final UserRepository userRepository;
     private final UserService userService;
-    private final UserAppMapper userAppMapper;
 
     /**
      * 기본 회원가입. role 은 자동으로 USER 가 등록이됨. 어드민 유저는 DB 에서 직접 생성할것
@@ -25,7 +24,7 @@ public class UserUseCase {
      */
     @Transactional
     public User signup(UserSignupRequestDto requestDto) {
-        User user = userAppMapper.toDomain(requestDto);
+        User user = UserRequestMapper.INSTANCE.toDomain(requestDto);
         user.changePassword(userService.encodePassword(user.getPassword()));
         userService.addRole(user, Role.CODE.USER);
 
