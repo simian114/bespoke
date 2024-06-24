@@ -1,6 +1,6 @@
 package com.blog.bespoke.infrastructure.security;
 
-import com.blog.bespoke.application.dto.mapper.UserAppMapper;
+import com.blog.bespoke.application.dto.mapper.UserRequestMapper;
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
 import com.blog.bespoke.application.usecase.UserUseCase;
 import com.blog.bespoke.domain.model.user.User;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
                 RepositoryConfig.class,
                 UserDetailsService.class,
                 UserUseCase.class,
-                UserAppMapper.class,
+                 UserRequestMapper.class,
                 PasswordEncoderConfig.class
         })
 )
