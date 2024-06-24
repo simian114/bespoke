@@ -2,7 +2,11 @@ package com.blog.bespoke.domain.model.user.role;
 
 import com.blog.bespoke.domain.model.user.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 
 @Getter
 @IdClass(UserRoleId.class)
@@ -11,7 +15,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRole {
+public class UserRole implements GrantedAuthority {
     @Id
     @Column(name = "user_id")
     private Long userId;
@@ -29,4 +33,10 @@ public class UserRole {
     @MapsId("roleId")
     @JoinColumn(name = "role_id")
     private Role role;
+
+    @Transient
+    @Override
+    public String getAuthority() {
+        return role.getCode().name();
+    }
 }
