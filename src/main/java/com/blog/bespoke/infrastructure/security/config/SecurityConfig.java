@@ -1,5 +1,6 @@
 package com.blog.bespoke.infrastructure.security.config;
 
+import com.blog.bespoke.domain.model.user.role.Role;
 import com.blog.bespoke.domain.service.JwtService;
 import com.blog.bespoke.infrastructure.security.exception.AccessDeniedHandlerImpl;
 import com.blog.bespoke.infrastructure.security.exception.AuthenticationEntryPointImpl;
@@ -66,7 +67,7 @@ public class SecurityConfig {
         );
 
         http.authorizeHttpRequests(requests -> requests
-                // TODO: 추가해야함
+                .requestMatchers("/api/admin/**").hasRole(Role.CODE.ADMIN.name())
                 .anyRequest().permitAll()
         );
 

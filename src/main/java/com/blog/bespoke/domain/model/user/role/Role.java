@@ -4,6 +4,8 @@ package com.blog.bespoke.domain.model.user.role;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Setter
 @Getter
 @Table(name = "role")
@@ -11,7 +13,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role {
+public class Role implements Serializable {
     @Id
     @Column(name = "role_id")
     private Long id;

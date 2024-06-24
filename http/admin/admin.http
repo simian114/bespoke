@@ -1,0 +1,4 @@
+
+### ADMIN test
+GET localhost:8080/api/admin/users
+Authorization: Bearer {{access_token}}

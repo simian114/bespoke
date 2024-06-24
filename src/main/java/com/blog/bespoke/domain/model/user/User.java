@@ -8,7 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -38,6 +40,18 @@ public class User extends TimeStamp {
 
     @Enumerated(EnumType.STRING)
     private STATUS status = STATUS.INACTIVE;
+
+    private LocalDateTime bannedUntil;
+
+    public List<String> getRolesAsString() {
+        return roles.stream()
+                .map(role -> role.getRole().getCode().name())
+                .toList();
+    }
+
+    // --- transient value
+
+    // --- domain logic
     public void setStatus(STATUS status) {
         this.status = status;
     }
