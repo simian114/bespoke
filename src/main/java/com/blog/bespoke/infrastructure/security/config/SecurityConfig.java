@@ -71,8 +71,8 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
         );
 
-        http.addFilterBefore(new TransactionFilter(), BasicAuthenticationFilter.class);
-        http.addFilterAt(jwtAuthenticationFilter(), BasicAuthenticationFilter.class);
+        http.addFilterAt(new TransactionFilter(), BasicAuthenticationFilter.class);
+        http.addFilterAt(jwtAuthenticationFilter(), TransactionFilter.class);
 
         return http.build();
     }
