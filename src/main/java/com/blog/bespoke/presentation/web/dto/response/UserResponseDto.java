@@ -1,6 +1,6 @@
 package com.blog.bespoke.presentation.web.dto.response;
 
-import com.blog.bespoke.domain.model.User;
+import com.blog.bespoke.domain.model.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

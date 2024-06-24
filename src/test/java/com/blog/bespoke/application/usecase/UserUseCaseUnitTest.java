@@ -2,8 +2,9 @@ package com.blog.bespoke.application.usecase;
 
 import com.blog.bespoke.application.dto.mapper.UserAppMapper;
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
-import com.blog.bespoke.domain.model.User;
+import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.UserRepository;
+import com.blog.bespoke.domain.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserUseCaseUnitTest {
+    @Mock
+    private UserService userService;
 
     @Mock
     private UserRepository userRepository;
@@ -35,7 +38,7 @@ class UserUseCaseUnitTest {
     @BeforeEach
     void setup() {
         // TODO: password encoder 넣고 테스트 해야함
-        userUseCase = new UserUseCase(userRepository, userAppMapper, passwordEncoder);
+        userUseCase = new UserUseCase(userRepository, userService, userAppMapper);
     }
 
     @Test

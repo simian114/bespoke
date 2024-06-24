@@ -3,7 +3,7 @@ package com.blog.bespoke.infrastructure.security;
 import com.blog.bespoke.application.dto.mapper.UserAppMapper;
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
 import com.blog.bespoke.application.usecase.UserUseCase;
-import com.blog.bespoke.domain.model.User;
+import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.repository.config.RepositoryConfig;
 import com.blog.bespoke.infrastructure.security.config.PasswordEncoderConfig;
 import jakarta.transaction.Transactional;

@@ -1,7 +1,7 @@
 package com.blog.bespoke.application.dto.mapper;
 
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
-import com.blog.bespoke.domain.model.User;
+import com.blog.bespoke.domain.model.user.User;
 import org.springframework.stereotype.Component;
 
 @Component

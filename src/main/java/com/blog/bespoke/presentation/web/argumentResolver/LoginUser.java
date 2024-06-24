@@ -1,6 +1,6 @@
 package com.blog.bespoke.presentation.web.argumentResolver;
 
-import com.blog.bespoke.domain.model.User;
+import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.security.principal.UserPrincipal;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;

@@ -1,6 +1,6 @@
 package com.blog.bespoke.infrastructure.security.service;
 
-import com.blog.bespoke.domain.model.User;
+import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.UserRepository;
 import com.blog.bespoke.infrastructure.security.principal.UserPrincipal;
 import lombok.RequiredArgsConstructor;
