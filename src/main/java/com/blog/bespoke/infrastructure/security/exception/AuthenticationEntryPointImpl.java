@@ -29,7 +29,7 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
                                 HttpStatus.UNAUTHORIZED,
                                 "인증된 유저만 접근이 가능합니다.",
                                 request.getRequestURI()
-                        )
+                        ).getBody()
                 )
         );
     }
