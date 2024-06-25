@@ -16,7 +16,11 @@ public enum ErrorCode {
     // user
     USER_HAS_BLOCKED(HttpStatus.UNAUTHORIZED, "BLOCK USER"),
     USER_INACTIVE(HttpStatus.UNAUTHORIZED, "INACTIVE USER"),
-    USER_FAIL_AUTHENTICATION(HttpStatus.UNAUTHORIZED, "username 또는 password 가 올바르지 않습니다")
+    USER_FAIL_AUTHENTICATION(HttpStatus.UNAUTHORIZED, "username 또는 password 가 올바르지 않습니다"),
+
+    // token
+    TOKEN_HAS_EXPIRED(HttpStatus.BAD_REQUEST, "TOKEN HAS EXPIRED"),
+    TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "TOKEN NOT FOUND"),
     ;
 
     private final HttpStatus statusCode;
