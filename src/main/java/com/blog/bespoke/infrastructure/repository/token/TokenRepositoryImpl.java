@@ -33,6 +33,10 @@ public class TokenRepositoryImpl implements TokenRepository {
         return tokenJpaRepository.findByCode(code).orElseThrow(supplier);
     }
 
+    @Override
+    public void delete(Token token) {
+        tokenJpaRepository.delete(token);
+    }
 
     @Override
     public void deleteByCode(String code) {

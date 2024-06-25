@@ -41,4 +41,9 @@ public class Token {
         USER,
         POST
     }
+
+    @Transient
+    public boolean hasExpired() {
+        return expiredAt.isBefore(LocalDateTime.now());
+    }
 }
