@@ -69,8 +69,14 @@ public class User extends TimeStamp {
         this.password = password;
     }
 
+    @Transient
     public boolean isActive() {
         return status == STATUS.ACTIVE;
+    }
+
+    @Transient
+    public void activate() {
+        status = STATUS.ACTIVE;
     }
 
     public enum STATUS {
