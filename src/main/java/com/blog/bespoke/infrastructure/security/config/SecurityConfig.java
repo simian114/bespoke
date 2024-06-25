@@ -68,6 +68,8 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/api/admin/**").hasRole(Role.CODE.ADMIN.name())
+
+                .requestMatchers("/api/auth/test").authenticated()
                 .anyRequest().permitAll()
         );
 

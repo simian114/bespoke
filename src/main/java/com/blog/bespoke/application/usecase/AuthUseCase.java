@@ -1,11 +1,14 @@
 package com.blog.bespoke.application.usecase;
 
 import com.blog.bespoke.application.dto.request.LoginRequestDto;
+import com.blog.bespoke.application.dto.request.ReIssueTokenRequestDto;
 import com.blog.bespoke.application.dto.response.LoginResponseDto;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.token.Token;
 import com.blog.bespoke.domain.model.user.User;
+import com.blog.bespoke.domain.repository.TokenRepository;
+import com.blog.bespoke.domain.repository.UserRepository;
 import com.blog.bespoke.domain.service.JwtService;
 import com.blog.bespoke.domain.service.RefreshTokenService;
 import com.blog.bespoke.infrastructure.security.principal.UserPrincipal;
@@ -25,6 +28,8 @@ public class AuthUseCase {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+    private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
 
     @Transactional
     public LoginResponseDto login(LoginRequestDto requestDto) {
@@ -51,6 +56,17 @@ public class AuthUseCase {
         return LoginResponseDto.builder()
                 .accessToken(jwtService.createAccessToken(user))
                 .refreshToken(refreshToken.getCode())
+                .build();
+    }
+
+    @Transactional
+    public LoginResponseDto reIssueToken(ReIssueTokenRequestDto requestDto) {
+        Token refreshToken = tokenRepository.getByCode(requestDto.getRefreshToken());
+        User user = userRepository.getById(refreshToken.getRefId());
+        Token reIssuedRefreshToken = refreshTokenService.createRefreshToken(user);
+        return LoginResponseDto.builder()
+                .accessToken(jwtService.createAccessToken(user))
+                .refreshToken(reIssuedRefreshToken.getCode())
                 .build();
     }
 }

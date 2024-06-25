@@ -42,7 +42,7 @@ public class JwtService {
 
     public String createAccessToken(User user) {
         Date date = new Date();
-        Date expiredDate = new Date(date.getTime() + 1000 * 60 * 60 * 24);
+        Date expiredDate = new Date(date.getTime() + 1000 * 60 * 60);
         return Jwts.builder()
                 .setSubject(user.getEmail())
                 .setExpiration(expiredDate)
