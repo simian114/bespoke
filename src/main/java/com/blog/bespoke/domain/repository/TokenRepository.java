@@ -11,6 +11,7 @@ public interface TokenRepository {
 
     Token getByCode(String code);
 
+    void delete(Token token);
     void deleteByCode(String code);
 
     // TODO: pagination 으로 만료 된 토큰 가져오는 쿼리 만들기
