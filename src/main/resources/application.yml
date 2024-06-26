@@ -3,6 +3,9 @@ jwt:
 host:
   url: ${HOST_URL}
 spring:
+  data:
+    redis:
+      port: 16379
   application:
     name: bespoke
   datasource:

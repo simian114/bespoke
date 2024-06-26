@@ -2,6 +2,7 @@ package com.blog.bespoke.domain.model.user;
 
 import com.blog.bespoke.domain.model.common.TimeStamp;
 import com.blog.bespoke.domain.model.user.role.UserRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,6 +44,7 @@ public class User extends TimeStamp {
 
     private LocalDateTime bannedUntil;
 
+    @JsonIgnore
     public List<String> getRolesAsString() {
         return roles.stream()
                 .map(role -> role.getRole().getCode().name())
@@ -52,10 +54,8 @@ public class User extends TimeStamp {
     // --- transient value
 
     // --- domain logic
-    public void setStatus(STATUS status) {
-        this.status = status;
-    }
 
+    @JsonIgnore
     @Transient
     public void addRole(UserRole role) {
         if (roles == null) {
@@ -64,19 +64,28 @@ public class User extends TimeStamp {
         roles.add(role);
     }
 
+    @JsonIgnore
     @Transient
     public void changePassword(String password) {
         this.password = password;
     }
 
+    @JsonIgnore
     @Transient
     public boolean isActive() {
         return status == STATUS.ACTIVE;
     }
 
+    @JsonIgnore
     @Transient
     public void activate() {
         status = STATUS.ACTIVE;
+    }
+
+    @JsonIgnore
+    @Transient
+    public void deActivate() {
+        status = STATUS.INACTIVE;
     }
 
     public enum STATUS {

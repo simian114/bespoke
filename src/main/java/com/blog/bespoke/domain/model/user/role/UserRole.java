@@ -1,12 +1,12 @@
 package com.blog.bespoke.domain.model.user.role;
 
 import com.blog.bespoke.domain.model.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 
 @Getter
 @IdClass(UserRoleId.class)
@@ -15,7 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRole implements GrantedAuthority {
+public class UserRole {
     @Id
     @Column(name = "user_id")
     private Long userId;
@@ -27,16 +27,11 @@ public class UserRole implements GrantedAuthority {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("userId")
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @ManyToOne
     @MapsId("roleId")
     @JoinColumn(name = "role_id")
     private Role role;
-
-    @Transient
-    @Override
-    public String getAuthority() {
-        return role.getCode().name();
-    }
 }

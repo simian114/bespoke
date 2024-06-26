@@ -3,14 +3,20 @@ package com.blog.bespoke.infrastructure.repository.user;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.model.user.role.Role;
 import com.blog.bespoke.domain.repository.UserRepository;
+import com.blog.bespoke.infrastructure.repository.redis.RedisUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
+    private static final String USER_CACHE_PREFIX = "user:";
     private final UserJpaRepository userJpaRepository;
     private final RoleJpaRepository roleJpaRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisUtil redisUtil;
 
     @Override
     public User save(User user) {
@@ -19,6 +25,13 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> findById(Long id) {
+        String key = USER_CACHE_PREFIX + id;
+        User cachedUser = (User) redisTemplate.opsForValue().get(key);
+        if (cachedUser != null) {
+            return Optional.of(cachedUser);
+        }
+        Optional<User> user = userJpaRepository.findById(id);
+        user.ifPresent(value -> redisTemplate.opsForValue().set(key, value, 10, TimeUnit.MINUTES));
         return userJpaRepository.findById(id);
     }
 
@@ -40,7 +53,15 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return userJpaRepository.findByEmail(email);
+        String key = USER_CACHE_PREFIX + email;
+        User cachedUser = redisUtil.get(key, User.class);
+        if (cachedUser != null) {
+            return Optional.of(cachedUser);
+        }
+
+        Optional<User> user = userJpaRepository.findByEmail(email);
+        user.ifPresent(v -> redisUtil.set(key, v));
+        return user;
     }
 
     @Override
