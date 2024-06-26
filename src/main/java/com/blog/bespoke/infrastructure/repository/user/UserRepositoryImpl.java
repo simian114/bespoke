@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
@@ -25,13 +24,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> findById(Long id) {
-        String key = USER_CACHE_PREFIX + id;
-        User cachedUser = (User) redisTemplate.opsForValue().get(key);
-        if (cachedUser != null) {
-            return Optional.of(cachedUser);
-        }
-        Optional<User> user = userJpaRepository.findById(id);
-        user.ifPresent(value -> redisTemplate.opsForValue().set(key, value, 10, TimeUnit.MINUTES));
         return userJpaRepository.findById(id);
     }
 
@@ -53,15 +45,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> findByEmail(String email) {
-        String key = USER_CACHE_PREFIX + email;
-        User cachedUser = redisUtil.get(key, User.class);
-        if (cachedUser != null) {
-            return Optional.of(cachedUser);
-        }
-
-        Optional<User> user = userJpaRepository.findByEmail(email);
-        user.ifPresent(v -> redisUtil.set(key, v));
-        return user;
+        return userJpaRepository.findByEmail(email);
     }
 
     @Override
