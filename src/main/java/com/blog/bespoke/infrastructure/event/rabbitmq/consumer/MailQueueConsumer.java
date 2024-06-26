@@ -1,6 +1,6 @@
-package com.blog.bespoke.application.amqp.consumer;
+package com.blog.bespoke.infrastructure.event.rabbitmq.consumer;
 
-import com.blog.bespoke.application.amqp.message.UserRegistrationMessage;
+import com.blog.bespoke.application.event.message.UserRegistrationMessage;
 import com.blog.bespoke.application.usecase.MailUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;

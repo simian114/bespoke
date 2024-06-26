@@ -1,4 +1,4 @@
-package com.blog.bespoke.application.amqp.config;
+package com.blog.bespoke.infrastructure.event.rabbitmq.config;
 
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
