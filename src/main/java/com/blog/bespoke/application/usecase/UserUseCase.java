@@ -13,7 +13,6 @@ import com.blog.bespoke.domain.repository.UserRepository;
 import com.blog.bespoke.domain.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.web.access.WebInvocationPrivilegeEvaluator;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,7 +25,6 @@ public class UserUseCase {
     private final TokenRepository tokenRepository;
     private final UserService userService;
     private final UserRegistrationEventPublisher publisher;
-    private final WebInvocationPrivilegeEvaluator privilegeEvaluator;
 
 
     /**
@@ -38,7 +36,7 @@ public class UserUseCase {
     @Transactional
     public User signup(UserSignupRequestDto requestDto) {
         User user = UserRequestMapper.INSTANCE.toDomain(requestDto);
-        user.setStatus(User.STATUS.INACTIVE);
+        user.deActivate();
         user.changePassword(userService.encodePassword(user.getPassword()));
         userService.addRole(user, Role.CODE.USER);
         User savedUser = userRepository.save(user);
