@@ -1,9 +1,9 @@
 package com.blog.bespoke.application.usecase;
 
-import com.blog.bespoke.application.amqp.message.UserRegistrationMessage;
-import com.blog.bespoke.application.amqp.publisher.EventPublisher;
 import com.blog.bespoke.application.dto.mapper.UserRequestMapper;
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
+import com.blog.bespoke.application.event.message.UserRegistrationMessage;
+import com.blog.bespoke.application.event.publisher.EventPublisher;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.token.Token;
