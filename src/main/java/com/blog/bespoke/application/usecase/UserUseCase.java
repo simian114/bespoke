@@ -1,8 +1,9 @@
 package com.blog.bespoke.application.usecase;
 
+import com.blog.bespoke.application.amqp.message.UserRegistrationMessage;
+import com.blog.bespoke.application.amqp.publisher.EventPublisher;
 import com.blog.bespoke.application.dto.mapper.UserRequestMapper;
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
-import com.blog.bespoke.application.event.publisher.UserRegistrationEventPublisher;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.token.Token;
@@ -24,7 +25,7 @@ public class UserUseCase {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final UserService userService;
-    private final UserRegistrationEventPublisher publisher;
+    private final EventPublisher eventPublisher;
 
 
     /**
@@ -50,7 +51,12 @@ public class UserUseCase {
                         .expiredAt(LocalDateTime.now().plusMinutes(3))
                         .build()
         );
-        publisher.publish(user.getEmail(), token.getCode());
+        eventPublisher.publishMailEvent(
+                UserRegistrationMessage.builder()
+                        .email(user.getEmail())
+                        .code(token.getCode())
+                        .build()
+        );
 
         return userRepository.save(user);
     }
