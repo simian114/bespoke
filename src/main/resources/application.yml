@@ -2,6 +2,7 @@ jwt:
   secret-key: ${JWT_SECRET_KEY}
 host:
   url: ${HOST_URL}
+rabbitmq.routing-key.mail: mail
 spring:
   data:
     redis:
@@ -39,3 +40,12 @@ spring:
       mail.smtp.starttls.enable: true
       mail.smtp.starttls.required: true
       mail.smtp.connectiontimeout: 5000
+  rabbitmq:
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+    host: ${RABBITMQ_HOST}
+
+
+
+
