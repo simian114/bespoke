@@ -1,4 +1,4 @@
-package com.blog.bespoke.presentation.web.dto.response;
+package com.blog.bespoke.application.dto.response;
 
 import com.blog.bespoke.domain.model.user.User;
 import lombok.Builder;

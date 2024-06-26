@@ -25,7 +25,6 @@ public class UserService {
         user.addRole(userRole);
     }
 
-
     public String encodePassword(String password) {
         return passwordEncoder.encode(password);
     }
