@@ -38,6 +38,17 @@ create table token
     index idx_code (code) # code 에 index 추가
 );
 
+create table follow
+(
+    follow_id bigint primary key auto_increment,
+    following_id bigint not null,
+    follower_id bigint not null,
+    created_at timestamp default current_timestamp,
+    foreign key(following_id) references users(user_id) on delete cascade,
+    foreign key(follower_id) references users(user_id) on delete cascade,
+    constraint unique_follow unique (following_id, follower_id)
+);
+
 INSERT INTO role(code)
 values ('USER');
 INSERT INTO role(code)
