@@ -78,4 +78,15 @@ public class UserUseCase {
         return user;
     }
 
+    @Transactional
+    public void follow(Long followingId, User currentUser) {
+        User user = userRepository.getById(currentUser.getId());
+        user.follow(followingId);
+    }
+
+    @Transactional
+    public void unfollow(Long followingId, User currentUser) {
+        User user = userRepository.getUserWithFollowByIdAndFollowingId(currentUser.getId(), followingId);
+        user.unfollow(followingId);
+    }
 }
