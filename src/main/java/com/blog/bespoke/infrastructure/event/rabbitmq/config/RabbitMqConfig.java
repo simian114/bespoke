@@ -28,11 +28,21 @@ public class RabbitMqConfig {
     @Value("${rabbitmq.routing-key.mail}")
     private String mailQueueKey;
 
+    @Value("${rabbitmq.routing-key.common}")
+    private String commonQueueKey;
+
+
     // --- queue 등록
     @Bean
     public Queue mailQueue() {
         return new Queue(mailQueueKey, false);
     }
+
+    @Bean
+    public Queue commonQueue() {
+        return new Queue(commonQueueKey, false);
+    }
+
 
     // --- object 사용 위한 설정.
     @Bean

@@ -2,6 +2,7 @@ package com.blog.bespoke.application.usecase;
 
 import com.blog.bespoke.application.dto.mapper.UserRequestMapper;
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
+import com.blog.bespoke.application.event.message.UserFollowMessage;
 import com.blog.bespoke.application.event.message.UserRegistrationMessage;
 import com.blog.bespoke.application.event.publisher.EventPublisher;
 import com.blog.bespoke.application.exception.BusinessException;
@@ -82,6 +83,7 @@ public class UserUseCase {
     public void follow(Long followingId, User currentUser) {
         User user = userRepository.getById(currentUser.getId());
         user.follow(followingId);
+        eventPublisher.publishFollowEvent(UserFollowMessage.builder().followerId(user.getId()).followingId(followingId).build());
     }
 
     @Transactional
