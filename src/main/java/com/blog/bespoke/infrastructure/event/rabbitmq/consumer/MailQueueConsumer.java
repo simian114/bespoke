@@ -5,9 +5,9 @@ import com.blog.bespoke.application.usecase.MailUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 @RequiredArgsConstructor
 @RabbitListener(queues = "${rabbitmq.routing-key.mail}")
 public class MailQueueConsumer {

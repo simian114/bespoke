@@ -1,5 +1,6 @@
 package com.blog.bespoke.infrastructure.event.rabbitmq.publisher;
 
+import com.blog.bespoke.application.event.message.UserFollowMessage;
 import com.blog.bespoke.application.event.message.UserRegistrationMessage;
 import com.blog.bespoke.application.event.publisher.EventPublisher;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,15 @@ public class RabbitMqPublisher implements EventPublisher {
     @Value("${rabbitmq.routing-key.mail}")
     private String mailQueueKey;
 
+    @Value("${rabbitmq.routing-key.common}")
+    private String commonQueueKey;
+
     public void publishMailEvent(UserRegistrationMessage message) {
         rabbitTemplate.convertAndSend(mailQueueKey, message);
+    }
+
+    @Override
+    public void publishFollowEvent(UserFollowMessage message) {
+         rabbitTemplate.convertAndSend(commonQueueKey, message);
     }
 }

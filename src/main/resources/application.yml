@@ -3,6 +3,7 @@ jwt:
 host:
   url: ${HOST_URL}
 rabbitmq.routing-key.mail: mail
+rabbitmq.routing-key.common: common
 spring:
   data:
     redis:
