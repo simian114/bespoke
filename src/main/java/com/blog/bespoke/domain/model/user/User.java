@@ -41,7 +41,8 @@ public class User extends TimeStamp {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserRole> roles;
     @Enumerated(EnumType.STRING)
-    private STATUS status = STATUS.INACTIVE;
+    private Status status = Status.INACTIVE;
+
     private LocalDateTime bannedUntil;
 
     @JsonIgnore
@@ -95,23 +96,23 @@ public class User extends TimeStamp {
     @JsonIgnore
     @Transient
     public boolean isActive() {
-        return status == STATUS.ACTIVE;
+        return status == Status.ACTIVE;
     }
 
     @JsonIgnore
     @Transient
     public void activate() {
-        status = STATUS.ACTIVE;
+        status = Status.ACTIVE;
     }
 
     @JsonIgnore
     @Transient
     public void deActivate() {
-        status = STATUS.INACTIVE;
+        status = Status.INACTIVE;
     }
 
 
-    public enum STATUS {
+    public enum Status {
         INACTIVE,
         ACTIVE
     }

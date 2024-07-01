@@ -19,9 +19,9 @@ public class Role implements Serializable {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private CODE code;
+    private Code code;
 
-    public enum CODE {
+    public enum Code {
         USER,
         ADMIN
     }
