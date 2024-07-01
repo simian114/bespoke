@@ -9,5 +9,6 @@ public interface EventPublisher {
 
     void publishFollowEvent(UserFollowMessage message);
 
-    void publishPostCreateEvent(PostCreateMessage message);
+    // NOTE: create 가 아닌 published 이벤트로 변경해야함
+    void publishPostPublishEvent(PostCreateMessage message);
 }
