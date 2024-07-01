@@ -28,7 +28,8 @@ public enum ErrorCode {
     // psot
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시글입니다."),
     BANNED_USER_POST(HttpStatus.BAD_REQUEST, "정지 된 유저의 게시글입니다."),
-    POST_FORBIDDEN(HttpStatus.BAD_REQUEST, "접근 권한이 없는 게시글입니다.")
+    POST_FORBIDDEN(HttpStatus.BAD_REQUEST, "접근 권한이 없는 게시글입니다."),
+    POST_BAD_STATUS(HttpStatus.BAD_REQUEST, "수정 할 수 없습니다.")
     ;
 
     private final HttpStatus statusCode;
