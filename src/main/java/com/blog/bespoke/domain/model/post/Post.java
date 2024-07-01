@@ -11,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.Objects;
 import java.util.Set;
 
 @DynamicInsert
@@ -54,9 +55,34 @@ public class Post extends TimeStamp {
         return status == Status.PUBLISHED;
     }
 
+    public void update(PostUpdateCmd postUpdateCmd) {
+        if (postUpdateCmd.getTitle() != null) {
+            title = postUpdateCmd.getTitle();
+        }
+        if (postUpdateCmd.getContent() != null) {
+            content = postUpdateCmd.getContent();
+        }
+        if (postUpdateCmd.getDescription() != null) {
+            description = postUpdateCmd.getDescription();
+        }
+    }
+
+    public boolean canUpdateBy(User currentUser) {
+        return currentUser.isAdmin() || (Objects.equals(author.getId(), currentUser.getId()));
+    }
+
+    public void changeStatus(Status status) {
+        this.status = status;
+    }
+
+    public boolean isBocked() {
+        return status == Status.BLOCKED;
+    }
+
     public enum Status {
         DRAFT,
         PUBLISHED,
+        HIDDEN, // 숨김처리
         BLOCKED
     }
 }
