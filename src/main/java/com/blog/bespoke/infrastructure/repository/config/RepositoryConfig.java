@@ -1,7 +1,10 @@
 package com.blog.bespoke.infrastructure.repository.config;
 
+import com.blog.bespoke.domain.repository.PostRepository;
 import com.blog.bespoke.domain.repository.TokenRepository;
 import com.blog.bespoke.domain.repository.UserRepository;
+import com.blog.bespoke.infrastructure.repository.post.PostJpaRepository;
+import com.blog.bespoke.infrastructure.repository.post.PostRepositoryImpl;
 import com.blog.bespoke.infrastructure.repository.token.TokenJpaRepository;
 import com.blog.bespoke.infrastructure.repository.token.TokenRepositoryImpl;
 import com.blog.bespoke.infrastructure.repository.user.RoleJpaRepository;
@@ -22,6 +25,7 @@ public class RepositoryConfig {
     private final UserJpaRepository userJpaRepository;
     private final TokenJpaRepository tokenJpaRepository;
     private final RoleJpaRepository roleJpaRepository;
+    private final PostJpaRepository postJpaRepository;
 
     @PersistenceContext
     private final EntityManager em;
@@ -34,6 +38,11 @@ public class RepositoryConfig {
     @Bean
     public UserRepository userRepository() {
         return new UserRepositoryImpl(jpaQueryFactory(), userJpaRepository, roleJpaRepository);
+    }
+
+    @Bean
+    public PostRepository postRepository() {
+        return new PostRepositoryImpl(jpaQueryFactory(), postJpaRepository);
     }
 
     @Bean
