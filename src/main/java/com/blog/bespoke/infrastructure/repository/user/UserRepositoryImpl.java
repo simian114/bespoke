@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.blog.bespoke.domain.model.user.QUser.user;
@@ -135,17 +136,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     private BooleanExpression statusEq(User.Status status) {
-        if (status == null) {
-            return null;
-        }
-        return user.status.eq(status);
+        return user.status.eq(Objects.requireNonNullElse(status, User.Status.ACTIVE));
     }
 
     private BooleanExpression roleEq(Role.Code role) {
-        if (role == null) {
-            return null;
-        }
-        return user.roles.any().role.code.eq(role);
+        return user.roles.any().role.code.eq(Objects.requireNonNullElse(role, Role.Code.USER));
     }
 
 }
