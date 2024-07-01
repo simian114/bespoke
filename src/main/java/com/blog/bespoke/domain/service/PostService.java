@@ -10,6 +10,9 @@ public class PostService {
         if (post.isPublished()) {
             return true;
         }
+        if (user == null) {
+            return false;
+        }
         // published 상태가 아니라면, 본인 또는 어드민만 볼 수 있음
         return post.getAuthor().getId().equals(user.getId()) || user.isAdmin();
     }
