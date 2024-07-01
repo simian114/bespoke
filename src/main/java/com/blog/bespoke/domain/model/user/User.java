@@ -2,6 +2,7 @@ package com.blog.bespoke.domain.model.user;
 
 import com.blog.bespoke.domain.model.common.TimeStamp;
 import com.blog.bespoke.domain.model.follow.Follow;
+import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.user.role.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -57,6 +58,9 @@ public class User extends TimeStamp {
     @OneToMany(mappedBy = "followingId", cascade = CascadeType.ALL, orphanRemoval = true)
     public Set<Follow> followings = new HashSet<>();
 
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    public Set<Post> posts;
+
     @JsonIgnore
     public List<String> getRolesAsString() {
         return roles.stream()
@@ -66,6 +70,9 @@ public class User extends TimeStamp {
 
     // --- 연관관계 편의 메서드
 
+    // --- transient value
+
+    // --- domain logic
     public void follow(Long followingId) {
         if (followings == null) {
             followings = new HashSet<>();
@@ -88,10 +95,6 @@ public class User extends TimeStamp {
 
     }
 
-    // --- transient value
-
-    // --- domain logic
-
     @JsonIgnore
     @Transient
     public void addRole(UserRole role) {
@@ -113,6 +116,12 @@ public class User extends TimeStamp {
     public boolean isActive() {
         return status == Status.ACTIVE;
     }
+
+    @Transient
+    public boolean isAdmin() {
+        return false;
+    }
+
 
     @JsonIgnore
     @Transient
