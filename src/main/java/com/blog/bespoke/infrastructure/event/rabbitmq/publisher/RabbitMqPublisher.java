@@ -28,7 +28,7 @@ public class RabbitMqPublisher implements EventPublisher {
     }
 
     @Override
-    public void publishPostCreateEvent(PostCreateMessage message) {
+    public void publishPostPublishEvent(PostCreateMessage message) {
         rabbitTemplate.convertAndSend(commonQueueKey, message);
     }
 }

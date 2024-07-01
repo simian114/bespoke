@@ -73,7 +73,7 @@ public class PostUseCase {
 
         // post 의 상태가 published 인 경우에만!
         if (post.isPublished()) {
-            publisher.publishPostCreateEvent(
+            publisher.publishPostPublishEvent(
                     PostCreateMessage.builder()
                             .postId(savedPost.getId())
                             .authorId(author.getId())
@@ -103,7 +103,7 @@ public class PostUseCase {
         // NOTE: 기존 draft 에서 published 가 되면 이벤트 쏘기
         post.changeStatus(cmd.getStatus());
         if (asIs == Post.Status.DRAFT && cmd.getStatus() == Post.Status.PUBLISHED) {
-             publisher.publishPostCreateEvent(
+             publisher.publishPostPublishEvent(
                     PostCreateMessage.builder()
                             .postId(post.getId())
                             .authorId(post.getAuthor().getId())
