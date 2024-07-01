@@ -16,7 +16,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void addRole(User user, Role.CODE code) {
+    public void addRole(User user, Role.Code code) {
         Role role = userRepository.getRoleByCode(code);
         UserRole userRole = UserRole.builder()
                 .role(role)

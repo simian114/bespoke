@@ -40,7 +40,7 @@ public class UserUseCase {
         User user = UserRequestMapper.INSTANCE.toDomain(requestDto);
         user.deActivate();
         user.changePassword(userService.encodePassword(user.getPassword()));
-        userService.addRole(user, Role.CODE.USER);
+        userService.addRole(user, Role.Code.USER);
         User savedUser = userRepository.save(user);
 
         Token token = tokenRepository.save(

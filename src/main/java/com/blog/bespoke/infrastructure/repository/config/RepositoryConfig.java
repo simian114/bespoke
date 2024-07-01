@@ -7,6 +7,9 @@ import com.blog.bespoke.infrastructure.repository.token.TokenRepositoryImpl;
 import com.blog.bespoke.infrastructure.repository.user.RoleJpaRepository;
 import com.blog.bespoke.infrastructure.repository.user.UserJpaRepository;
 import com.blog.bespoke.infrastructure.repository.user.UserRepositoryImpl;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,9 +23,17 @@ public class RepositoryConfig {
     private final TokenJpaRepository tokenJpaRepository;
     private final RoleJpaRepository roleJpaRepository;
 
+    @PersistenceContext
+    private final EntityManager em;
+
+    @Bean
+    public JPAQueryFactory jpaQueryFactory() {
+        return new JPAQueryFactory(em);
+    }
+
     @Bean
     public UserRepository userRepository() {
-        return new UserRepositoryImpl(userJpaRepository, roleJpaRepository);
+        return new UserRepositoryImpl(jpaQueryFactory(), userJpaRepository, roleJpaRepository);
     }
 
     @Bean

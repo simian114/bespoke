@@ -34,4 +34,8 @@ public class UserRole {
     @MapsId("roleId")
     @JoinColumn(name = "role_id")
     private Role role;
+
+    public void setUser(User user) {
+         this.user = user;
+    }
 }

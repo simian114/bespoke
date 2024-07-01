@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -16,6 +18,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+@DynamicInsert
+@DynamicUpdate
 @Getter
 @Table(name = "users")
 @Entity
@@ -23,27 +27,35 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends TimeStamp {
-    // --- relation
-    @OneToMany(mappedBy = "followerId", cascade = CascadeType.ALL, orphanRemoval = true)
-    public Set<Follow> followers = new HashSet<>();
-    @OneToMany(mappedBy = "followingId", cascade = CascadeType.ALL, orphanRemoval = true)
-    public Set<Follow> followings = new HashSet<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
+
     @Column(unique = true)
     private String email;
+
     private String password;
+
     @Column(unique = true)
     private String nickname;
+
     private String name;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+
+     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserRole> roles;
+
     @Enumerated(EnumType.STRING)
     private Status status = Status.INACTIVE;
 
     private LocalDateTime bannedUntil;
+
+    // --- relation
+    @OneToMany(mappedBy = "followerId", cascade = CascadeType.ALL, orphanRemoval = true)
+    public Set<Follow> followers = new HashSet<>();
+
+    @OneToMany(mappedBy = "followingId", cascade = CascadeType.ALL, orphanRemoval = true)
+    public Set<Follow> followings = new HashSet<>();
 
     @JsonIgnore
     public List<String> getRolesAsString() {
@@ -51,6 +63,8 @@ public class User extends TimeStamp {
                 .map(role -> role.getRole().getCode().name())
                 .toList();
     }
+
+    // --- 연관관계 편의 메서드
 
     public void follow(Long followingId) {
         if (followings == null) {
@@ -85,6 +99,7 @@ public class User extends TimeStamp {
             roles = new HashSet<>();
         }
         roles.add(role);
+        role.setUser(this);
     }
 
     @JsonIgnore
