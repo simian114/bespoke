@@ -29,8 +29,7 @@ public interface UserRepository {
     User getUserWithFollowByIdAndFollowingId(Long userId, Long followingId);
 
     // role
-    Optional<Role> findRoleByCode(Role.CODE code);
+    Optional<Role> findRoleByCode(Role.Code code);
 
-
-    Role getRoleByCode(Role.CODE code);
+    Role getRoleByCode(Role.Code code);
 }

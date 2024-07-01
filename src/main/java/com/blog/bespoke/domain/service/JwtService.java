@@ -66,14 +66,14 @@ public class JwtService {
                 .getBody();
         List<String> roles = (List) claims.get(JwtService.CLAIM_ROLES);
         Set<UserRole> userRoles = roles.stream()
-                .map(role -> UserRole.builder().role(Role.builder().code(Role.CODE.valueOf(role)).build()).build())
+                .map(role -> UserRole.builder().role(Role.builder().code(Role.Code.valueOf(role)).build()).build())
                 .collect(Collectors.toSet());
         return User.builder()
                 .id(claims.get(JwtService.CLAIM_ID, Long.class))
                 .email(claims.get(JwtService.CLAIM_EMAIL, String.class))
                 .name(claims.get(JwtService.CLAIM_NAME, String.class))
                 .nickname(claims.get(JwtService.CLAIM_NICKNAME, String.class))
-                .status(User.STATUS.valueOf(claims.get(JwtService.CLAIM_STATUS, String.class)))
+                .status(User.Status.valueOf(claims.get(JwtService.CLAIM_STATUS, String.class)))
                 .roles(userRoles)
                 .build();
     }
