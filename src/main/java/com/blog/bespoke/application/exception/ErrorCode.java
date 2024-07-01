@@ -23,7 +23,12 @@ public enum ErrorCode {
     TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "잘못된 토큰입니다."),
 
     // follow
-    FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "팔로우 정보가 없습니다.")
+    FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "팔로우 정보가 없습니다."),
+
+    // psot
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시글입니다."),
+    BANNED_USER_POST(HttpStatus.BAD_REQUEST, "정지 된 유저의 게시글입니다."),
+    POST_FORBIDDEN(HttpStatus.BAD_REQUEST, "접근 권한이 없는 게시글입니다.")
     ;
 
     private final HttpStatus statusCode;
