@@ -1,5 +1,6 @@
 package com.blog.bespoke.infrastructure.event.rabbitmq.publisher;
 
+import com.blog.bespoke.application.event.message.PostCreateMessage;
 import com.blog.bespoke.application.event.message.UserFollowMessage;
 import com.blog.bespoke.application.event.message.UserRegistrationMessage;
 import com.blog.bespoke.application.event.publisher.EventPublisher;
@@ -24,5 +25,10 @@ public class RabbitMqPublisher implements EventPublisher {
     @Override
     public void publishFollowEvent(UserFollowMessage message) {
          rabbitTemplate.convertAndSend(commonQueueKey, message);
+    }
+
+    @Override
+    public void publishPostCreateEvent(PostCreateMessage message) {
+        rabbitTemplate.convertAndSend(commonQueueKey, message);
     }
 }
