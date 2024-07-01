@@ -5,23 +5,23 @@ host:
 rabbitmq.routing-key.mail: mail
 rabbitmq.routing-key.common: common
 spring:
-  data:
-    redis:
-      port: 16379
   application:
     name: bespoke
+  data:
+    redis:
+      port: ${REDIS_PORT}
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:13306/bespoke
-    username: root
-    password: password
+    url: jdbc:mysql://127.0.0.1:${MYSQL_PORT}/bespoke
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
   flyway:
     enabled: true
     baseline-on-migrate: true
     create-schemas: true
     locations: classpath:db/migration,classpath:db/seed
-    user: root
-    password: password
+    user: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
   jpa:
     show-sql: false
     hibernate:
@@ -46,7 +46,3 @@ spring:
     username: ${RABBITMQ_USERNAME}
     password: ${RABBITMQ_PASSWORD}
     host: ${RABBITMQ_HOST}
-
-
-
-
