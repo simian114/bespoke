@@ -1,25 +1,35 @@
 jwt:
   secret-key: ${JWT_SECRET_KEY}
+host:
+  url: ${HOST_URL}
+rabbitmq.routing-key.mail: mail
+rabbitmq.routing-key.common: common
 spring:
+  data:
+    redis:
+      port: 26379
   application:
     name: bespoke
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:23306/bespoke
-    username: root
+    username: user
     password: password
   flyway:
     enabled: true
     baseline-on-migrate: true
     create-schemas: true
     locations: classpath:db/migration
-    url: jdbc:mysql://127.0.0.1:23306/bespoke
+    user: user
+    password: password
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: validate
-logging:
-  level:
-    org:
-      springframework:
-        data: DEBUG
+    properties:
+      hibernate:
+        format_sql: true
+  rabbitmq:
+    port: 25672
+    username: admin
+    password: password
