@@ -8,13 +8,17 @@ import com.blog.bespoke.application.event.publisher.EventPublisher;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.post.Post;
+import com.blog.bespoke.domain.model.post.PostSearchCond;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.PostRepository;
 import com.blog.bespoke.domain.repository.UserRepository;
 import com.blog.bespoke.domain.service.PostService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +46,18 @@ public class PostUseCase {
             throw new BusinessException(ErrorCode.POST_FORBIDDEN);
         }
         return PostResponseDto.from(post);
+    }
+
+    @Transactional
+    public Page<PostResponseDto> postSearch(PostSearchCond cond, User currentUser) {
+        // published 가 아닌 정보를 요청하면서 user 가 null 인 경우는 예외를 보내야한다.
+        if (cond.getStatus() != Post.Status.PUBLISHED && currentUser == null
+                || cond.getStatus() != Post.Status.PUBLISHED && !Objects.equals(currentUser.getId(), cond.getAuthorId())) {
+            throw new BusinessException(ErrorCode.POST_FORBIDDEN);
+        }
+
+        return postRepository.search(cond)
+                .map(PostResponseDto::from);
     }
 
     @Transactional

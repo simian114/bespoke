@@ -3,9 +3,7 @@ package com.blog.bespoke.domain.repository;
 import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.post.PostSearchCond;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository {
@@ -19,5 +17,5 @@ public interface PostRepository {
 
     void deleteById(Long id);
 
-    Page<Post> search(PostSearchCond cond, Pageable pageable);
+    Page<Post> search(PostSearchCond cond);
 }
