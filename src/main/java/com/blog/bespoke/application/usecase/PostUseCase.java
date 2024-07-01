@@ -36,6 +36,10 @@ public class PostUseCase {
     public PostResponseDto showPostById(Long postId, User currentUser) {
         Post post = postRepository.getById(postId);
 
+        if (post.isDeleted()) {
+            throw new BusinessException(ErrorCode.POST_NOT_FOUND);
+        }
+
         // check post's author is not banned
         User author = post.getAuthor();
 
@@ -103,7 +107,7 @@ public class PostUseCase {
         // NOTE: 기존 draft 에서 published 가 되면 이벤트 쏘기
         post.changeStatus(cmd.getStatus());
         if (asIs == Post.Status.DRAFT && cmd.getStatus() == Post.Status.PUBLISHED) {
-             publisher.publishPostPublishEvent(
+            publisher.publishPostPublishEvent(
                     PostCreateMessage.builder()
                             .postId(post.getId())
                             .authorId(post.getAuthor().getId())
@@ -124,5 +128,15 @@ public class PostUseCase {
         }
         post.update(postUpdateCmd);
         return PostResponseDto.from(postRepository.save(post));
+    }
+
+    @Transactional
+    public void deletePost(Long postId, User currentUser) {
+        Post post = postRepository.getById(postId);
+        if (!post.canUpdateBy(currentUser)) {
+            throw new BusinessException(ErrorCode.POST_FORBIDDEN);
+        }
+        post.delete();
+        postRepository.save(post);
     }
 }

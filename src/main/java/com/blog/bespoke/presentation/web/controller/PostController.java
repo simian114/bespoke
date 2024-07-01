@@ -6,6 +6,7 @@ import com.blog.bespoke.domain.model.post.PostSearchCond;
 import com.blog.bespoke.domain.model.post.PostStatusCmd;
 import com.blog.bespoke.domain.model.post.PostUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
+import com.blog.bespoke.infrastructure.aop.ResponseEnvelope.Envelope;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,13 @@ public class PostController {
     @GetMapping("/{postId}")
     public ResponseEntity<?> showPostById(@PathVariable Long postId, @LoginUser User currentUser) {
         return ResponseEntity.ok(postUseCase.showPostById(postId, currentUser));
+    }
+
+    @Envelope("삭제했습니다.")
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<?> deleteById(@PathVariable Long postId, @LoginUser User currentUser) {
+        postUseCase.deletePost(postId, currentUser);
+        return ResponseEntity.noContent().build();
     }
 
 
