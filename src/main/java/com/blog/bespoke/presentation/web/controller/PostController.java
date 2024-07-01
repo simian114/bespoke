@@ -25,4 +25,10 @@ public class PostController {
     public ResponseEntity<?> search(@ModelAttribute PostSearchCond cond, @LoginUser User currentUser) {
         return ResponseEntity.ok(postUseCase.postSearch(cond, currentUser));
     }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<?> showPostById(@PathVariable Long postId, @LoginUser User currentUser) {
+        return ResponseEntity.ok(postUseCase.showPostById(postId, currentUser));
+    }
+
 }
