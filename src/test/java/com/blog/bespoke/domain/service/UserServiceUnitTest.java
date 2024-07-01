@@ -3,7 +3,6 @@ package com.blog.bespoke.domain.service;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.model.user.role.Role;
 import com.blog.bespoke.domain.repository.UserRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,11 +32,11 @@ class UserServiceUnitTest {
     void add_role_test() {
         // given
         User user = User.builder().id(1L).email("email@gmail.com").name("name").password("password").build();
-        Role role = Role.builder().id(1L).code(Role.CODE.USER).build();
+        Role role = Role.builder().id(1L).code(Role.Code.USER).build();
         given(userRepository.getRoleByCode(Mockito.any()))
                 .willReturn(role);
         // when
-        userService.addRole(user, Role.CODE.USER);
+        userService.addRole(user, Role.Code.USER);
 
         // then
         assertThat(user.getRoles().size()).isEqualTo(1);
