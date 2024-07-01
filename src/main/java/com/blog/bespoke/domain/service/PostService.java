@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class PostService {
     public boolean canShow(Post post, User user) {
+        if (post.isDeleted()) {
+            return false;
+        }
         if (post.isPublished()) {
             return true;
         }
