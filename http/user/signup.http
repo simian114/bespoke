@@ -1,0 +1,22 @@
+### signup
+
+POST localhost:8080/api/user
+Content-Type: application/json
+
+{
+  "email": "email@gmail.com",
+  "nickname": "nickname",
+  "name": "name",
+  "password": "password"
+}
+
+### foobar
+POST localhost:8080/api/user
+Content-Type: application/json
+
+{
+  "email": "foobar@gmail.com",
+  "nickname": "foobar",
+  "name": "foobar",
+  "password": "password"
+}
