@@ -13,8 +13,8 @@ import com.blog.bespoke.domain.model.post.PostStatusCmd;
 import com.blog.bespoke.domain.model.post.PostUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.PostRepository;
-import com.blog.bespoke.domain.repository.UserRepository;
 import com.blog.bespoke.domain.service.PostService;
+import com.blog.bespoke.domain.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,12 +26,16 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class PostUseCase {
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
     private final PostService postService;
+    private final UserService userService;
     private final EventPublisher publisher;
     private final PostRequestMapper mapper = PostRequestMapper.INSTANCE;
 
-    // 내가 좋아요 했는지 여부도 알 수 있음 좋겠다.
+    /**
+     * 1. 내가 좋아요 했는지 여부
+     * 2. 좋아요수
+     * 3. 조회수
+     */
     @Transactional
     public PostResponseDto showPostById(Long postId, User currentUser) {
         Post post = postRepository.getById(postId);
@@ -69,7 +73,7 @@ public class PostUseCase {
     @Transactional
     public PostResponseDto write(PostCreateRequestDto requestDto, User currentUser) {
         // user 의 상태를 검사해야하나?
-        User author = userRepository.getById(currentUser.getId());
+        User author = userService.getById(currentUser.getId());
         Post post = mapper.toDomain(requestDto);
         post.setAuthor(author);
 
@@ -138,5 +142,26 @@ public class PostUseCase {
         }
         post.delete();
         postRepository.save(post);
+    }
+
+    @Transactional
+    public PostResponseDto likePost(Long postId, User currentUser) {
+        Post post = postRepository.getPostWithLikeByPostIdAndUserId(postId, currentUser.getId());
+        if (post.checkHasAlreadyLikeByUser(currentUser.getId())) {
+            throw new BusinessException(ErrorCode.ALREADY_LIKE_POST);
+        }
+
+        post.addLike(currentUser);
+
+        // 이벤트 전송해야함. LocalDateTime 이 쏴지는지 확인해봐야함
+        // publisher.publishPostLikeEvent(new PostLikeMessage(currentUser.getId(), postId, LocalDateTime.now()));
+        return PostResponseDto.from(post);
+    }
+
+    @Transactional
+    public PostResponseDto cancelLikePost(Long postId, User currentUser) {
+        Post post = postRepository.getPostWithLikeByPostIdAndUserId(postId, currentUser.getId());
+        post.cancelLike(postId, currentUser);
+        return PostResponseDto.from(post);
     }
 }

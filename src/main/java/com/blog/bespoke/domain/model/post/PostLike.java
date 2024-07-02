@@ -23,12 +23,12 @@ public class PostLike {
     @Column(name = "post_like_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
     // NOTE: 그냥 userId 만 넣게 만들면 안되나?
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

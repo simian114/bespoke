@@ -5,7 +5,6 @@ import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.post.PostSearchCond;
 import com.blog.bespoke.domain.repository.PostRepository;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -53,10 +52,22 @@ public class PostRepositoryImpl implements PostRepository {
         postJpaRepository.deleteById(id);
     }
 
+
+    @Override
+    public Optional<Post> findPostWithLikeByPostIdAndUserId(Long postId, Long userId) {
+        return postJpaRepository.findPostWithLikeByIdAndUserId(postId, userId);
+    }
+
+    @Override
+    public Post getPostWithLikeByPostIdAndUserId(Long postId, Long userId) {
+        return findPostWithLikeByPostIdAndUserId(postId, userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.POST_LIKE_NOT_FOUND));
+    }
+
     @Override
     public Page<Post> search(PostSearchCond cond) {
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getPageSize());
-        JPAQuery<Post> jpaQuery = query(post, cond)
+        JPAQuery<Post> jpaQuery = query(cond)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
@@ -69,9 +80,8 @@ public class PostRepositoryImpl implements PostRepository {
         return PageableExecutionUtils.getPage(posts, pageable, () -> totalSize);
     }
 
-    private <T>JPAQuery<T> query(Expression<T> expr, PostSearchCond cond) {
-        return queryFactory.select(expr)
-                .from(post)
+    private JPAQuery<Post> query(PostSearchCond cond) {
+        return queryFactory.selectFrom(post)
                 .leftJoin(post.author).fetchJoin()
                 .where(
                         statusEq(cond),
