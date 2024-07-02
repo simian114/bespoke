@@ -1,11 +1,30 @@
 package com.blog.bespoke.domain.service;
 
+import com.blog.bespoke.application.exception.BusinessException;
+import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.user.User;
+import com.blog.bespoke.domain.repository.PostRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class PostService {
+    private final PostRepository postRepository;
+
+    public Post getPostById(Long id) {
+        return postRepository.getById(id);
+    }
+
+    public Post getPublishedPostById(Long id) {
+        Post post = postRepository.getById(id);
+        if (!post.isPublished()) {
+            throw new BusinessException(ErrorCode.POST_NOT_FOUND);
+        }
+        return post;
+    }
+
     public boolean canShow(Post post, User user) {
         if (post.isDeleted()) {
             return false;

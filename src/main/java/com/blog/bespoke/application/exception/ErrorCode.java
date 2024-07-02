@@ -14,6 +14,7 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"),
 
     // user
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 계정입니다."),
     USER_HAS_BLOCKED(HttpStatus.UNAUTHORIZED, "정지된 계정입니다."),
     USER_INACTIVE(HttpStatus.UNAUTHORIZED, "이메일 인증이 완료되지 않은 계정입니다."),
     USER_FAIL_AUTHENTICATION(HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호를 확인해주세요."),
@@ -25,11 +26,15 @@ public enum ErrorCode {
     // follow
     FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "팔로우 정보가 없습니다."),
 
-    // psot
+    // post
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시글입니다."),
     BANNED_USER_POST(HttpStatus.BAD_REQUEST, "정지 된 유저의 게시글입니다."),
     POST_FORBIDDEN(HttpStatus.BAD_REQUEST, "접근 권한이 없는 게시글입니다."),
-    POST_BAD_STATUS(HttpStatus.BAD_REQUEST, "수정 할 수 없습니다.")
+    POST_BAD_STATUS(HttpStatus.BAD_REQUEST, "수정 할 수 없습니다."),
+
+    // post like
+    ALREADY_LIKE_POST(HttpStatus.BAD_REQUEST, "이미 좋아요한 게시글입니다."),
+    POST_LIKE_NOT_FOUND(HttpStatus.BAD_REQUEST, "좋아요되지 않은 게시글입니다."),
     ;
 
     private final HttpStatus statusCode;

@@ -1,6 +1,7 @@
 package com.blog.bespoke.domain.repository;
 
 import com.blog.bespoke.domain.model.post.Post;
+import com.blog.bespoke.domain.model.post.PostLike;
 import com.blog.bespoke.domain.model.post.PostSearchCond;
 import org.springframework.data.domain.Page;
 
@@ -18,4 +19,7 @@ public interface PostRepository {
     void deleteById(Long id);
 
     Page<Post> search(PostSearchCond cond);
+
+    Optional<Post> findPostWithLikeByPostIdAndUserId(Long postId, Long userId);
+    Post getPostWithLikeByPostIdAndUserId(Long postId, Long userId);
 }

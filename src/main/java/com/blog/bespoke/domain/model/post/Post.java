@@ -11,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -77,6 +78,30 @@ public class Post extends TimeStamp {
 
     public boolean isBocked() {
         return status == Status.BLOCKED;
+    }
+
+    public void addLike(User currentUser) {
+        if (postLikes == null) {
+            postLikes = new HashSet<>();
+        }
+        postLikes.add(PostLike.builder().post(this).user(currentUser).build());
+
+    }
+
+    public void cancelLike(Long postId, User currentUser) {
+        if (postLikes == null) {
+            return;
+        }
+        postLikes.stream()
+                .filter(like -> like.getPost().id.equals(postId) && like.getUser().getId().equals(currentUser.getId()))
+                .findFirst()
+                .ifPresent(like -> postLikes.remove(like));
+
+    }
+
+    public boolean checkHasAlreadyLikeByUser(Long userId) {
+        return postLikes.stream()
+                .anyMatch(like -> like.getUser().getId().equals(userId));
     }
 
     public enum Status {
