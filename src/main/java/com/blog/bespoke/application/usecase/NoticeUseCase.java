@@ -10,4 +10,9 @@ public class NoticeUseCase {
     public void noticeToFollowers() {
         log.info("notice to followers~");
     }
+
+    // userId
+    public void noticeToUser() {
+        log.info("특정 유저에게만 생성되는 알림");
+    }
 }
