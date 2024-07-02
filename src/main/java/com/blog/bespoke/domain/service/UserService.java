@@ -25,6 +25,10 @@ public class UserService {
         user.addRole(userRole);
     }
 
+    public User getById(Long id) {
+        return userRepository.getById(id);
+    }
+
     public String encodePassword(String password) {
         return passwordEncoder.encode(password);
     }

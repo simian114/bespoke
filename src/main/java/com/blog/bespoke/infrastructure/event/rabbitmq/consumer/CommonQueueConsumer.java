@@ -1,6 +1,7 @@
 package com.blog.bespoke.infrastructure.event.rabbitmq.consumer;
 
 import com.blog.bespoke.application.event.message.PostCreateMessage;
+import com.blog.bespoke.application.event.message.PostLikeMessage;
 import com.blog.bespoke.application.event.message.UserFollowMessage;
 import com.blog.bespoke.application.usecase.NoticeUseCase;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,10 @@ public class CommonQueueConsumer {
         // hello world
         noticeUseCase.noticeToFollowers();
         // NoticeUseCase 를 만들어서 알림 보내기
+    }
+
+    @RabbitHandler
+    public void receivePostLikeMessage(PostLikeMessage message) {
+        noticeUseCase.noticeToUser();
     }
 }
