@@ -4,6 +4,7 @@ import com.blog.bespoke.application.dto.mapper.PostRequestMapper;
 import com.blog.bespoke.application.dto.request.PostCreateRequestDto;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
 import com.blog.bespoke.application.event.message.PostCreateMessage;
+import com.blog.bespoke.application.event.message.PostLikeMessage;
 import com.blog.bespoke.application.event.publisher.EventPublisher;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
@@ -20,7 +21,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -146,15 +149,16 @@ public class PostUseCase {
 
     @Transactional
     public PostResponseDto likePost(Long postId, User currentUser) {
-        Post post = postRepository.getPostWithLikeByPostIdAndUserId(postId, currentUser.getId());
-        if (post.checkHasAlreadyLikeByUser(currentUser.getId())) {
+        Optional<Post> optionalPost = postRepository.findPostWithLikeByPostIdAndUserId(postId, currentUser.getId());
+        if (optionalPost.isPresent()) {
             throw new BusinessException(ErrorCode.ALREADY_LIKE_POST);
         }
+        Post post = postRepository.getById(postId);
 
         post.addLike(currentUser);
+        // TODO: 좋아요 수 증가
 
-        // 이벤트 전송해야함. LocalDateTime 이 쏴지는지 확인해봐야함
-        // publisher.publishPostLikeEvent(new PostLikeMessage(currentUser.getId(), postId, LocalDateTime.now()));
+        publisher.publishPostLikeEvent(new PostLikeMessage(currentUser.getId(), postId, LocalDateTime.now()));
         return PostResponseDto.from(post);
     }
 
@@ -162,6 +166,7 @@ public class PostUseCase {
     public PostResponseDto cancelLikePost(Long postId, User currentUser) {
         Post post = postRepository.getPostWithLikeByPostIdAndUserId(postId, currentUser.getId());
         post.cancelLike(postId, currentUser);
+        // 좋아요 수 감소
         return PostResponseDto.from(post);
     }
 }
