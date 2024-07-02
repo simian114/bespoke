@@ -2,6 +2,7 @@ package com.blog.bespoke.infrastructure.repository.user;
 
 import com.blog.bespoke.domain.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -12,4 +13,23 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.followings f WHERE f.followerId = :userId AND f.followingId = :followingId")
     Optional<User> findUserWithFollowByIdAndFollowingId(@Param("userId") Long userId, @Param("followingId") Long followingId);
+
+    @Query("SELECT u FROM User u LEFT JOIN Follow f on u.id = f.followingId WHERE u.id = :userId AND f.followerId = :followerId")
+    Optional<User> findUserWithFollowByIdAndFollowerId(@Param("userId") Long userId, @Param("followerId") Long followerId);
+
+    @Modifying
+    @Query("UPDATE UserCountInfo u SET u.followerCount = u.followerCount + 1 WHERE u.userId =:userId")
+    void incrementFollowerCount(@Param("userId") Long userId);
+
+    @Modifying
+    @Query("UPDATE UserCountInfo u SET u.followingCount = u.followingCount + 1 WHERE u.userId = :userId")
+    void incrementFollowingCount(@Param("userId") Long userId);
+
+    @Modifying
+    @Query("UPDATE UserCountInfo  u SET u.followerCount = u.followerCount - 1 WHERE u.userId = :userId")
+    void decrementFollowerCount(@Param("userId") Long userId);
+
+    @Modifying
+    @Query("UPDATE UserCountInfo u SET u.followingCount = u.followingCount - 1 WHERE u.userId = :userId")
+    void decrementFollowingCount(@Param("userId") Long userId);
 }

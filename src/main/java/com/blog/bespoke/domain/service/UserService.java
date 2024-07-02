@@ -3,7 +3,7 @@ package com.blog.bespoke.domain.service;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.model.user.role.Role;
 import com.blog.bespoke.domain.model.user.role.UserRole;
-import com.blog.bespoke.domain.repository.UserRepository;
+import com.blog.bespoke.domain.repository.user.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +14,14 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Transactional
+    public void initUser(User user) {
+        user.init();
+        user.changePassword(encodePassword(user.getPassword()));
+        // create
+        addRole(user, Role.Code.USER);
+    }
 
     @Transactional
     public void addRole(User user, Role.Code code) {

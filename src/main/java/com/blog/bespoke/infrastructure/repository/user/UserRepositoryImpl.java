@@ -5,7 +5,7 @@ import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.model.user.UserSearchCond;
 import com.blog.bespoke.domain.model.user.role.Role;
-import com.blog.bespoke.domain.repository.UserRepository;
+import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
@@ -96,6 +96,41 @@ public class UserRepositoryImpl implements UserRepository {
         return findUserWithFollowByIdAndFollowingId(userId, followingId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.FOLLOW_NOT_FOUND));
     }
+    // 나와 나 팔로워
+
+
+    @Override
+    public Optional<User> findUserWithFollowByIdAndFollowerId(Long userId, Long followerId) {
+        return userJpaRepository.findUserWithFollowByIdAndFollowerId(userId, followerId);
+    }
+
+    @Override
+    public User getUserWithFollowByIdAndFollowerId(Long userId, Long followerId) {
+        return findUserWithFollowByIdAndFollowerId(userId, followerId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.FOLLOW_NOT_FOUND));
+    }
+
+    @Override
+    public void incrementFollowerCount(Long userId) {
+        userJpaRepository.incrementFollowerCount(userId);
+    }
+
+    @Override
+    public void incrementFollowingCount(Long userId) {
+        userJpaRepository.incrementFollowingCount(userId);
+    }
+
+    @Override
+    public void decrementFollowerCount(Long userId) {
+        userJpaRepository.decrementFollowerCount(userId);
+    }
+
+    @Override
+    public void decrementFollowingCount(Long userId) {
+        userJpaRepository.decrementFollowingCount(userId);
+    }
+
+    // --- search
 
     @Override
     public Page<User> search(UserSearchCond cond, Pageable pageable) {

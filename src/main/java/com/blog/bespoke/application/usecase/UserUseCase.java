@@ -2,16 +2,14 @@ package com.blog.bespoke.application.usecase;
 
 import com.blog.bespoke.application.dto.mapper.UserRequestMapper;
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
-import com.blog.bespoke.application.event.message.UserFollowMessage;
 import com.blog.bespoke.application.event.message.UserRegistrationMessage;
 import com.blog.bespoke.application.event.publisher.EventPublisher;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.token.Token;
 import com.blog.bespoke.domain.model.user.User;
-import com.blog.bespoke.domain.model.user.role.Role;
 import com.blog.bespoke.domain.repository.TokenRepository;
-import com.blog.bespoke.domain.repository.UserRepository;
+import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.blog.bespoke.domain.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -38,9 +36,7 @@ public class UserUseCase {
     @Transactional
     public User signup(UserSignupRequestDto requestDto) {
         User user = UserRequestMapper.INSTANCE.toDomain(requestDto);
-        user.deActivate();
-        user.changePassword(userService.encodePassword(user.getPassword()));
-        userService.addRole(user, Role.Code.USER);
+        userService.initUser(user);
         User savedUser = userRepository.save(user);
 
         Token token = tokenRepository.save(
@@ -77,18 +73,5 @@ public class UserUseCase {
         // 아직 만료가 되지 않았다면, token 에 있는 유저의 상태를 ACTIVE 로 변경함
         // 동시에 토큰을 삭제한다.
         return user;
-    }
-
-    @Transactional
-    public void follow(Long followingId, User currentUser) {
-        User user = userRepository.getById(currentUser.getId());
-        user.follow(followingId);
-        eventPublisher.publishFollowEvent(UserFollowMessage.builder().followerId(user.getId()).followingId(followingId).build());
-    }
-
-    @Transactional
-    public void unfollow(Long followingId, User currentUser) {
-        User user = userRepository.getUserWithFollowByIdAndFollowingId(currentUser.getId(), followingId);
-        user.unfollow(followingId);
     }
 }

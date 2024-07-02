@@ -1,9 +1,6 @@
 package com.blog.bespoke.infrastructure.event.rabbitmq.publisher;
 
-import com.blog.bespoke.application.event.message.PostCreateMessage;
-import com.blog.bespoke.application.event.message.PostLikeMessage;
-import com.blog.bespoke.application.event.message.UserFollowMessage;
-import com.blog.bespoke.application.event.message.UserRegistrationMessage;
+import com.blog.bespoke.application.event.message.*;
 import com.blog.bespoke.application.event.publisher.EventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -25,6 +22,11 @@ public class RabbitMqPublisher implements EventPublisher {
 
     @Override
     public void publishFollowEvent(UserFollowMessage message) {
+        rabbitTemplate.convertAndSend(commonQueueKey, message);
+    }
+
+    @Override
+    public void publishUnfollowEvent(UserUnFollowMessage message) {
         rabbitTemplate.convertAndSend(commonQueueKey, message);
     }
 
