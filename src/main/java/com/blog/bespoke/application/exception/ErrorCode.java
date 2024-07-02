@@ -25,6 +25,7 @@ public enum ErrorCode {
 
     // follow
     FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "팔로우 정보가 없습니다."),
+    FOLLOWER_NOT_FOUND(HttpStatus.NOT_FOUND, "팔로워 정보가 없습니다."),
 
     // post
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시글입니다."),

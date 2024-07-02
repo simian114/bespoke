@@ -1,4 +1,4 @@
-package com.blog.bespoke.domain.repository;
+package com.blog.bespoke.domain.repository.user;
 
 
 import com.blog.bespoke.domain.model.user.User;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository {
+public interface UserRepository extends UserCountInfoRepository {
     User save(User user);
 
     Optional<User> findById(Long id);
@@ -32,6 +32,12 @@ public interface UserRepository {
     Optional<User> findUserWithFollowByIdAndFollowingId(Long userId, Long followingId);
 
     User getUserWithFollowByIdAndFollowingId(Long userId, Long followingId);
+
+    // NOTE: 나와 팔로워
+    Optional<User> findUserWithFollowByIdAndFollowerId(Long userId, Long followerId);
+
+    User getUserWithFollowByIdAndFollowerId(Long userId, Long followerId);
+
 
     // role
     Optional<Role> findRoleByCode(Role.Code code);

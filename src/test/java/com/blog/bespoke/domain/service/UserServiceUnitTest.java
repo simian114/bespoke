@@ -2,7 +2,7 @@ package com.blog.bespoke.domain.service;
 
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.model.user.role.Role;
-import com.blog.bespoke.domain.repository.UserRepository;
+import com.blog.bespoke.domain.repository.user.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

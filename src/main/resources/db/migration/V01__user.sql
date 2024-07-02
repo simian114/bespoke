@@ -30,12 +30,22 @@ create table user_role
 create table follow
 (
     follow_id    bigint primary key auto_increment,
-    following_id bigint not null,
-    follower_id  bigint not null,
+    following_id bigint not null, # 팔로우 당한 사람
+    follower_id  bigint not null, # 팔로우 한 사람
     created_at   timestamp default current_timestamp,
     foreign key (following_id) references users (user_id) on delete cascade,
     foreign key (follower_id) references users (user_id) on delete cascade,
     constraint unique_follow unique (following_id, follower_id)
+);
+
+create table user_count_info
+(
+    user_id bigint primary key not null,
+    follower_count bigint not null default 0, # 나를 팔로우 한 사람의 수
+    following_count bigint not null default 0, # 내가 팔로우 한 수
+    published_post_count bigint not null default 0, # 게시한 게시글 수
+    like_post_count bigint not null default 0, # 좋아요 한 게시글 수
+    foreign key (user_id) references users (user_id) on delete cascade
 );
 
 INSERT INTO role(code)

@@ -8,7 +8,7 @@ import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.token.Token;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.TokenRepository;
-import com.blog.bespoke.domain.repository.UserRepository;
+import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.blog.bespoke.domain.service.JwtService;
 import com.blog.bespoke.domain.service.RefreshTokenService;
 import com.blog.bespoke.infrastructure.security.principal.UserPrincipal;

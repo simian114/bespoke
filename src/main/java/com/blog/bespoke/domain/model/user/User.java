@@ -28,38 +28,32 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends TimeStamp {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long id;
-
-    @Column(unique = true)
-    private String email;
-
-    private String password;
-
-    @Column(unique = true)
-    private String nickname;
-
-    private String name;
-
-     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UserRole> roles;
-
-    @Enumerated(EnumType.STRING)
-    private Status status = Status.INACTIVE;
-
-    private LocalDateTime bannedUntil;
-
     // --- relation
-    @OneToMany(mappedBy = "followerId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "followingId", cascade = CascadeType.ALL, orphanRemoval = true)
     public Set<Follow> followers = new HashSet<>();
 
-    @OneToMany(mappedBy = "followingId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "followerId", cascade = CascadeType.ALL, orphanRemoval = true)
     public Set<Follow> followings = new HashSet<>();
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     public Set<Post> posts;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Long id;
+    @Column(unique = true)
+    private String email;
+    private String password;
+    @Column(unique = true)
+    private String nickname;
+    private String name;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserCountInfo userCountInfo;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserRole> roles;
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.INACTIVE;
+    private LocalDateTime bannedUntil;
 
     @JsonIgnore
     public List<String> getRolesAsString() {
@@ -73,6 +67,11 @@ public class User extends TimeStamp {
     // --- transient value
 
     // --- domain logic
+    public void init() {
+        this.deActivate();
+        this.userCountInfo = UserCountInfo.builder().user(this).build();
+    }
+
     public void follow(Long followingId) {
         if (followings == null) {
             followings = new HashSet<>();
@@ -94,6 +93,27 @@ public class User extends TimeStamp {
                 .findFirst().ifPresent(follow -> followings.remove(follow));
 
     }
+
+    public void addFollower(Long followerId) {
+        if (followers == null) {
+            followers = new HashSet<>();
+        }
+        followers.add(Follow.builder()
+                .followerId(followerId)
+                .followingId(id)
+                .build()
+        );
+    }
+
+    public void removeFollower(Long followerId) {
+        if (followers == null) {
+            followers = new HashSet<>();
+        }
+        followers.stream()
+                .filter(f -> Objects.equals(f.getFollowerId(), followerId))
+                .findFirst().ifPresent(follow -> followers.remove(follow));
+    }
+
 
     @JsonIgnore
     @Transient

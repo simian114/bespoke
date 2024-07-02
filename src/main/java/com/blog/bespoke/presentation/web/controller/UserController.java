@@ -2,6 +2,7 @@ package com.blog.bespoke.presentation.web.controller;
 
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
 import com.blog.bespoke.application.dto.response.UserResponseDto;
+import com.blog.bespoke.application.usecase.UserFollowUseCase;
 import com.blog.bespoke.application.usecase.UserUseCase;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.aop.ResponseEnvelope.Envelope;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
     private final UserUseCase userUseCase;
+    private final UserFollowUseCase userFollowUseCase;
 
     @Envelope("이메일 인증을 해주세요!")
     @PostMapping
@@ -29,15 +31,13 @@ public class UserController {
     @Envelope("팔로우 성공")
     @PostMapping("/{id}/follow")
     public ResponseEntity<?> follow(@PathVariable Long id, @LoginUser User currentUser) {
-        userUseCase.follow(id, currentUser);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(userFollowUseCase.follow(id, currentUser));
     }
 
     @Envelope("팔로우 취소")
     @DeleteMapping("/{id}/follow")
     public ResponseEntity<?> unfollow(@PathVariable Long id, @LoginUser User currentUser) {
-        userUseCase.unfollow(id, currentUser);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(userFollowUseCase.unfollow(id, currentUser));
     }
 
 }
