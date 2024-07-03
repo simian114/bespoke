@@ -16,4 +16,12 @@ public class PostSearchCond extends CommonSearchCond {
     private Boolean like; // 내가 좋아요 한 게시글
     private Boolean follow; // 내가 팔로우 한 유저의 게시글
     private long userId;
+    private OrderBy orderBy = OrderBy.LATEST; // TODO: 기본은 생성일자로
+
+    public enum OrderBy {
+        LATEST,     // 최신순
+        LIKE,       // 좋아요순
+        VIEW,       // 조회순
+        COMMENT     // 댓글순
+    }
 }

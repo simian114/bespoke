@@ -6,6 +6,11 @@ Authorization: Bearer {{access_token}}
 GET localhost:8080/api/posts?authorId=1&status=DRAFT
 Authorization: Bearer {{access_token}}
 
+### search 전체 조회
+GET localhost:8080/api/posts?orderBy=LIKE
+Authorization: Bearer {{access_token}}
+
+
 ### 1번 유저가 좋아요 한 게시글 조회
 GET localhost:8080/api/posts?userId=1&like=true
 
@@ -17,3 +22,18 @@ GET localhost:8080/api/posts?userId=1&follow=true
 
 ### 2번 유저가 팔로우 한 유저의 게시글 조회
 GET localhost:8080/api/posts?userId=2&follow=true
+
+### 최신순 정렬
+GET localhost:8080/api/posts?orderBy=LATEST
+
+### 좋아요순 정렬
+GET localhost:8080/api/posts?orderBy=LIKE
+
+### 조회순 정렬
+GET localhost:8080/api/posts?orderBy=VIEW
+
+### 댓글순 정렬
+GET localhost:8080/api/posts?orderBy=COMMENT
+
+### 잘못된 정렬
+GET localhost:8080/api/posts?orderBy=ZZ
