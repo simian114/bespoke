@@ -8,4 +8,8 @@ public interface UserCountInfoRepository {
     void decrementFollowerCount(Long userId);
 
     void decrementFollowingCount(Long userId);
+
+    void incrementPublishedPostCount(Long userId);
+
+    void decrementPublishedPostCount(Long userId);
 }

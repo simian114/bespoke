@@ -3,7 +3,7 @@ package com.blog.bespoke.application.usecase;
 import com.blog.bespoke.application.dto.mapper.PostRequestMapper;
 import com.blog.bespoke.application.dto.request.PostCreateRequestDto;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
-import com.blog.bespoke.application.event.message.PostCreateMessage;
+import com.blog.bespoke.application.event.message.PublishPostEvent;
 import com.blog.bespoke.application.event.message.PostLikeMessage;
 import com.blog.bespoke.application.event.publisher.EventPublisher;
 import com.blog.bespoke.application.exception.BusinessException;
@@ -15,6 +15,7 @@ import com.blog.bespoke.domain.model.post.PostUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.PostRepository;
 import com.blog.bespoke.domain.service.PostService;
+import com.blog.bespoke.domain.service.UserCountInfoService;
 import com.blog.bespoke.domain.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class PostUseCase {
     private final PostRepository postRepository;
     private final PostService postService;
     private final UserService userService;
+    private final UserCountInfoService userCountInfoService;
     private final EventPublisher publisher;
     private final PostRequestMapper mapper = PostRequestMapper.INSTANCE;
 
@@ -78,14 +80,14 @@ public class PostUseCase {
         // user 의 상태를 검사해야하나?
         User author = userService.getById(currentUser.getId());
         Post post = mapper.toDomain(requestDto);
-        post.setAuthor(author);
+        post.init(author);
 
         Post savedPost = postRepository.save(post);
 
         // post 의 상태가 published 인 경우에만!
         if (post.isPublished()) {
             publisher.publishPostPublishEvent(
-                    PostCreateMessage.builder()
+                    PublishPostEvent.builder()
                             .postId(savedPost.getId())
                             .authorId(author.getId())
                             .title(savedPost.getTitle())
@@ -99,6 +101,7 @@ public class PostUseCase {
 
     /**
      * DRAFT -> PUBLISHED 인 경우 이벤트 발생
+     * * -> DRAFT 는 안된다.
      */
     @Transactional
     public PostResponseDto changeStatus(Long postId, PostStatusCmd cmd, User currentUser) {
@@ -115,7 +118,7 @@ public class PostUseCase {
         post.changeStatus(cmd.getStatus());
         if (asIs == Post.Status.DRAFT && cmd.getStatus() == Post.Status.PUBLISHED) {
             publisher.publishPostPublishEvent(
-                    PostCreateMessage.builder()
+                    PublishPostEvent.builder()
                             .postId(post.getId())
                             .authorId(post.getAuthor().getId())
                             .title(post.getTitle())
@@ -123,6 +126,12 @@ public class PostUseCase {
                             .build()
             );
         }
+
+        // NOTE: published 에서 다른 값으로 변경되면, published count 다운 해야함
+        if (asIs == Post.Status.PUBLISHED && cmd.getStatus() != Post.Status.PUBLISHED) {
+            userCountInfoService.decrementPublishedPostCount(post.getAuthor().getId());
+        }
+
         return PostResponseDto.from(postRepository.save(post));
     }
 

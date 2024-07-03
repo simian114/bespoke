@@ -42,10 +42,10 @@ public class CommonQueueConsumer {
     // usecase 를 이용해서 팔로워들한테 알림 메시지를 보내줘야함.
     // 팔로우 유저가 많을 수도 있으니, batch 방법을 사용해서 알림 보내줘야하나?
     @RabbitHandler
-    public void receiveCreatePostMessage(PostCreateMessage message) {
-        // hello world
-        noticeUseCase.noticeToFollowers();
+    public void receivePublishPostMessage(PublishPostEvent message) {
+        userCountInfoService.incrementPublishedPostCount(message.getAuthorId());
         // NoticeUseCase 를 만들어서 알림 보내기
+        noticeUseCase.noticeToFollowers();
     }
 
     @RabbitHandler

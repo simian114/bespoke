@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class PostCreateMessage {
+public class PublishPostEvent {
     private Long postId;
     private Long authorId;
     private String title;
