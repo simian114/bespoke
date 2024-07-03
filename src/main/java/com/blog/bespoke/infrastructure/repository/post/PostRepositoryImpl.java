@@ -18,6 +18,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import java.util.List;
 import java.util.Optional;
 
+import static com.blog.bespoke.domain.model.follow.QFollow.follow;
 import static com.blog.bespoke.domain.model.post.QPost.post;
 import static com.blog.bespoke.domain.model.post.QPostLike.postLike;
 
@@ -116,7 +117,8 @@ public class PostRepositoryImpl implements PostRepository {
                 .leftJoin(post.author).fetchJoin()
                 .leftJoin(post.postCountInfo).fetchJoin();
 
-        like(query, cond);
+        applyLike(query, cond);
+        applyFollow(query, cond);
 
         return query
                 .where(
@@ -129,7 +131,8 @@ public class PostRepositoryImpl implements PostRepository {
         JPAQuery<Long> query = queryFactory.select(Wildcard.count)
                 .from(post);
 
-        like(query, cond);
+        applyLike(query, cond);
+        applyFollow(query, cond);
 
         return query
                 .where(
@@ -138,12 +141,29 @@ public class PostRepositoryImpl implements PostRepository {
                 );
     }
 
-    private <T> JPAQuery<T> like(JPAQuery<T> query, PostSearchCond cond) {
+    /**
+     * 내가 좋아요 한 게시글 리스트
+     */
+    private <T> void applyLike(JPAQuery<T> query, PostSearchCond cond) {
         if (Boolean.TRUE.equals(cond.getLike()) && cond.getUserId() > 0) {
             query.leftJoin(post.postLikes, postLike)
                     .where(postLike.user.id.eq(cond.getUserId()));
         }
-        return query;
+    }
+
+    /**
+     * 내가 팔로우 한 유저들의 게시글 리스트
+     * 1. 팔로우 한 유저의 id 리스트를 먼저 불러온다.
+     * 2. post search 쿼리의 where 문에 1번에서 구한 팔로우 한 유저의 id 리스트를 넣는다.
+     */
+    private <T> void applyFollow(JPAQuery<T> query, PostSearchCond cond) {
+        if (Boolean.TRUE.equals(cond.getFollow()) && cond.getUserId() > 0) {
+            List<Long> followingIds = queryFactory.select(follow.followingId)
+                    .from(follow)
+                    .where(follow.followerId.eq(cond.getUserId()))
+                    .fetch();
+            query.where(post.author.id.in(followingIds));
+        }
     }
 
     private BooleanExpression authorIdEq(PostSearchCond cond) {
