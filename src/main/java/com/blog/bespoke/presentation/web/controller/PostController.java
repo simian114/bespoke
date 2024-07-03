@@ -1,8 +1,9 @@
 package com.blog.bespoke.presentation.web.controller;
 
 import com.blog.bespoke.application.dto.request.PostCreateRequestDto;
-import com.blog.bespoke.application.usecase.PostUseCase;
-import com.blog.bespoke.application.usecase.UserUseCase;
+import com.blog.bespoke.application.usecase.post.PostLikeUseCase;
+import com.blog.bespoke.application.usecase.post.PostUseCase;
+import com.blog.bespoke.application.usecase.user.UserUseCase;
 import com.blog.bespoke.domain.model.post.PostSearchCond;
 import com.blog.bespoke.domain.model.post.PostStatusCmd;
 import com.blog.bespoke.domain.model.post.PostUpdateCmd;
@@ -19,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
 public class PostController {
-    private final UserUseCase userUseCase;
     private final PostUseCase postUseCase;
+    private final PostLikeUseCase postLikeUseCase;
 
     @PostMapping
     public ResponseEntity<?> write(@Valid @RequestBody PostCreateRequestDto requestDto, @LoginUser User currentUser) {
@@ -59,13 +60,13 @@ public class PostController {
     @Envelope("게시글 좋아요를 눌렀습니다.")
     @PostMapping("/{postId}/like")
     public ResponseEntity<?> likePost(@PathVariable Long postId, @LoginUser User currentUser) {
-        return ResponseEntity.ok(postUseCase.likePost(postId, currentUser));
+        return ResponseEntity.ok(postLikeUseCase.likePost(postId, currentUser));
     }
 
     @Envelope("게시글 좋아요를 취소했습니다.")
     @DeleteMapping("/{postId}/like")
     public ResponseEntity<?> cancelLikePost(@PathVariable Long postId, @LoginUser User currentUser) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(postUseCase.cancelLikePost(postId, currentUser));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(postLikeUseCase.cancelLikePost(postId, currentUser));
     }
 
 }

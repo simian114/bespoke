@@ -1,4 +1,4 @@
-package com.blog.bespoke.application.usecase;
+package com.blog.bespoke.application.usecase.user;
 
 import com.blog.bespoke.application.dto.mapper.UserRequestMapper;
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
