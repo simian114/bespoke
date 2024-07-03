@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.blog.bespoke.domain.model.post.QPost.post;
+import static com.blog.bespoke.domain.model.post.QPostLike.postLike;
 
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepository {
@@ -92,6 +93,7 @@ public class PostRepositoryImpl implements PostRepository {
 
     // --- search
 
+    // 내가 좋아요 한 경우...
     @Override
     public Page<Post> search(PostSearchCond cond) {
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getPageSize());
@@ -108,9 +110,15 @@ public class PostRepositoryImpl implements PostRepository {
         return PageableExecutionUtils.getPage(posts, pageable, () -> totalSize);
     }
 
+    // TODO: 이렇게 조인해오면 author 의 연관관계 중 eager 를 가져옴. 근데 난 그거 싫은데..
     private JPAQuery<Post> query(PostSearchCond cond) {
-        return queryFactory.selectFrom(post)
+        JPAQuery<Post> query = queryFactory.selectFrom(post)
                 .leftJoin(post.author).fetchJoin()
+                .leftJoin(post.postCountInfo).fetchJoin();
+
+        like(query, cond);
+
+        return query
                 .where(
                         statusEq(cond),
                         authorIdEq(cond)
@@ -118,12 +126,24 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     private JPAQuery<Long> countQuery(PostSearchCond cond) {
-        return queryFactory.select(Wildcard.count)
-                .from(post)
+        JPAQuery<Long> query = queryFactory.select(Wildcard.count)
+                .from(post);
+
+        like(query, cond);
+
+        return query
                 .where(
                         statusEq(cond),
                         authorIdEq(cond)
                 );
+    }
+
+    private <T> JPAQuery<T> like(JPAQuery<T> query, PostSearchCond cond) {
+        if (Boolean.TRUE.equals(cond.getLike()) && cond.getUserId() > 0) {
+            query.leftJoin(post.postLikes, postLike)
+                    .where(postLike.user.id.eq(cond.getUserId()));
+        }
+        return query;
     }
 
     private BooleanExpression authorIdEq(PostSearchCond cond) {
