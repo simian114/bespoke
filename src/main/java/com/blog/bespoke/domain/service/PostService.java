@@ -4,7 +4,7 @@ import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.user.User;
-import com.blog.bespoke.domain.repository.PostRepository;
+import com.blog.bespoke.domain.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

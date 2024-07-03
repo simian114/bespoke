@@ -100,6 +100,12 @@ Content-Type: application/json
 GET localhost:8080/api/posts/{{post_id}}
 Authorization: Bearer {{foobar_access_token}}
 
+
+### search 전체 조회
+GET localhost:8080/api/posts
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
 ### searh 조회
 GET localhost:8080/api/posts?authorId=1&status=DRAFT
 Content-Type: application/json

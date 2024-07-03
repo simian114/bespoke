@@ -12,9 +12,14 @@ Content-Type: application/json
     client.global.set("refresh_token", response.body.data.refreshToken);
 %}
 
-### 두번째 유저 follow
+### email이 foobar를 follow
 POST localhost:8080/api/user/2/follow
 Authorization: Bearer {{access_token}}
+
+### foobar가 email을 follow
+POST localhost:8080/api/user/1/follow
+Authorization: Bearer {{foobar_access_token}}
+
 
 ### unfollow
 DELETE localhost:8080/api/user/2/follow

@@ -2,7 +2,7 @@ package com.blog.bespoke.infrastructure.event.rabbitmq.consumer;
 
 import com.blog.bespoke.application.event.message.*;
 import com.blog.bespoke.application.usecase.NoticeUseCase;
-import com.blog.bespoke.application.usecase.post.PostUseCase;
+import com.blog.bespoke.domain.service.PostCountInfoService;
 import com.blog.bespoke.domain.service.UserCountInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 @Component
 @RabbitListener(queues = "${rabbitmq.routing-key.common}")
 public class CommonQueueConsumer {
-    private final PostUseCase postUseCase;
     private final NoticeUseCase noticeUseCase;
     private final UserCountInfoService userCountInfoService;
+    private final PostCountInfoService postCountInfoService;
 
     @RabbitHandler
     public void receiveUserFollowMessage(UserFollowMessage message) {
@@ -52,6 +52,7 @@ public class CommonQueueConsumer {
     public void receivePostLikeMessage(PostLikeMessage message) {
         try {
             userCountInfoService.incrementPostLikeCount(message.getUserId());
+            postCountInfoService.incrementLikeCount(message.getPostId());
             noticeUseCase.noticeToUser();
         } catch (Exception e) {
             log.error("receive post like message exception", e);
@@ -60,9 +61,9 @@ public class CommonQueueConsumer {
 
     @RabbitHandler
     public void receivePostCancelLikeMessage(PostLikeCancelMessage message) {
-
         try {
             userCountInfoService.decrementPostLikeCount(message.getUserId());
+            postCountInfoService.decrementLikeCount(message.getPostId());
         } catch (Exception e) {
             log.error("receive post cancel like message exception", e);
         }

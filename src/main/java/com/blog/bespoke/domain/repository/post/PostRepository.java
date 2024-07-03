@@ -1,13 +1,12 @@
-package com.blog.bespoke.domain.repository;
+package com.blog.bespoke.domain.repository.post;
 
 import com.blog.bespoke.domain.model.post.Post;
-import com.blog.bespoke.domain.model.post.PostLike;
 import com.blog.bespoke.domain.model.post.PostSearchCond;
 import org.springframework.data.domain.Page;
 
 import java.util.Optional;
 
-public interface PostRepository {
+public interface PostRepository extends PostCountInfoRepository {
     Post save(Post post);
 
     Optional<Post> findById(Long id);
