@@ -6,7 +6,11 @@ Authorization: Bearer {{access_token}}
 GET localhost:8080/api/posts?authorId=1&status=DRAFT
 Authorization: Bearer {{access_token}}
 
-### 내가 좋아요 한 게시글 조회
+### 1번 유저가 좋아요 한 게시글
+GET localhost:8080/api/posts?userId=1&like=true
+
+
+### 2번 유저가 좋아요 한 게시글
 GET localhost:8080/api/posts?userId=2&like=true
 
 ### 1번 유저가 팔로우 한 유저의 게시글 조회

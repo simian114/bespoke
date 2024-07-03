@@ -13,6 +13,7 @@ import com.blog.bespoke.domain.model.post.PostStatusCmd;
 import com.blog.bespoke.domain.model.post.PostUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.post.PostRepository;
+import com.blog.bespoke.domain.service.PostSearchService;
 import com.blog.bespoke.domain.service.PostService;
 import com.blog.bespoke.domain.service.UserCountInfoService;
 import com.blog.bespoke.domain.service.UserService;
@@ -21,14 +22,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
 @Service
 @RequiredArgsConstructor
 public class PostUseCase {
     private final PostRepository postRepository;
     private final PostService postService;
     private final UserService userService;
+    private final PostSearchService postSearchService;
     private final UserCountInfoService userCountInfoService;
     private final EventPublisher publisher;
     private final PostRequestMapper mapper = PostRequestMapper.INSTANCE;
@@ -62,9 +62,7 @@ public class PostUseCase {
 
     @Transactional
     public Page<PostResponseDto> postSearch(PostSearchCond cond, User currentUser) {
-        // published 가 아닌 정보를 요청하면서 user 가 null 인 경우는 예외를 보내야한다.
-        if (cond.getStatus() != Post.Status.PUBLISHED && currentUser == null
-                || cond.getStatus() != Post.Status.PUBLISHED && !Objects.equals(currentUser.getId(), cond.getAuthorId())) {
+        if (!postSearchService.canSearch(cond, currentUser)) {
             throw new BusinessException(ErrorCode.POST_FORBIDDEN);
         }
 
