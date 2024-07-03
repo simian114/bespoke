@@ -41,5 +41,13 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
     @Query("UPDATE UserCountInfo u SET u.publishedPostCount = u.publishedPostCount - 1 WHERE u.userId = :userId")
     void decrementPublishedPostCount(@Param("userId") Long userId);
 
+    @Modifying
+    @Query("UPDATE UserCountInfo u SET u.likePostCount = u.likePostCount + 1 WHERE u.userId = :userId")
+    void incrementLikePostCount(@Param("userId") Long userId);
+
+    @Modifying
+    @Query("UPDATE UserCountInfo u SET u.likePostCount = u.likePostCount - 1 WHERE u.userId = :userId")
+    void decrementLikePostCount(@Param("userId") Long userId);
+
 
 }

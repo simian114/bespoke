@@ -12,4 +12,8 @@ public interface UserCountInfoRepository {
     void incrementPublishedPostCount(Long userId);
 
     void decrementPublishedPostCount(Long userId);
+
+    void incrementLikePostCount(Long userId);
+
+    void decrementLikePostCount(Long userId);
 }
