@@ -50,12 +50,21 @@ public class CommonQueueConsumer {
 
     @RabbitHandler
     public void receivePostLikeMessage(PostLikeMessage message) {
-        //
-        noticeUseCase.noticeToUser();
+        try {
+            userCountInfoService.incrementPostLikeCount(message.getUserId());
+            noticeUseCase.noticeToUser();
+        } catch (Exception e) {
+            log.error("receive post like message exception", e);
+        }
     }
 
     @RabbitHandler
     public void receivePostCancelLikeMessage(PostLikeCancelMessage message) {
-        // postUseCase.decrease
+
+        try {
+            userCountInfoService.decrementPostLikeCount(message.getUserId());
+        } catch (Exception e) {
+            log.error("receive post cancel like message exception", e);
+        }
     }
 }

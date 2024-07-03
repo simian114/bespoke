@@ -4,7 +4,6 @@ import com.blog.bespoke.application.dto.mapper.PostRequestMapper;
 import com.blog.bespoke.application.dto.request.PostCreateRequestDto;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
 import com.blog.bespoke.application.event.message.PublishPostEvent;
-import com.blog.bespoke.application.event.message.PostLikeMessage;
 import com.blog.bespoke.application.event.publisher.EventPublisher;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
@@ -22,9 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -81,6 +78,9 @@ public class PostUseCase {
         User author = userService.getById(currentUser.getId());
         Post post = mapper.toDomain(requestDto);
         post.init(author);
+        if (requestDto.getStatus() != null) {
+            post.changeStatus(requestDto.getStatus());
+        }
 
         Post savedPost = postRepository.save(post);
 

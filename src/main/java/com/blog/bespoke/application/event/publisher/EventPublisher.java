@@ -17,4 +17,6 @@ public interface EventPublisher {
 
     // NOTE:
     void publishPostLikeEvent(PostLikeMessage message);
+
+    void publishPostCancelLikeEvent(PostLikeCancelMessage message);
 }

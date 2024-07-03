@@ -1,6 +1,5 @@
 package com.blog.bespoke.domain.service;
 
-import com.blog.bespoke.domain.model.user.UserCountInfo;
 import com.blog.bespoke.domain.repository.user.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -44,11 +43,14 @@ public class UserCountInfoService {
         userRepository.decrementPublishedPostCount(userId);
     }
 
-    public void incrementPostLikeCount() {
+    @Transactional
+    public void incrementPostLikeCount(Long userId) {
+        userRepository.incrementLikePostCount(userId);
     }
 
-    public void decrementPostLikeCount() {
-
+    @Transactional
+    public void decrementPostLikeCount(Long userId) {
+        userRepository.decrementLikePostCount(userId);
     }
 
 }
