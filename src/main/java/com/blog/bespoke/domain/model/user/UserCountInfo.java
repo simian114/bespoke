@@ -38,20 +38,4 @@ public class UserCountInfo {
     private User user;
 
     // domain logic
-
-    public void incrementFollower() {
-        followerCount += 1;
-    }
-
-    public void incrementFollowing() {
-        followingCount += 1;
-    }
-
-    public void decrementFollowing() {
-        followingCount -= 1;
-    }
-
-    public void decrementFollower() {
-        followerCount -= 1;
-    }
 }

@@ -130,6 +130,17 @@ public class UserRepositoryImpl implements UserRepository {
         userJpaRepository.decrementFollowingCount(userId);
     }
 
+    @Override
+    public void incrementPublishedPostCount(Long userId) {
+        userJpaRepository.incrementPublishedPostCount(userId);
+    }
+
+    @Override
+    public void decrementPublishedPostCount(Long userId) {
+        userJpaRepository.decrementPublishedPostCount(userId);
+    }
+
+
     // --- search
 
     @Override

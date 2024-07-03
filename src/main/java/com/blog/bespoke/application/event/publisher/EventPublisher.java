@@ -13,7 +13,7 @@ public interface EventPublisher {
     void publishUnfollowEvent(UserUnFollowMessage message);
 
     // NOTE: create 가 아닌 published 이벤트로 변경해야함
-    void publishPostPublishEvent(PostCreateMessage message);
+    void publishPostPublishEvent(PublishPostEvent message);
 
     // NOTE:
     void publishPostLikeEvent(PostLikeMessage message);

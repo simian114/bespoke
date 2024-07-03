@@ -34,16 +34,17 @@ public class UserCountInfoService {
         userRepository.decrementFollowingCount(followerId);
     }
 
-    public void incrementPublishedPostCount() {
-
+    @Transactional
+    public void incrementPublishedPostCount(Long userId) {
+        userRepository.incrementPublishedPostCount(userId);
     }
 
-    public void decrementPublishedPostCount() {
-
+    @Transactional
+    public void decrementPublishedPostCount(Long userId) {
+        userRepository.decrementPublishedPostCount(userId);
     }
 
     public void incrementPostLikeCount() {
-
     }
 
     public void decrementPostLikeCount() {
