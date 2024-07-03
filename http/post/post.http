@@ -28,6 +28,23 @@ Authorization: Bearer {{access_token}}
     client.global.set("post_id", response.body.data.id);
 %}
 
+### 게시글 작성
+POST localhost:8080/api/posts
+Content-Type: application/json
+Authorization: Bearer {{foobar_access_token}}
+
+{
+  "title": "title",
+  "description": "description",
+  "content": "content",
+  "status": "PUBLISHED"
+}
+
+> {%
+    client.global.set("post_id", response.body.data.id);
+%}
+
+
 ### 단건 조회(미인증 유저) 400 에러가 발생해야함
 GET localhost:8080/api/posts/{{post_id}}
 
@@ -117,3 +134,4 @@ Authorization: Bearer {{access_token}}
 
 ### 삭제 후 조회
 GET localhost:8080/api/posts/{{post_id}}
+
