@@ -1,4 +1,4 @@
-package com.blog.bespoke.application.usecase;
+package com.blog.bespoke.application.usecase.post;
 
 import com.blog.bespoke.application.dto.mapper.PostRequestMapper;
 import com.blog.bespoke.application.dto.request.PostCreateRequestDto;
@@ -154,28 +154,5 @@ public class PostUseCase {
         }
         post.delete();
         postRepository.save(post);
-    }
-
-    @Transactional
-    public PostResponseDto likePost(Long postId, User currentUser) {
-        Optional<Post> optionalPost = postRepository.findPostWithLikeByPostIdAndUserId(postId, currentUser.getId());
-        if (optionalPost.isPresent()) {
-            throw new BusinessException(ErrorCode.ALREADY_LIKE_POST);
-        }
-        Post post = postRepository.getById(postId);
-
-        post.addLike(currentUser);
-        // TODO: 좋아요 수 증가
-
-        publisher.publishPostLikeEvent(new PostLikeMessage(currentUser.getId(), postId, LocalDateTime.now()));
-        return PostResponseDto.from(post);
-    }
-
-    @Transactional
-    public PostResponseDto cancelLikePost(Long postId, User currentUser) {
-        Post post = postRepository.getPostWithLikeByPostIdAndUserId(postId, currentUser.getId());
-        post.cancelLike(postId, currentUser);
-        // 좋아요 수 감소
-        return PostResponseDto.from(post);
     }
 }

@@ -2,7 +2,7 @@ package com.blog.bespoke.infrastructure.event.rabbitmq.consumer;
 
 import com.blog.bespoke.application.event.message.*;
 import com.blog.bespoke.application.usecase.NoticeUseCase;
-import com.blog.bespoke.application.usecase.PostUseCase;
+import com.blog.bespoke.application.usecase.post.PostUseCase;
 import com.blog.bespoke.domain.service.UserCountInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
