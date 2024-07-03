@@ -9,28 +9,24 @@ import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.post.PostRepository;
-import com.blog.bespoke.domain.service.PostService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class PostLikeUseCase {
     private final PostRepository postRepository;
     private final EventPublisher publisher;
-    private final PostService postService;
 
     @Transactional
     public PostResponseDto likePost(Long postId, User currentUser) {
-        Optional<Post> optionalPost = postRepository.findPostWithLikeByPostIdAndUserId(postId, currentUser.getId());
-        if (optionalPost.isPresent()) {
+        Post post = postRepository.getPostWithLikeByPostIdAndUserId(postId, currentUser.getId());
+        if (!post.getPostLikes().isEmpty()) {
             throw new BusinessException(ErrorCode.ALREADY_LIKE_POST);
         }
-        Post post = postService.getPublishedPostById(postId);
 
         post.addLike(currentUser);
 
@@ -46,6 +42,9 @@ public class PostLikeUseCase {
     @Transactional
     public PostResponseDto cancelLikePost(Long postId, User currentUser) {
         Post post = postRepository.getPostWithLikeByPostIdAndUserId(postId, currentUser.getId());
+        if (post.getPostLikes().isEmpty()) {
+            throw new BusinessException(ErrorCode.POST_LIKE_NOT_FOUND);
+        }
         post.cancelLike(postId, currentUser);
         PostResponseDto dto = PostResponseDto.from(post);
         PostResponseDto.PostCountInfoResponseDto countInfo = dto.getCountInfo();
