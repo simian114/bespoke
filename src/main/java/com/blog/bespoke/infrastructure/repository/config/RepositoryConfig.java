@@ -1,6 +1,6 @@
 package com.blog.bespoke.infrastructure.repository.config;
 
-import com.blog.bespoke.domain.repository.PostRepository;
+import com.blog.bespoke.domain.repository.post.PostRepository;
 import com.blog.bespoke.domain.repository.TokenRepository;
 import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.blog.bespoke.infrastructure.repository.post.PostJpaRepository;

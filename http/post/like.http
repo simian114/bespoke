@@ -37,7 +37,7 @@ Content-Type: application/json
 > {% client.global.set("post_id", response.body.data.id) %}
 
 
-### foobar 계정으로 좋아요 -> 실패해야함. 예외문구: 존재하지 않는 게시글 (상태가 이상하다.. 보다는 존재하지 않는다는게 맞을듯)
+### email 계정으로 좋아요 -> 실패해야함. 예외문구: 존재하지 않는 게시글 (상태가 이상하다.. 보다는 존재하지 않는다는게 맞을듯)
 POST localhost:8080/api/posts/{{post_id}}/like
 Authorization: Bearer {{access_token}}
 
@@ -73,3 +73,6 @@ Authorization: Bearer {{access_token}}
 ### foobar 계정으로 삭제 된 게시글 좋아요 -> 실패 400 예외 발생해야함
 POST localhost:8080/api/posts/{{post_id}}/like
 Authorization: Bearer {{foobar_access_token}}
+
+### 조회
+GET localhost:8080/api/posts/{{post_id}}

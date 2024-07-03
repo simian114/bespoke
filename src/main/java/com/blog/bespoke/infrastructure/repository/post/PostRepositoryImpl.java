@@ -4,7 +4,7 @@ import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.post.PostSearchCond;
-import com.blog.bespoke.domain.repository.PostRepository;
+import com.blog.bespoke.domain.repository.post.PostRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -63,6 +63,34 @@ public class PostRepositoryImpl implements PostRepository {
         return findPostWithLikeByPostIdAndUserId(postId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.POST_LIKE_NOT_FOUND));
     }
+
+    @Override
+    public void incrementLikeCount(Long postId) {
+        postJpaRepository.incrementLikeCount(postId);
+    }
+
+    @Override
+    public void decrementLikeCount(Long postId) {
+        postJpaRepository.decrementLikeCount(postId);
+
+    }
+
+    @Override
+    public void incrementViewCount(Long postId) {
+        postJpaRepository.incrementViewCount(postId);
+    }
+
+    @Override
+    public void incrementCommentCount(Long postId) {
+        postJpaRepository.incrementCommentCount(postId);
+    }
+
+    @Override
+    public void decrementCommentCount(Long postId) {
+        postJpaRepository.decrementCommentCount(postId);
+    }
+
+    // --- search
 
     @Override
     public Page<Post> search(PostSearchCond cond) {

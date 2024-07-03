@@ -12,7 +12,7 @@ import com.blog.bespoke.domain.model.post.PostSearchCond;
 import com.blog.bespoke.domain.model.post.PostStatusCmd;
 import com.blog.bespoke.domain.model.post.PostUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
-import com.blog.bespoke.domain.repository.PostRepository;
+import com.blog.bespoke.domain.repository.post.PostRepository;
 import com.blog.bespoke.domain.service.PostService;
 import com.blog.bespoke.domain.service.UserCountInfoService;
 import com.blog.bespoke.domain.service.UserService;

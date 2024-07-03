@@ -46,8 +46,13 @@ public class Post extends TimeStamp {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PostLike> postLikes;
 
-    public void setAuthor(User author) {
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private PostCountInfo postCountInfo;
+
+    public void init(User author) {
         this.author = author;
+        this.status = Status.DRAFT;
+        this.postCountInfo = PostCountInfo.builder().post(this).build();
     }
 
     // --- domain logic

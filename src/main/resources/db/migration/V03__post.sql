@@ -57,3 +57,13 @@ create table comment_like
     created_at      timestamp default current_timestamp
 );
 
+create table post_count_info
+(
+    post_count_info_id bigint primary key auto_increment,
+    post_id bigint not null,
+    like_count bigint not null default 0,
+    view_count bigint not null default 0,
+    comment_count bigint not null default 0,
+    foreign key (post_id) references post (post_id)
+)
+
