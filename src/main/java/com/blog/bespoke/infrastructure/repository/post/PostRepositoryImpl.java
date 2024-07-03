@@ -10,6 +10,7 @@ import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,7 @@ import static com.blog.bespoke.domain.model.follow.QFollow.follow;
 import static com.blog.bespoke.domain.model.post.QPost.post;
 import static com.blog.bespoke.domain.model.post.QPostLike.postLike;
 
+@Slf4j
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepository {
     private final JPAQueryFactory queryFactory;
@@ -94,7 +96,6 @@ public class PostRepositoryImpl implements PostRepository {
 
     // --- search
 
-    // 내가 좋아요 한 경우...
     @Override
     public Page<Post> search(PostSearchCond cond) {
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getPageSize());
@@ -102,8 +103,7 @@ public class PostRepositoryImpl implements PostRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
-        jpaQuery.orderBy(post.createdAt.desc());
-
+        applyOrderBy(jpaQuery, cond.getOrderBy());
         List<Post> posts = jpaQuery.fetch();
 
         Long totalSize = countQuery(cond).fetch().get(0);
@@ -140,6 +140,27 @@ public class PostRepositoryImpl implements PostRepository {
                         authorIdEq(cond)
                 );
     }
+
+    /**
+     * - 좋아요순
+     * - 최신순. 기본으로 최신순
+     * - 조회순
+     * - 댓글순
+     */
+    private void applyOrderBy(JPAQuery<Post> query, PostSearchCond.OrderBy orderBy) {
+        if (orderBy.equals(PostSearchCond.OrderBy.LATEST)) {
+            query.orderBy(post.createdAt.desc());
+        } else if (orderBy.equals(PostSearchCond.OrderBy.COMMENT)) {
+            log.info("comment 수 를 이용한 정렬 미구현.");
+            query.orderBy(post.postCountInfo.commentCount.desc());
+        } else if (orderBy.equals(PostSearchCond.OrderBy.LIKE)) {
+            query.orderBy(post.postCountInfo.likeCount.desc());
+        } else if (orderBy.equals(PostSearchCond.OrderBy.VIEW)) {
+            query.orderBy(post.postCountInfo.viewCount.desc());
+        }
+        query.orderBy(post.createdAt.desc());
+    }
+
 
     /**
      * 내가 좋아요 한 게시글 리스트

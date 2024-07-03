@@ -17,6 +17,9 @@ public class PostSearchService {
         if (currentUser == null) {
             return cond.getStatus() == Post.Status.PUBLISHED;
         }
+        if (cond.getStatus() == Post.Status.PUBLISHED) {
+            return true;
+        }
         if (!cond.getAuthorId().equals(currentUser.getId())) {
             return false;
         }
