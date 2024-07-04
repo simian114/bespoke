@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,13 +24,12 @@ public class PostLikeUseCase {
 
     @Transactional
     public PostResponseDto likePost(Long postId, User currentUser) {
-        Post post = postRepository.getPostWithLikeByPostIdAndUserId(postId, currentUser.getId());
-        if (!post.getPostLikes().isEmpty()) {
+        Optional<Post> postOp  = postRepository.findPostWithLikeByPostIdAndUserId(postId, currentUser.getId());
+        if (postOp.isPresent()) {
             throw new BusinessException(ErrorCode.ALREADY_LIKE_POST);
         }
-
+        Post post = postRepository.getById(postId);
         post.addLike(currentUser);
-
         PostResponseDto dto = PostResponseDto.from(post);
         PostResponseDto.PostCountInfoResponseDto countInfo = dto.getCountInfo();
         countInfo.setLikeCount(countInfo.getLikeCount() + 1);
