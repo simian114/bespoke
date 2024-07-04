@@ -14,6 +14,7 @@ import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,7 @@ import static com.blog.bespoke.domain.model.post.QPostLike.postLike;
 public class PostRepositoryImpl implements PostRepository {
     private final JPAQueryFactory queryFactory;
     private final PostJpaRepository postJpaRepository;
+    private final EntityManager em;
 
     @Override
     public Post save(Post post) {
@@ -92,7 +94,14 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public void incrementViewCount(Long postId) {
-        postJpaRepository.incrementViewCount(postId);
+        em.createQuery("""
+                        UPDATE PostCountInfo p
+                        SET p.viewCount = p.viewCount + 1
+                        WHERE p.postId = :postId
+                        """
+                ).setParameter("postId", postId)
+                .executeUpdate();
+        em.flush();
     }
 
     @Override

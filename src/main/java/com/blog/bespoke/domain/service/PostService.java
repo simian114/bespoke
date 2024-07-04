@@ -32,7 +32,7 @@ public class PostService {
         }
 
         if (shouldIncreaseViewCount(post, currentUser)) {
-            // postRepository.increasePostViewCount();
+            post.getPostCountInfo().increaseViewCount();
         }
         return post;
     }
@@ -40,16 +40,12 @@ public class PostService {
     /**
      * 1. published post 가 아니면 조회수는 오르지 않음
      * 2. currentUser 가 어드민일 경우 조회수는 오르지 않음
-     * 3. currentUser 가 작성자일 경우 조회수는 오르지 않음
      */
     private boolean shouldIncreaseViewCount(Post post, User currentUser) {
         if (!post.isPublished()) {
             return false;
         }
         if (currentUser != null && currentUser.isAdmin()) {
-            return false;
-        }
-        if (currentUser != null && post.getAuthor().getId().equals(currentUser.getId())) {
             return false;
         }
         return true;

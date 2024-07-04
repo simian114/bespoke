@@ -42,7 +42,7 @@ public class RepositoryConfig {
 
     @Bean
     public PostRepository postRepository() {
-        return new PostRepositoryImpl(jpaQueryFactory(), postJpaRepository);
+        return new PostRepositoryImpl(jpaQueryFactory(), postJpaRepository, em);
     }
 
     @Bean
