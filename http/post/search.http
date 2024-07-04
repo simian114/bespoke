@@ -2,6 +2,11 @@
 GET localhost:8080/api/posts
 Authorization: Bearer {{access_token}}
 
+### search 전체 조회
+GET localhost:8080/api/posts?userId=1&page=0
+Authorization: Bearer {{access_token}}
+
+
 ### searh 조회
 GET localhost:8080/api/posts?authorId=1&status=DRAFT
 Authorization: Bearer {{access_token}}
