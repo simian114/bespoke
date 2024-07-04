@@ -49,6 +49,10 @@ public class Post extends TimeStamp {
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private PostCountInfo postCountInfo;
 
+    // --- transient
+    @Transient
+    private Boolean likedByUser = false;
+
     public void init(User author) {
         this.author = author;
         this.status = Status.DRAFT;

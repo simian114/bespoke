@@ -3,10 +3,15 @@ package com.blog.bespoke.infrastructure.repository.post;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.post.Post;
+import com.blog.bespoke.domain.model.post.PostCountInfo;
 import com.blog.bespoke.domain.model.post.PostSearchCond;
+import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.post.PostRepository;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +21,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -111,12 +118,18 @@ public class PostRepositoryImpl implements PostRepository {
         return PageableExecutionUtils.getPage(posts, pageable, () -> totalSize);
     }
 
+
     // TODO: 이렇게 조인해오면 author 의 연관관계 중 eager 를 가져옴. 근데 난 그거 싫은데..
     private JPAQuery<Post> query(PostSearchCond cond) {
-        JPAQuery<Post> query = queryFactory.selectFrom(post)
-                .leftJoin(post.author).fetchJoin()
-                .leftJoin(post.postCountInfo).fetchJoin();
-
+        JPAQuery<Post> query = queryFactory.select(post)
+                .select(Projections.fields(
+                                Post.class,
+                                getFields(cond).toArray(new Expression<?>[0])
+                        )
+                )
+                .from(post)
+                .leftJoin(post.author)
+                .leftJoin(post.postCountInfo);
         applyLike(query, cond);
         applyFollow(query, cond);
 
@@ -127,12 +140,50 @@ public class PostRepositoryImpl implements PostRepository {
                 );
     }
 
+    private List<Expression<?>> getFields(PostSearchCond cond) {
+        List<Expression<?>> selectedFields = new ArrayList<>(Arrays.asList(
+                post.id,
+                post.title,
+                post.description,
+                post.content,
+                post.status,
+                post.createdAt,
+                post.updatedAt,
+                Projections.fields(
+                        PostCountInfo.class,
+                        post.postCountInfo.viewCount,
+                        post.postCountInfo.likeCount,
+                        post.postCountInfo.commentCount
+                ).as("postCountInfo"),
+                Projections.fields(
+                        User.class,
+                        post.author.id,
+                        post.author.email,
+                        post.author.nickname,
+                        post.author.name,
+                        post.author.createdAt
+                ).as("author")
+        ));
+        if (cond.getUserId() > 0) {
+            selectedFields.add(
+                    JPAExpressions.selectOne()
+                            .from(postLike)
+                            .where(postLike.post.eq(post).and(postLike.user.id.eq(cond.getUserId())))
+                            .exists()
+                            .as("likedByUser")
+            );
+
+        }
+        return selectedFields;
+    }
+
     private JPAQuery<Long> countQuery(PostSearchCond cond) {
         JPAQuery<Long> query = queryFactory.select(Wildcard.count)
                 .from(post);
 
         applyLike(query, cond);
         applyFollow(query, cond);
+
 
         return query
                 .where(

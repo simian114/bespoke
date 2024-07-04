@@ -2,6 +2,7 @@ package com.blog.bespoke.application.dto.response;
 
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.model.user.UserCountInfo;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 @Builder
@@ -12,6 +13,8 @@ public class UserResponseDto {
     private String email;
     private String nickname;
     private String name;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private UserCountInfoResponseDto countInfo;
 
     static public UserResponseDto from(User user) {
@@ -35,7 +38,7 @@ public class UserResponseDto {
 
         static public UserCountInfoResponseDto from(UserCountInfo info) {
             if (info == null) {
-                return UserCountInfoResponseDto.builder().build();
+                return null;
             }
             return UserCountInfoResponseDto.builder()
                     .followerCount(info.getFollowerCount())
