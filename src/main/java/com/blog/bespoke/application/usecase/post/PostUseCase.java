@@ -40,24 +40,7 @@ public class PostUseCase {
      */
     @Transactional
     public PostResponseDto showPostById(Long postId, User currentUser) {
-        // TODO: postService 에서 get & viewcount 올리는 메서드 만들어야함
-        Post post = postRepository.getById(postId);
-
-        if (post.isDeleted()) {
-            throw new BusinessException(ErrorCode.POST_NOT_FOUND);
-        }
-
-        // check post's author is not banned
-        User author = post.getAuthor();
-
-        // throw 정지 된 유저의 게시글은 볼 수 없다.
-        if (author.getBannedUntil() != null) {
-            throw new BusinessException(ErrorCode.BANNED_USER_POST);
-        }
-
-        if (!postService.canShow(post, currentUser)) {
-            throw new BusinessException(ErrorCode.POST_FORBIDDEN);
-        }
+        Post post = postService.getPostAndUpdateViewCountWhenNeeded(postId, currentUser);
         return PostResponseDto.from(post);
     }
 

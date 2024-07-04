@@ -85,7 +85,7 @@ public class Post extends TimeStamp {
         this.status = status;
     }
 
-    public boolean isBocked() {
+    public boolean isBlocked() {
         return status == Status.BLOCKED;
     }
 
@@ -108,9 +108,8 @@ public class Post extends TimeStamp {
 
     }
 
-    public boolean checkHasAlreadyLikeByUser(Long userId) {
-        return postLikes.stream()
-                .anyMatch(like -> like.getUser().getId().equals(userId));
+    public void setLikedByUser(boolean b) {
+        likedByUser = b;
     }
 
     public enum Status {

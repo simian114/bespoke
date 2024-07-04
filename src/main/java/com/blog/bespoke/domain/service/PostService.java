@@ -13,20 +13,53 @@ import org.springframework.stereotype.Service;
 public class PostService {
     private final PostRepository postRepository;
 
-    public Post getPostById(Long id) {
-        return postRepository.getById(id);
-    }
+    /**
+     * 1. currentUser 가 존재하면 likedByUser 가 필드에 추가됨
+     * 2. currentUser 가 없으면 likedByUser 는 없음
+     * 3. 조건에 따라 viewcount 를 실행함
+     */
+    public Post getPostAndUpdateViewCountWhenNeeded(Long postId, User currentUser) {
+        Post post = postRepository.getById(postId);
 
-    public Post getPublishedPostById(Long id) {
-        Post post = postRepository.getById(id);
-        if (!post.isPublished()) {
-            throw new BusinessException(ErrorCode.POST_NOT_FOUND);
+        if (!canShow(post, currentUser)) {
+            throw new BusinessException(ErrorCode.POST_FORBIDDEN);
+        }
+
+        if (currentUser != null) {
+            if (postRepository.existsPostLikeByPostIdAndUserId(postId, currentUser.getId())) {
+                post.setLikedByUser(true);
+            }
+        }
+
+        if (shouldIncreaseViewCount(post, currentUser)) {
+            // postRepository.increasePostViewCount();
         }
         return post;
     }
 
-    public boolean canShow(Post post, User user) {
+    /**
+     * 1. published post 가 아니면 조회수는 오르지 않음
+     * 2. currentUser 가 어드민일 경우 조회수는 오르지 않음
+     * 3. currentUser 가 작성자일 경우 조회수는 오르지 않음
+     */
+    private boolean shouldIncreaseViewCount(Post post, User currentUser) {
+        if (!post.isPublished()) {
+            return false;
+        }
+        if (currentUser != null && currentUser.isAdmin()) {
+            return false;
+        }
+        if (currentUser != null && post.getAuthor().getId().equals(currentUser.getId())) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean canShow(Post post, User user) {
         if (post.isDeleted()) {
+            return false;
+        }
+        if (post.getAuthor().getBannedUntil() != null) {
             return false;
         }
         if (post.isPublished()) {
@@ -51,6 +84,6 @@ public class PostService {
             return false;
         }
         return (toBe != Post.Status.BLOCKED || user.isAdmin())
-                && (!post.isBocked() || user.isAdmin());
+                && (!post.isBlocked() || user.isAdmin());
     }
 }

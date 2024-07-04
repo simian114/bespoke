@@ -63,6 +63,10 @@ public class PostRepositoryImpl implements PostRepository {
         postJpaRepository.deleteById(id);
     }
 
+    @Override
+    public boolean existsPostLikeByPostIdAndUserId(Long postId, Long userId) {
+        return postJpaRepository.existsPostLikeByPostIdAndUserId(postId, userId);
+    }
 
     @Override
     public Optional<Post> findPostWithLikeByPostIdAndUserId(Long postId, Long userId) {
