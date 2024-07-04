@@ -6,7 +6,9 @@ import org.springframework.data.domain.Page;
 
 import java.util.Optional;
 
-public interface PostRepository extends PostCountInfoRepository {
+public interface PostRepository extends PostCountInfoRepository,
+        PostLikeRepository
+{
     Post save(Post post);
 
     Optional<Post> findById(Long id);

@@ -21,7 +21,8 @@ public class PostResponseDto {
     private LocalDateTime updatedAt;
     private PostCountInfoResponseDto countInfo;
     private UserResponseDto author;
-    private Boolean likedByUser;
+
+    private boolean likedByUser;
 
     static public PostResponseDto from(Post post) {
         return PostResponseDto.builder()
@@ -34,7 +35,7 @@ public class PostResponseDto {
                 .updatedAt(post.getUpdatedAt())
                 .countInfo(PostCountInfoResponseDto.from(post.getPostCountInfo()))
                 .author(UserResponseDto.from(post.getAuthor()))
-                .likedByUser(post.getLikedByUser())
+                .likedByUser(Boolean.TRUE.equals(post.getLikedByUser()))
                 .build();
     }
 
