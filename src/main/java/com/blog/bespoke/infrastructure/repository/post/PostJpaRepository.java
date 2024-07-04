@@ -9,8 +9,10 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface PostJpaRepository extends JpaRepository<Post, Long> {
-    @Query("SELECT DISTINCT p FROM Post p LEFT JOIN  PostLike l ON l.user.id = :userId WHERE p.id = :postId AND p.status = 'PUBLISHED'")
+    @Query("SELECT p FROM Post p LEFT JOIN FETCH p.postLikes pl WHERE p.id = :postId AND (pl IS NULL OR pl.user.id = :userId) AND p.status = 'PUBLISHED'")
     Optional<Post> findPostWithLikeByIdAndUserId(@Param("postId") Long postId, @Param("userId") Long userId);
+
+    // select Post with PostLike
 
     @Modifying
     @Query("UPDATE PostCountInfo p SET p.likeCount = p.likeCount + 1 WHERE p.postId = :postId")
