@@ -33,4 +33,8 @@ public class PostCountInfo {
     @MapsId
     @JoinColumn(name = "post_id")
     private Post post;
+
+    public void increaseViewCount() {
+        viewCount += 1;
+    }
 }
