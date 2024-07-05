@@ -3,7 +3,7 @@ POST localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "email@gmail.com",
+  "email": "user@gmail.com",
   "password": "password"
 }
 
@@ -21,7 +21,7 @@ Authorization: Bearer {{access_token}}
   "title": "title",
   "description": "description",
   "content": "content",
-  "status": "DRAFT"
+  "status": "PUBLISHED"
 }
 
 > {%
@@ -31,7 +31,7 @@ Authorization: Bearer {{access_token}}
 ### 게시글 작성
 POST localhost:8080/api/posts
 Content-Type: application/json
-Authorization: Bearer {{foobar_access_token}}
+Authorization: Bearer {{access_token2}}
 
 {
   "title": "title",
@@ -107,15 +107,15 @@ POST localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "foobar@gmail.com",
+  "email": "user2@gmail.com",
   "password": "password"
 }
 
-> {% client.global.set("foobar_access_token", response.data.access_token) %}
+> {% client.global.set("access_token2", response.data.access_token) %}
 
-### foobar 로 로그인 후 조회 400 예외 발생
+### user2 로 로그인 후 조회 400 예외 발생
 GET localhost:8080/api/posts/{{post_id}}
-Authorization: Bearer {{foobar_access_token}}
+Authorization: Bearer {{access_token2}}
 
 
 ### search 전체 조회

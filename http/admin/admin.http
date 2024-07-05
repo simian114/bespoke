@@ -1,4 +1,18 @@
+### admin login
+POST localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "password": "password"
+}
+
+> {%
+    client.global.set("admin_access_token", response.body.data.accessToken);
+    client.global.set("admin_refresh_token", response.body.data.refreshToken);
+%}
+
 
 ### ADMIN test
 GET localhost:8080/api/admin/users
-Authorization: Bearer {{access_token}}
+Authorization: Bearer {{admin_access_token}}
