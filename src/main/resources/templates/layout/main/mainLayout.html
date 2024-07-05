@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+>
+
+<!--공통 JS / CSS 영역을 관리하는 환경 영역-->
+<!--<head th:replace="fragments/config :: base">-->
+<!--    <title layout:title-pattern="$LAYOUT_TITLE : $CONTENT_TITLE">공통 타이틀</title>-->
+<!--</head>-->
+<head>
+    <!--Common Head-->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport"
+          content="width=device-width, maximum-scale=1.0, minimum-scale=1, user-scalable=yes,initial-scale=1.0"
+    />
+
+    <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE"></title> <!--1-->
+
+    <!--Common JS-->
+    <!--    <script th:inline="javascript" type="text/javascript" th:src="@{/lib/jquery-3.6.1.min.js}"></script>-->
+    <!--    <script th:inline="javascript" type="text/javascript" th:src="@{/lib/jquery-ui.min.js}"></script>-->
+    <script src="/js/htmx.min.js"></script>
+<!--    <script src="/js/surreal.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/gh/gnat/surreal@main/surreal.js"></script>
+
+    <!--Common CSS -->
+    <link rel="stylesheet" href="/css/application.css">
+</head>
+
+<body>
+<!--Header 영역을 참조합니다.-->
+<header th:replace="fragments/header :: mainHeader"></header>
+
+<!--Content 내용 영역을 참조합니다-->
+<th:block layout:fragment="content">
+    <!--    -->
+</th:block>
+
+<!--Footer 영역을 참조합니다.-->
+<footer th:replace="fragments/footer :: mainFooter"></footer>
+</body>
+</html>
