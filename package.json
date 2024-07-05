@@ -1,0 +1,25 @@
+{
+  "name": "bespoke",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-bulma": "sass --load-path=node_modules src/main/resources/styles/global.scss ./src/main/resources/static/css/application.css",
+    "start": "npm run build-bulma -- --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simian114/bespoke.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/simian114/bespoke/issues"
+  },
+  "homepage": "https://github.com/simian114/bespoke#readme",
+  "dependencies": {
+    "bulma": "^1.0.1",
+    "sass": "^1.77.6"
+  }
+}
