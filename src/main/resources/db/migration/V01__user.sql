@@ -47,9 +47,3 @@ create table user_count_info
     like_post_count bigint not null default 0, # 좋아요 한 게시글 수
     foreign key (user_id) references users (user_id) on delete cascade
 );
-
-INSERT INTO role(code)
-values ('USER');
-INSERT INTO role(code)
-values ('ADMIN');
-

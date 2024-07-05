@@ -55,6 +55,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // 기본 로그인 방법 무효화
         http.formLogin(AbstractHttpConfigurer::disable);
+        // TODO: 서버로 전변경하면 csrf 옵션 키기. 현재는 일반 API 때문에 disable
         http.csrf(AbstractHttpConfigurer::disable);
         http.httpBasic(AbstractHttpConfigurer::disable);
         http.logout(AbstractHttpConfigurer::disable);
