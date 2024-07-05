@@ -8,8 +8,11 @@ import com.blog.bespoke.infrastructure.security.filter.JwtAuthenticationFilter;
 import com.blog.bespoke.infrastructure.web.filter.transaction.TransactionFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.StaticResourceLocation;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,6 +22,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
+import java.util.Set;
 
 @Configuration
 @RequiredArgsConstructor
@@ -52,6 +57,7 @@ public class SecurityConfig {
         http.formLogin(AbstractHttpConfigurer::disable);
         http.csrf(AbstractHttpConfigurer::disable);
         http.httpBasic(AbstractHttpConfigurer::disable);
+        http.logout(AbstractHttpConfigurer::disable);
 
         // 세션 사용 안함
         http.sessionManagement(configurer ->
@@ -67,10 +73,20 @@ public class SecurityConfig {
         );
 
         http.authorizeHttpRequests(requests -> requests
+                // 과거 개발용 api
                 .requestMatchers("/api/admin/**").hasRole(Role.Code.ADMIN.name())
+                .requestMatchers("/api/user/signup").permitAll()
+                .requestMatchers("/api/auth/login").permitAll()
+                .requestMatchers("/api/auth/reissue").permitAll()
                 .requestMatchers("/api/auth/test").authenticated()
                 .requestMatchers("/api/user/{id}/follow").authenticated()
-                .anyRequest().permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
+                // 실제 서비스
+                .requestMatchers("/login").permitAll()
+                .requestMatchers("/signup").permitAll()
+                .requestMatchers("/").permitAll()
+                .requestMatchers(PathRequest.toStaticResources().at(Set.of(StaticResourceLocation.CSS, StaticResourceLocation.JAVA_SCRIPT))).permitAll()
+                .anyRequest().authenticated()
         );
 
         http.addFilterAt(new TransactionFilter(), BasicAuthenticationFilter.class);

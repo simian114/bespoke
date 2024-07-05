@@ -12,6 +12,8 @@ import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -35,9 +37,29 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User user) {
-        // TODO: 이메일 or 닉네임 중복 시 발생하는 예외를 핸들링 해야함.
-        // TODO: 그 외의 테이블 조건에 부합하지 않는 예외가 발생할 시 그 예외들도 핸들링 해야함
-        return userJpaRepository.save(user);
+        try {
+            User save = userJpaRepository.save(user);
+            return save;
+        } catch (DataIntegrityViolationException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof ConstraintViolationException) {
+                ConstraintViolationException.ConstraintKind kind = ((ConstraintViolationException) cause).getKind();
+                if (kind == ConstraintViolationException.ConstraintKind.UNIQUE) {
+                    String constraintName = ((ConstraintViolationException) cause).getConstraintName();
+                    if (constraintName != null && constraintName.endsWith("email")) {
+                        throw new BusinessException(ErrorCode.EXISTS_EMAIL);
+                    } else if (constraintName != null && constraintName.endsWith("nickname")) {
+                        throw new BusinessException(ErrorCode.EXISTS_NICKNAME);
+                    }
+                } else {
+                    throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
+                }
+
+            }
+            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

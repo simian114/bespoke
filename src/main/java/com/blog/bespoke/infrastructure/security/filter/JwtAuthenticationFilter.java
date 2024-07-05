@@ -9,6 +9,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -27,7 +29,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        Optional<String> accessToken = getAccessToken(request);
+        Optional<String> accessToken = getAccessTokenFromCookie(request);
+        if (accessToken.isEmpty()) {
+            accessToken = getAccessToken(request);
+        }
         if (accessToken.isEmpty() || !isValidAccessTokenAndSetRequestContext(accessToken.get(), request)) {
             filterChain.doFilter(request, response);
             return;
@@ -41,6 +46,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.setContext(context);
         filterChain.doFilter(request, response);
     }
+
+    private Optional<String> getAccessTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return Optional.empty();
+        }
+        Cookie accessTokenCookie = Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().equals("access_token"))
+                .findAny()
+                .orElse(null);
+        if (accessTokenCookie == null) {
+            return Optional.empty();
+        }
+        String accessToken = accessTokenCookie.getValue();
+        if (accessToken.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(accessToken);
+    }
+
 
     private Optional<String> getAccessToken(HttpServletRequest request) {
         String authorization = request.getHeader(JwtService.AUTH_HEADER);

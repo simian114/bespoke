@@ -18,6 +18,8 @@ public enum ErrorCode {
     USER_HAS_BLOCKED(HttpStatus.UNAUTHORIZED, "정지된 계정입니다."),
     USER_INACTIVE(HttpStatus.UNAUTHORIZED, "이메일 인증이 완료되지 않은 계정입니다."),
     USER_FAIL_AUTHENTICATION(HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호를 확인해주세요."),
+    EXISTS_EMAIL(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
+    EXISTS_NICKNAME(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다."),
 
     // token
     TOKEN_HAS_EXPIRED(HttpStatus.BAD_REQUEST, "토큰이 만료되었습니다."),
