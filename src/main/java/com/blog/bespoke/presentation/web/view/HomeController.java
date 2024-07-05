@@ -11,8 +11,6 @@ public class HomeController {
     @GetMapping({"", "/", "/home"})
     public String home(@LoginUser User currentUser, Model model) {
         // currentUser
-        System.out.println(currentUser);
-        model.addAttribute("user", currentUser);
         return "page/home/home";
     }
     // 공통으로 model 에 user 는 넣기
