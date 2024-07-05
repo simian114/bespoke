@@ -1,9 +1,9 @@
-### email 로그인
+### user 로그인
 POST localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "email@gmail.com",
+  "email": "user@gmail.com",
   "password": "password"
 }
 
@@ -12,16 +12,16 @@ Content-Type: application/json
     client.global.set("refresh_token", response.body.data.refreshToken);
 %}
 
-### foobar 로그인
+### user2 로그인
 POST localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "foobar@gmail.com",
+  "email": "user2@gmail.com",
   "password": "password"
 }
 
-> {% client.global.set("foobar_access_token", response.body.data.accessToken) %}
+> {% client.global.set("access_token2", response.body.data.accessToken) %}
 
 ### email 계정으로 게시글 생성 (draft)
 POST localhost:8080/api/posts
@@ -50,29 +50,34 @@ Content-Type: application/json
   "status": "PUBLISHED"
 }
 
-### foobar 계정으로 좋아요 -> 성공해야함.
+### user2 계정으로 좋아요 -> 성공해야함.
 POST localhost:8080/api/posts/{{post_id}}/like
-Authorization: Bearer {{foobar_access_token}}
+Authorization: Bearer {{access_token2}}
 
-### foobar 계정으로 다시 좋아요 -> 400 예외. 이미 좋아요 함
+### user2 계정으로 좋아요 -> 성공해야함.
+GET localhost:8080/api/posts/{{post_id}}
+Authorization: Bearer {{access_token2}}
+
+
+### user2 계정으로 다시 좋아요 -> 400 예외. 이미 좋아요 함
 POST localhost:8080/api/posts/{{post_id}}/like
-Authorization: Bearer {{foobar_access_token}}
+Authorization: Bearer {{access_token2}}
 
-### foobar 계정으로 좋아요 취소 -> 성공
+### user2 계정으로 좋아요 취소 -> 성공
 DELETE localhost:8080/api/posts/{{post_id}}/like
-Authorization: Bearer {{foobar_access_token}}
+Authorization: Bearer {{access_token2}}
 
-### foobar 계정으로 다시 좋아요 취소 -> 실패. 400 또는 404 예외 발생해야함
+### user2 계정으로 다시 좋아요 취소 -> 실패. 400 또는 404 예외 발생해야함
 DELETE localhost:8080/api/posts/{{post_id}}/like
-Authorization: Bearer {{foobar_access_token}}
+Authorization: Bearer {{access_token2}}
 
-### email 계정으로 게시글 삭제
+### user 계정으로 게시글 삭제
 DELETE localhost:8080/api/posts/{{post_id}}
 Authorization: Bearer {{access_token}}
 
-### foobar 계정으로 삭제 된 게시글 좋아요 -> 실패 400 예외 발생해야함
+### user2 계정으로 삭제 된 게시글 좋아요 -> 실패 400 예외 발생해야함
 POST localhost:8080/api/posts/{{post_id}}/like
-Authorization: Bearer {{foobar_access_token}}
+Authorization: Bearer {{access_token2}}
 
 ### 조회
 GET localhost:8080/api/posts/{{post_id}}
