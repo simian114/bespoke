@@ -85,8 +85,10 @@ public class SecurityConfig {
                 // 실제 서비스
                 .requestMatchers("/login").permitAll()
                 .requestMatchers("/signup").permitAll()
-                .requestMatchers("/").permitAll()
                 .requestMatchers(PathRequest.toStaticResources().at(Set.of(StaticResourceLocation.CSS, StaticResourceLocation.JAVA_SCRIPT))).permitAll()
+                .requestMatchers("/hx/home/posts").permitAll()
+                .requestMatchers("/blog/{nickname}/{postId}").permitAll()
+                .requestMatchers("/").permitAll()
                 .anyRequest().authenticated()
         );
 

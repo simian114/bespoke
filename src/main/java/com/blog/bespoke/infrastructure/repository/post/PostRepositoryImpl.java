@@ -222,7 +222,8 @@ public class PostRepositoryImpl implements PostRepository {
         } else if (orderBy.equals(PostSearchCond.OrderBy.VIEW)) {
             query.orderBy(post.postCountInfo.viewCount.desc());
         }
-        query.orderBy(post.createdAt.desc());
+        // NOTE: 기본으로 ID 정렬
+        query.orderBy(post.id.desc());
     }
 
 

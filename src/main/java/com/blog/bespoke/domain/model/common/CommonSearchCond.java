@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CommonSearchCond {
-    protected Integer pageSize = 10;
+    protected Integer pageSize = 20;
 
     // protected Long cursor;
     protected Integer page = 0;
