@@ -6,7 +6,7 @@
 <header class="container">
     <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-            <a class="navbar-item" href="/" hx-boost="true">
+            <a class="navbar-item" href="/static" hx-boost="true">
                 <svg width="205.8" height="36.2" viewBox="0 0 205.8 36.2" xmlns="http://www.w3.org/2000/svg">
                     <g id="svgGroup" stroke-linecap="round" fill-rule="evenodd" font-size="9pt" stroke="#000"
                        stroke-width="0.25mm" fill="#000" style="stroke:#000;stroke-width:0.25mm;fill:#000">
@@ -60,8 +60,8 @@
             <div class="navbar-end">
                 <div class="navbar-item">
                     <!--                    thymeleaf 조건-->
-                    <div sec:authorize="isAuthenticated()" class="buttons">
-                        <a class="button is-primary" href="/">
+                    <div th:if="${me != null}" class="buttons">
+                        <a class="button is-primary" th:href="@{/blog/{nickname}(nickname=${me.nickname})}">
                             <strong>My Blog</strong>
                         </a>
                         <!--    TODO: htmx 로 수정하고 싶다. -->
