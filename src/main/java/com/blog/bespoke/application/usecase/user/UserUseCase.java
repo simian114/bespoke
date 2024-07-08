@@ -74,4 +74,8 @@ public class UserUseCase {
         // 동시에 토큰을 삭제한다.
         return user;
     }
+
+    public User getUserByNickname(String nickname) {
+        return userRepository.getByNickname(nickname);
+    }
 }
