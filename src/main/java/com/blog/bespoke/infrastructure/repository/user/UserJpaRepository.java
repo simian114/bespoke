@@ -11,6 +11,8 @@ import java.util.Optional;
 public interface UserJpaRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
+    Optional<User> findByNickname(String nickname);
+
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.followings f WHERE f.followerId = :userId AND f.followingId = :followingId")
     Optional<User> findUserWithFollowByIdAndFollowingId(@Param("userId") Long userId, @Param("followingId") Long followingId);
 

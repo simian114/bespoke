@@ -8,6 +8,7 @@ import com.blog.bespoke.domain.model.post.PostSearchCond;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.post.PostRepository;
 import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
@@ -119,11 +120,14 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public Page<Post> search(PostSearchCond cond) {
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getPageSize());
+
+        // query(post, cond)
+        // count = query(WildCard.ALL, cond).fetch().get(0) // left join 제외하고
         JPAQuery<Post> jpaQuery = query(cond)
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
+                .limit(pageable.getPageSize())
+                .orderBy(createOrderSpecifier(cond.getOrderBy()), post.id.desc());
 
-        applyOrderBy(jpaQuery, cond.getOrderBy());
         List<Post> posts = jpaQuery.fetch();
 
         Long totalSize = countQuery(cond).fetch().get(0);
@@ -134,7 +138,8 @@ public class PostRepositoryImpl implements PostRepository {
 
     // TODO: 이렇게 조인해오면 author 의 연관관계 중 eager 를 가져옴. 근데 난 그거 싫은데..
     private JPAQuery<Post> query(PostSearchCond cond) {
-        JPAQuery<Post> query = queryFactory.select(post)
+        JPAQuery<Post> query = queryFactory
+//        JPAQuery<Post> query = queryFactory.select(post)
                 .select(Projections.fields(
                                 Post.class,
                                 getFields(cond).toArray(new Expression<?>[0])
@@ -149,7 +154,8 @@ public class PostRepositoryImpl implements PostRepository {
         return query
                 .where(
                         statusEq(cond),
-                        authorIdEq(cond)
+                        authorIdEq(cond),
+                        nicknameEq(cond)
                 );
     }
 
@@ -197,33 +203,27 @@ public class PostRepositoryImpl implements PostRepository {
         applyLike(query, cond);
         applyFollow(query, cond);
 
-
         return query
                 .where(
                         statusEq(cond),
-                        authorIdEq(cond)
+                        authorIdEq(cond),
+                        nicknameEq(cond)
                 );
     }
 
     /**
-     * - 좋아요순
      * - 최신순. 기본으로 최신순
+     * - 좋아요순
      * - 조회순
      * - 댓글순
      */
-    private void applyOrderBy(JPAQuery<Post> query, PostSearchCond.OrderBy orderBy) {
-        if (orderBy.equals(PostSearchCond.OrderBy.LATEST)) {
-            query.orderBy(post.createdAt.desc());
-        } else if (orderBy.equals(PostSearchCond.OrderBy.COMMENT)) {
-            log.info("comment 수 를 이용한 정렬 미구현.");
-            query.orderBy(post.postCountInfo.commentCount.desc());
-        } else if (orderBy.equals(PostSearchCond.OrderBy.LIKE)) {
-            query.orderBy(post.postCountInfo.likeCount.desc());
-        } else if (orderBy.equals(PostSearchCond.OrderBy.VIEW)) {
-            query.orderBy(post.postCountInfo.viewCount.desc());
-        }
-        // NOTE: 기본으로 ID 정렬
-        query.orderBy(post.id.desc());
+    private OrderSpecifier<?> createOrderSpecifier(PostSearchCond.OrderBy orderBy) {
+        return switch (orderBy) {
+            case LATEST -> post.createdAt.desc();
+            case COMMENT -> post.postCountInfo.commentCount.desc();
+            case LIKE -> post.postCountInfo.likeCount.desc();
+            case VIEW -> post.postCountInfo.viewCount.desc();
+        };
     }
 
 
@@ -257,6 +257,13 @@ public class PostRepositoryImpl implements PostRepository {
             return null;
         }
         return post.author.id.eq(cond.getAuthorId());
+    }
+
+    private BooleanExpression nicknameEq(PostSearchCond cond) {
+        if (cond == null || cond.getNickname() == null || cond.getNickname().isEmpty()) {
+            return null;
+        }
+        return post.author.nickname.eq(cond.getNickname());
     }
 
     private BooleanExpression statusEq(PostSearchCond cond) {

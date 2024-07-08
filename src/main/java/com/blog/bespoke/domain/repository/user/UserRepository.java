@@ -22,6 +22,10 @@ public interface UserRepository extends UserCountInfoRepository {
 
     User getByEmail(String email);
 
+    Optional<User> findByNickname(String nickname);
+
+    User getByNickname(String nickname);
+
     void deleteById(Long id);
 
     void delete(User user);
@@ -43,4 +47,5 @@ public interface UserRepository extends UserCountInfoRepository {
     Optional<Role> findRoleByCode(Role.Code code);
 
     Role getRoleByCode(Role.Code code);
+
 }

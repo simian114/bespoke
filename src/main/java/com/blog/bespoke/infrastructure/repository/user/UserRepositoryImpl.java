@@ -94,6 +94,16 @@ public class UserRepositoryImpl implements UserRepository {
                 .orElseThrow(() -> new RuntimeException(email + " 인 user 없음"));
     }
 
+    @Override
+    public Optional<User> findByNickname(String nickname) {
+        return userJpaRepository.findByNickname(nickname);
+    }
+
+    @Override
+    public User getByNickname(String nickname) {
+        return findByNickname(nickname).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    }
+
     // role
     @Override
     public Optional<Role> findRoleByCode(Role.Code code) {

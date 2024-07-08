@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 public class PostSearchCond extends CommonSearchCond {
     private Long authorId;
+    private String nickname; // author nickname
     private Post.Status status = Post.Status.PUBLISHED;
     /**
      * userId: post 의 postLike 에 주어진 userId 가 좋아요 postLikes 에 postLike 하나가 담김
