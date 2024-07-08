@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+
+>
+<div class="block" th:fragment="orderBy">
+    <!--           TODO: 정렬은 오른쪽 끝에 배치 -->
+    <!--    TODO: 선택된 값 헤더에 표시 및 active 표현.-->
+    <!--    TODO: 드랍다운 공통화가 필요할듯-->
+    <div class="dropdown is-hoverable">
+        <div class="dropdown-trigger">
+            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                <span th:class="dropdown-header-text">Dropdown button</span>
+                <span class="icon is-small"><i class="fas fa-angle-down" aria-hidden="true"></i></span>
+            </button>
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu" role="menu">
+            <div class="dropdown-content">
+                <a href="?orderBy=VIEW" hx-boost="true" class="dropdown-item">조회수순</a>
+                <a href="?orderBy=LATEST" hx-boost="true" class="dropdown-item">최신순</a>
+                <a href="?orderBy=LIKE" hx-boost="true" class="dropdown-item">좋아요순</a>
+                <a href="?orderBy=COMMENT" hx-boost="true" class="dropdown-item">댓글순</a>
+            </div>
+        </div>
+    </div>
+</div>
+</html>
