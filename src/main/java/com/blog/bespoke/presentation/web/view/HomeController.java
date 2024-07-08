@@ -34,7 +34,8 @@ public class HomeController {
      * TODO: spring security 의 http.headers().cacheControl 에 대해 알아봐야함
      */
     @GetMapping({"", "/",})
-    public String home(HttpServletRequest request, HttpServletResponse response) {
+    public String home(HttpServletRequest request, HttpServletResponse response, @LoginUser User currentUser, Model model) {
+        model.addAttribute("me", currentUser);
         // TODO: 캐싱
 //        response.setHeader("Cache-Control", "max-age=3600, must-revalidate, no-transform");
 //        response.setHeader("Pragma", "");
@@ -69,6 +70,7 @@ public class HomeController {
         model.addAttribute("hasNextPage", postResponseDtos.hasNext());
         model.addAttribute("posts", contents);
         model.addAttribute("page", postResponseDtos.getPageable().getPageNumber());
+        model.addAttribute("me", currentUser);
 
         return "page/home/home :: .post-list";
     }
