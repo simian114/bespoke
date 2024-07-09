@@ -58,6 +58,9 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
     testImplementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
 
+    // aws s3
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.757'
+
     // lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

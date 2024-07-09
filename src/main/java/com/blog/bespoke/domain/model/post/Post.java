@@ -42,12 +42,19 @@ public class Post extends TimeStamp {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments;
 
-    // TODO: s3 images
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PostLike> postLikes;
 
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private PostCountInfo postCountInfo;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cover_image_id")
+    private S3PostImage coverImage;
+
+    // TODO: s3 images
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<S3PostImage> images;
 
     // --- transient
     @Transient

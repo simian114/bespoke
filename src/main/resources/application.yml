@@ -4,6 +4,12 @@ host:
   url: ${HOST_URL}
 rabbitmq.routing-key.mail: mail
 rabbitmq.routing-key.common: common
+aws:
+  s3:
+    access-key: ${AWS_S3_ACCESS_KEY}
+    secret-key: ${AWS_S3_SECRET_KEY}
+    bucket: ${AWS_S3_BUCKET}
+    bucket-url: ${AWS_S3_BUCKET_URL}
 spring:
   application:
     name: bespoke

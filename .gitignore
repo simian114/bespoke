@@ -42,3 +42,6 @@ out/
 
 ### node ###
 node_modules/*
+
+### credentials ###
+credentials/*
