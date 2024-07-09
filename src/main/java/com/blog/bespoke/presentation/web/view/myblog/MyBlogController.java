@@ -1,19 +1,24 @@
 package com.blog.bespoke.presentation.web.view.myblog;
 
+import com.blog.bespoke.application.dto.request.PostCreateRequestDto;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
 import com.blog.bespoke.application.usecase.post.PostUseCase;
 import com.blog.bespoke.application.usecase.user.UserUseCase;
+import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.post.PostSearchCond;
+import com.blog.bespoke.domain.model.post.PostStatusCmd;
+import com.blog.bespoke.domain.model.post.PostUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxRequest;
+import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RequiredArgsConstructor
@@ -70,6 +75,7 @@ public class MyBlogController {
         PostSearchCond postSearchCond = new PostSearchCond();
         postSearchCond.setPage(page);
         postSearchCond.setPageSize(20);
+        postSearchCond.setManage(true);
         postSearchCond.setNickname(nickname);
 
         Page<PostResponseDto> postPage = postUseCase.postSearch(postSearchCond, currentUser);
@@ -109,6 +115,115 @@ public class MyBlogController {
         Page<PostResponseDto> postPage = postUseCase.postSearch(postSearchCond, currentUser);
         return "";
     }
+
+    // NOTE: 레이아웃이 있어야함
+    @GetMapping("/blog/{nickname}/manage/posts/new")
+    public String createPostPage(@PathVariable("nickname") String nickname,
+                                 @LoginUser User currentUser,
+                                 Model model) {
+        User me = userUseCase.getUserByNickname(nickname);
+        if (!isOwner(nickname, currentUser)) {
+            return "redirect:/";
+        }
+        model.addAttribute("post", Post.builder().content("helloworld").build());
+        model.addAttribute("nickname", nickname);
+        model.addAttribute("owner", me);
+//            th:action="@{/blog/{nickname}/manage/posts(nickname=${nickname})}">
+
+        model.addAttribute("action", String.format("/blog/%s/manage/posts", nickname));
+        return "page/myblog/postEditor";
+    }
+
+    // NOTE: hx?
+    @PostMapping("/blog/{nickname}/manage/posts")
+    public String createPost(@PathVariable("nickname") String nickname,
+                             @LoginUser User currentUser,
+                             Model model,
+                             RedirectAttributes redirectAttributes,
+                             @Valid @ModelAttribute(name = "post") PostCreateRequestDto requestDto,
+                             BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("nickname", nickname);
+            return "page/myblog/postEditor";
+        }
+
+        PostResponseDto postDto = postUseCase.write(requestDto, currentUser);
+        redirectAttributes.addFlashAttribute("success", "post created");
+
+        return String.format("redirect:/blog/%s/manage/posts", nickname);
+    }
+
+    @HxRequest
+    @PatchMapping("/blog/{nickname}/manage/posts/{postId}/status/{status}")
+    public void changeStatus(@PathVariable("nickname") String nickname,
+                             @PathVariable("postId") Long postId,
+                             @PathVariable("status") Post.Status status,
+                             @LoginUser User currentUser) {
+
+        // TODO: 하나 집어서 수정할 수 있게 변경
+        PostStatusCmd cmd = new PostStatusCmd();
+        cmd.setStatus(status);
+        postUseCase.changeStatus(postId, cmd, currentUser);
+    }
+
+    @HxRequest
+    @DeleteMapping("/blog/{nickname}/manage/posts/{postId}")
+    @ResponseBody
+    public String deletePost(@PathVariable("nickname") String nickname,
+                             @PathVariable("postId") Long postId,
+                             @LoginUser User currentUser) {
+        /*
+         * 1. post 찾기
+         * 2. post 삭제
+         * 3. 해당 타겟 delete
+         */
+        return "";
+    }
+
+
+    /**
+     * 수정페이지
+     */
+    @GetMapping("/blog/{nickname}/manage/posts/{postId}/edit")
+    public String editPostPage(@PathVariable("nickname") String nickname,
+                               @PathVariable("postId") Long postId,
+                               @LoginUser User currentUser,
+                               RedirectAttributes redirectAttributes,
+                               Model model) {
+        if (!isOwner(nickname, currentUser)) {
+            redirectAttributes.addFlashAttribute("error", "권한없음");
+            return "redirect:/";
+        }
+        User me = userUseCase.getUserByNickname(nickname);
+        Post post = postUseCase.getPostById(postId);
+        model.addAttribute("post", post);
+        model.addAttribute("nickname", nickname);
+        model.addAttribute("owner", me);
+        model.addAttribute("action", String.format("/blog/%s/manage/posts/%d", nickname, postId));
+        return "page/myblog/postEditor";
+    }
+
+    // 수정 api
+    @PostMapping("/blog/{nickname}/manage/posts/{postId}")
+    public String updatePost(@PathVariable("nickname") String nickname,
+                             @PathVariable("postId") Long postId,
+                             @LoginUser User currentUser,
+                             @Valid @ModelAttribute("post") PostUpdateCmd cmd,
+                             BindingResult bindingResult,
+                             RedirectAttributes redirectAttributes,
+                             Model model) {
+        if (!isOwner(nickname, currentUser)) {
+            redirectAttributes.addFlashAttribute("error", "권한없음");
+            return "redirect:/";
+        }
+        if (bindingResult.hasErrors()) {
+            return "page/myblog/postEditor";
+        }
+        // TODO: update
+        postUseCase.updatePost(postId, cmd, currentUser);
+        return String.format("redirect:/blog/%s/manage/posts", nickname);
+    }
+
 
     @GetMapping("/blog/{nickname}/manage/categories")
     public String categoryManage() {

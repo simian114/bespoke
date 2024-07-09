@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/myblog/postEditorLayout}"
+      layout:fragment="content"
+>
+<head>
+    <title>게시글 작성 | 수정</title>
+</head>
+<body>
+<section>
+
+</section>
+<section class="section">
+<!--  th:action 의 경로를 서버에서 받아오고 싶다.  -->
+    <!--        <form class="container" th:action="@{/blog/{nickname}/manage/posts(nickname=${nickname})}" th:object="${post}" method="post" style="max-width: 768px" >-->
+    <form class="container" th:action="${action}" th:object="${post}" method="post" style="max-width: 768px" >
+        <div class="container">
+            <div class="field">
+                <label class="label">제목</label>
+                <div class="control">
+                    <input class="input" th:field="*{title}" type="text" placeholder="Text input">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">요약</label>
+                <div class="control has-icons-left has-icons-right">
+                    <input th:field="*{description}" class="input is-success" type="text" placeholder="요약된 내용을 적어주세요"
+                           value="bulma">
+                </div>
+            </div>
+
+            <!--  TODO: category 선택   -->
+        </div>
+
+        <div class="field">
+            <label class="label">내용</label>
+            <div class="control has-icons-left has-icons-right">
+                <textarea th:field="*{content}" id="editor" class="textarea is-success" type="text"
+                          placeholder="내용을 적어주세요"></textarea>
+            </div>
+        </div>
+        <div class="field is-grouped">
+            <div class="control">
+                <button class="button is-link">Submit</button>
+            </div>
+            <div class="control">
+                <button class="button is-link is-light">Cancel</button>
+            </div>
+        </div>
+        <div class="content" th:utext="${post.content}">
+
+        </div>
+    </form>
+
+</section>
+<script>
+    // TODO: non-premium plugin setup
+    // LINK: https://www.tiny.cloud/docs/tinymce/latest/full-featured-open-source-demo
+    tinymce.init({
+        selector: 'textarea',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+        content_css: ['/css/application.css'],
+        body_class: 'content',
+        content_style: 'body { margin: 16px; }',
+        height: 600,
+        resize:  true
+    });
+</script>
+</body>
+</html>
