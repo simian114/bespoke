@@ -139,7 +139,6 @@ public class PostRepositoryImpl implements PostRepository {
     // TODO: 이렇게 조인해오면 author 의 연관관계 중 eager 를 가져옴. 근데 난 그거 싫은데..
     private JPAQuery<Post> query(PostSearchCond cond) {
         JPAQuery<Post> query = queryFactory
-//        JPAQuery<Post> query = queryFactory.select(post)
                 .select(Projections.fields(
                                 Post.class,
                                 getFields(cond).toArray(new Expression<?>[0])
@@ -252,6 +251,10 @@ public class PostRepositoryImpl implements PostRepository {
         }
     }
 
+
+    /**
+     * nickname 과 authorId 가 둘 다 존재하면 안됨. 둘 중 하나만 존재해야한다. PostSearchCond 에 로직 작성할 것.
+     */
     private BooleanExpression authorIdEq(PostSearchCond cond) {
         if (cond == null || cond.getAuthorId() == null) {
             return null;
@@ -266,7 +269,14 @@ public class PostRepositoryImpl implements PostRepository {
         return post.author.nickname.eq(cond.getNickname());
     }
 
+    /**
+     * manage 가 false 인 경우 status 의 기본값은 PUBLISHED 로 세팅된다.
+     * manage 가 true 인 경우 status 조건은 따지지 않는다.
+     */
     private BooleanExpression statusEq(PostSearchCond cond) {
+        if (cond != null && cond.getManage() != null && cond.getManage() && cond.getStatus() == null) {
+            return null;
+        }
         if (cond == null || cond.getStatus() == null) {
             return post.status.eq(Post.Status.PUBLISHED);
         }

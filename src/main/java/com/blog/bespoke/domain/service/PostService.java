@@ -82,4 +82,8 @@ public class PostService {
         return (toBe != Post.Status.BLOCKED || user.isAdmin())
                 && (!post.isBlocked() || user.isAdmin());
     }
+
+    public Post getById(Long postId) {
+        return postRepository.getById(postId);
+    }
 }

@@ -44,6 +44,10 @@ public class PostUseCase {
         return PostResponseDto.from(post);
     }
 
+    public Post getPostById(Long postId) {
+        return postService.getById(postId);
+    }
+
     @Transactional
     public Page<PostResponseDto> postSearch(PostSearchCond cond, User currentUser) {
         if (!postSearchService.canSearch(cond, currentUser)) {
