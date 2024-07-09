@@ -166,12 +166,22 @@ public class MyBlogController {
         postUseCase.changeStatus(postId, cmd, currentUser);
     }
 
+    /**
+     * 삭제 실패한 경우 처리해야함.
+     * 삭제 된 게시글은 리스트에 보이면 안됨 -> search 에서 삭제 된 게시글은 알아서 걸러져야 한다.
+     */
     @HxRequest
     @DeleteMapping("/blog/{nickname}/manage/posts/{postId}")
     @ResponseBody
     public String deletePost(@PathVariable("nickname") String nickname,
                              @PathVariable("postId") Long postId,
                              @LoginUser User currentUser) {
+        try {
+            postUseCase.deletePost(postId, currentUser);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         /*
          * 1. post 찾기
          * 2. post 삭제
