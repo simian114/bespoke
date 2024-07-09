@@ -10,6 +10,8 @@ create table post
 
     author_id   bigint       not null,
 
+    cover_image_id bigint,
+
     # tags varchar(255), # ,로 구분되는 문자열.
 
     # TODO: category_id
