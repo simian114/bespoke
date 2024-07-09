@@ -230,7 +230,7 @@ public class PostRepositoryImpl implements PostRepository {
     /**
      * 삭제 된 게시글은 걸러서
      */
-    private  BooleanExpression filterDeletePost() {
+    private BooleanExpression filterDeletePost() {
         return post.deletedAt.isNull();
     }
 
