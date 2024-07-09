@@ -154,7 +154,8 @@ public class PostRepositoryImpl implements PostRepository {
                 .where(
                         statusEq(cond),
                         authorIdEq(cond),
-                        nicknameEq(cond)
+                        nicknameEq(cond),
+                        filterDeletePost()
                 );
     }
 
@@ -206,7 +207,8 @@ public class PostRepositoryImpl implements PostRepository {
                 .where(
                         statusEq(cond),
                         authorIdEq(cond),
-                        nicknameEq(cond)
+                        nicknameEq(cond),
+                        filterDeletePost()
                 );
     }
 
@@ -223,6 +225,13 @@ public class PostRepositoryImpl implements PostRepository {
             case LIKE -> post.postCountInfo.likeCount.desc();
             case VIEW -> post.postCountInfo.viewCount.desc();
         };
+    }
+
+    /**
+     * 삭제 된 게시글은 걸러서
+     */
+    private  BooleanExpression filterDeletePost() {
+        return post.deletedAt.isNull();
     }
 
 
