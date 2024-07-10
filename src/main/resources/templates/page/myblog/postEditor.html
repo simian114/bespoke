@@ -15,29 +15,45 @@
 <section class="section">
     <form class="container" th:action="${action}" th:object="${post}" method="post" style="max-width: 768px">
         <div class="container">
-            <div class="field">
-                <label class="label">제목</label>
-                <div class="control">
-                    <input class="input" th:field="*{title}" type="text" placeholder="Text input">
-                </div>
+            <!--  TODO: category 선택  -->
+            <!-- NOTE: 마음에 들지 않음 -->
+            <div layout:replace="~{fragments/form/layout-input :: input('title', 'Title', 'text', 'Title...', true)}">
+                <script layout:fragment="script">
+                    me().on("input", ev => {
+                        const el = me(ev).querySelector("input");
+                        const value = el?.value;
+                        if (value.length === 0 || value.length > 50) {
+                            el.classList.add("is-danger");
+                            el.classList.remove("is-success");
+                        } else {
+                            el.classList.remove("is-danger");
+                            el.classList.add("is-success");
+                        }
+                    })
+                </script>
             </div>
 
-            <div class="field">
-                <label class="label">요약</label>
-                <div class="control has-icons-left has-icons-right">
-                    <input th:field="*{description}" class="input is-success" type="text" placeholder="요약된 내용을 적어주세요"
-                           value="bulma">
-                </div>
+            <div layout:replace="~{fragments/form/layout-input :: input('description', 'Description', 'text', 'Description.. this will be used for seo and preview', false)}">
+                <script layout:fragment="script">
+                    me().on("input", ev => {
+                        const el = me(ev).querySelector("input");
+                        const value = el?.value;
+                        if (value.length === 0 || value.length > 200) {
+                            el.classList.add("is-danger");
+                            el.classList.remove("is-success");
+                        } else {
+                            el.classList.remove("is-danger");
+                            el.classList.add("is-success");
+                        }
+                    })
+                </script>
             </div>
-
-            <!--  TODO: category 선택   -->
         </div>
 
         <div class="field">
-            <label class="label">내용</label>
+            <label class="label">Content</label>
             <div class="control has-icons-left has-icons-right">
-                <textarea th:field="*{content}" id="editor" class="textarea is-success" type="text"
-                          placeholder="내용을 적어주세요"></textarea>
+                <textarea th:field="*{content}" id="editor" class="textarea is-success" type="text"></textarea>
             </div>
         </div>
         <div class="field is-grouped">
@@ -66,7 +82,7 @@
 
         xhr.onload = () => {
             if (xhr.status === 403) {
-                reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
+                reject({message: 'HTTP Error: ' + xhr.status, remove: true});
                 return;
             }
 
@@ -108,6 +124,7 @@
         resize: true,
         images_upload_handler: imagesUploadHandler
     });
+
 
 </script>
 </body>

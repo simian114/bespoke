@@ -88,6 +88,8 @@ public class SecurityConfig {
                 .requestMatchers(PathRequest.toStaticResources().at(Set.of(StaticResourceLocation.CSS, StaticResourceLocation.JAVA_SCRIPT))).permitAll()
                 .requestMatchers("/hx/home/posts").permitAll()
                 .requestMatchers("/blog/{nickname}/{postId}").permitAll()
+                .requestMatchers("/blog/{nickname}").permitAll()
+                .requestMatchers("/signup/success").anonymous()
                 .requestMatchers("/").permitAll()
                 .anyRequest().authenticated()
         );

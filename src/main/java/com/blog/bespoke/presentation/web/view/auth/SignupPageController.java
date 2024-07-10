@@ -46,13 +46,17 @@ public class SignupPageController {
                          RedirectAttributes redirectAttributes
     ) {
         if (bindingResult.hasErrors()) {
-            bindingResult.addError(new FieldError("user", "email", "이메일 중복됨"));
             return "/page/signup/signup";
         }
         try {
             userUseCase.signup(requestDto);
         } catch (BusinessException e) {
+            /*
+             * form 전체에 적용되는 에러는 ObjectError 를 사용하고
+             * 필드 하나에 적용되는 에러는 FieldError 를 사용한다.
+             */
             // NOTE: global error - 이메일 중복됨 / nickname 중복됨
+            // bindingResult.addError(new FieldError("user", "email", "이메일 중복됨"));
             bindingResult.addError(new ObjectError("user", e.getMessage()));
             return "/page/signup/signup";
         }
