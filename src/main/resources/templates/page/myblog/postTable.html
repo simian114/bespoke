@@ -41,7 +41,7 @@
                     <th>액션</th>
                 </tr>
                 </tfoot>
-                <tbody hx-confirm="Are you sure?" hx-target="closest tr" hx-swap="outerHTML swap:0.5s">
+                <tbody hx-swap="outerHTML swap:0.5s">
                 <!-- tbody -->
                 <th:block th:each="post: ${posts}">
                     <!--                    delete 된 post 라면 ...-->
@@ -54,7 +54,7 @@
                             <div class="buttons are-small">
                                 <a th:href="@{/blog/{nickname}/manage/posts/{postId}/edit(nickname=${nickname},postId=${post.id})}"
                                    class="button">edit</a>
-                                <button class="button is-danger"
+                                <button class="button is-danger"  hx-confirm="Are you sure?" hx-target="closest tr"
                                         hx:delete="@{/blog/{nickname}/manage/posts/{postId}(nickname=${nickname},postId=${post.id})}">delete</button>
                                 <th:block th:if="${post.status.name() == 'DRAFT'}">
                                     <button hx:patch="@{/blog/{nickname}/manage/posts/{postId}/status/PUBLISHED(nickname=${nickname},postId=${post.id})}"

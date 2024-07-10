@@ -14,24 +14,8 @@
 <section class="section">
     <form action="/login" th:action th:object="${user}" method="post">
         <div class="container">
-            <div class="field">
-                <label class="label" for="email">Email</label>
-                <div class="control has-icons-left has-icons-right">
-                    <input class="input" th:errorclass="is-danger" type="email" id="email" th:field="*{email}"
-                           placeholder="email@gmail.com">
-                    <span class="icon is-small is-left"><i class="fas fa-envelope"></i></span>
-                    <span class="icon is-small is-right"><i class="fas fa-exclamation-triangle"></i></span>
-                </div>
-                <p class="help is-danger" th:errors="*{email}"></p>
-            </div>
-            <div class="field">
-                <label class="label" for="password">Password</label>
-                <div class="control">
-                    <input class="input" th:errorclass="is-danger" id="password" type="password"
-                           th:field="${user.password}"/>
-                </div>
-                <p class="help is-danger" th:errors="*{password}"></p>
-            </div>
+            <div layout:replace="~{fragments/form/layout-input :: input('email', 'Email', 'email', 'email@gmail.com', true)}"></div>
+            <div layout:replace="~{fragments/form/layout-input :: input('password', 'Password', 'password', '')}"></div>
             <div class="field">
                 <div class="control">
                     <label class="checkbox">
@@ -40,7 +24,6 @@
                     </label>
                 </div>
             </div>
-            <!--            message 같은 컴포넌트 사용하면 좋을듯-->
             <div>
                 <th:block th:if="${#fields.hasGlobalErrors()}">
                     <p class="help is-danger" th:each="err :${#fields.globalErrors()}" th:text="${err}"></p>

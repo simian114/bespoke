@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<body>
+<!-- NOTE: fragment 를 사용하면 뭔가 조악함 특히 script 를 넣는게 별로임 -->
+<th:block th:fragment="form-input(field, label, inputType, placeholder, required, script)">
+    <div class="field" th:with="fieldName=${field}">
+        <label class="label" th:text="${label}">label</label>
+        <div class="control">
+            <!--  TODO: icon  -->
+            <input class="input" th:required="${required}" th:field="*{__${fieldName}__}" th:type="${inputType}" th:placeholder="${placeholder}">
+            <th:block th:if="${script != null}">
+                <script th:replace="${script}"></script>
+            </th:block>
+        </div>
+        <p class="help is-danger" th:errors="*{__${fieldName}__}"></p>
+    </div>
+</th:block>
+
+
+</body>
+</html>

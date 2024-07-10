@@ -128,7 +128,6 @@ public class MyBlogController {
         model.addAttribute("post", Post.builder().content("helloworld").build());
         model.addAttribute("nickname", nickname);
         model.addAttribute("owner", me);
-//            th:action="@{/blog/{nickname}/manage/posts(nickname=${nickname})}">
 
         model.addAttribute("action", String.format("/blog/%s/manage/posts", nickname));
         return "page/myblog/postEditor";
@@ -142,8 +141,10 @@ public class MyBlogController {
                              RedirectAttributes redirectAttributes,
                              @Valid @ModelAttribute(name = "post") PostCreateRequestDto requestDto,
                              BindingResult bindingResult) {
+        User me = userUseCase.getUserByNickname(nickname);
+        model.addAttribute("owner", me);
+        model.addAttribute("nickname", nickname);
         if (bindingResult.hasErrors()) {
-            model.addAttribute("nickname", nickname);
             return "page/myblog/postEditor";
         }
 
