@@ -76,7 +76,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(requests -> requests
                 // 과거 개발용 api
                 .requestMatchers("/api/admin/**").hasRole(Role.Code.ADMIN.name())
-                .requestMatchers("/api/user/signup").permitAll()
+                .requestMatchers("/api/user").permitAll()
                 .requestMatchers("/api/auth/login").permitAll()
                 .requestMatchers("/api/auth/reissue").permitAll()
                 .requestMatchers("/api/auth/test").authenticated()

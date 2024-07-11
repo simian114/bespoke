@@ -51,5 +51,6 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
     @Query("UPDATE UserCountInfo u SET u.likePostCount = u.likePostCount - 1 WHERE u.userId = :userId")
     void decrementLikePostCount(@Param("userId") Long userId);
 
-
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.categories c WHERE u.id = :userId ORDER BY c.priority desc")
+    Optional<User> findWithCategories(Long userId);
 }

@@ -1,5 +1,6 @@
 package com.blog.bespoke.domain.model.user;
 
+import com.blog.bespoke.domain.model.category.Category;
 import com.blog.bespoke.domain.model.common.TimeStamp;
 import com.blog.bespoke.domain.model.follow.Follow;
 import com.blog.bespoke.domain.model.post.Post;
@@ -12,12 +13,10 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @DynamicInsert
 @DynamicUpdate
@@ -37,6 +36,10 @@ public class User extends TimeStamp {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     public Set<Post> posts;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    public Set<Category> categories = new LinkedHashSet<>();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -47,10 +50,14 @@ public class User extends TimeStamp {
     @Column(unique = true)
     private String nickname;
     private String name;
+
+    // post
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserCountInfo userCountInfo;
+
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserRole> roles;
+
     @Enumerated(EnumType.STRING)
     private Status status = Status.INACTIVE;
     private LocalDateTime bannedUntil;
@@ -153,6 +160,25 @@ public class User extends TimeStamp {
     @Transient
     public void deActivate() {
         status = Status.INACTIVE;
+    }
+
+    @Transactional
+    @Transient
+    public void addCategory(Category category) {
+        if (categories == null) {
+            categories = new LinkedHashSet<>();
+        }
+        categories.add(category);
+        category.setUser(this);
+    }
+
+    public void removeCategory(Long categoryId) {
+        if (categories == null) {
+            return;
+        }
+        categories.stream()
+                .filter(c -> c.getId().equals(categoryId))
+                .findFirst().ifPresent(category -> categories.remove(category));
     }
 
 
