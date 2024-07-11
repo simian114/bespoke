@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/myblog/myBlogLayout}"
+      layout:fragment="content"
+>
+<head>
+    <title>Bespoke</title>
+</head>
+<body>
+<section class="section">
+    <div class="container">
+        <div class="block">
+            <a class="button" th:href="@{/blog/{nickname}/manage/categories/new(nickname=${nickname})}">
+                카테고리 생성
+            </a>
+        </div>
+
+        <div class="block">filter</div>
+
+        <!--        private Long id;-->
+        <!--        private String name;-->
+        <!--        private String description;-->
+
+        <div class="table-container is-flex is-flex-direction-column is-justify-content-center	">
+            <!--  테이블 넣기  -->
+            <table class="table">
+                <thead>
+                <tr>
+                    <th><abbr title="Post Id">id</abbr></th>
+                    <th><abbr title="Title">이름</abbr></th>
+                    <th><abbr title="Status">설명</abbr></th>
+                    <th>액션</th>
+                </tr>
+                </thead>
+                <!--  tfoot  -->
+                <tfoot>
+                <tr>
+                    <th><abbr title="Post Id">id</abbr></th>
+                    <th><abbr title="Title">제목</abbr></th>
+                    <th><abbr title="Status">상태</abbr></th>
+                    <th>액션</th>
+                </tr>
+                </tfoot>
+                <tbody hx-swap="outerHTML swap:0.5s">
+                <!-- tbody -->
+                <th:block th:each="category: ${categories}">
+                    <!--                    delete 된 post 라면 ...-->
+                    <tr>
+                        <th><abbr title="Post Id" th:text="${category.id}">id</abbr></th>
+                        <th><abbr title="Title" th:text="${category.name}">이름</abbr></th>
+                        <th><abbr title="Status" th:text="${category.description}">설명</abbr></th>
+                        <th class="buttons">
+                            <button hx-target="closest tr" hx:delete="@{/blog/{nickname}/manage/category/{categoryId}(nickname=${nickname},categoryId=${category.id})}" class="button is-danger is-small">delete</button>
+                            <th:block th:if="${category.visible}">
+                                <button class="button is-small">hide</button>
+                            </th:block>
+                            <th:block th:unless="${category.visible}">
+                                <button class="button is-small">visible</button>
+                            </th:block>
+                            <a th:href="@{/blog/{nickname}/manage/category/{categoryId}(nickname=${nickname},categoryId=${category.id})}" class="button is-small">edit</a>
+                        </th>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>

@@ -1,5 +1,6 @@
 package com.blog.bespoke.domain.model.post;
 
+import com.blog.bespoke.domain.model.category.Category;
 import com.blog.bespoke.domain.model.comment.Comment;
 import com.blog.bespoke.domain.model.common.TimeStamp;
 import com.blog.bespoke.domain.model.user.User;
@@ -39,6 +40,12 @@ public class Post extends TimeStamp {
     @ManyToOne
     @JoinColumn(name = "author_id")
     private User author;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments;
 

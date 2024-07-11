@@ -1,9 +1,13 @@
 package com.blog.bespoke.application.dto.response;
 
+import com.blog.bespoke.domain.model.category.Category;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.model.user.UserCountInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Getter
@@ -15,6 +19,9 @@ public class UserResponseDto {
     private String name;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<CategoryResponseDto> categories;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private UserCountInfoResponseDto countInfo;
 
     static public UserResponseDto from(User user) {
@@ -23,8 +30,31 @@ public class UserResponseDto {
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .name(user.getName())
+                .categories(user.categories != null && !user.categories.isEmpty()
+                        ? user.categories.stream().map(CategoryResponseDto::from).toList()
+                        : null
+                )
                 .countInfo(UserCountInfoResponseDto.from(user.getUserCountInfo()))
                 .build();
+    }
+
+    @AllArgsConstructor
+    @Data
+    @Builder
+    public static class CategoryResponseDto {
+        private String name;
+        private String description;
+        private Integer priority;
+        private LocalDateTime createdAt;
+
+        static private CategoryResponseDto from(Category category) {
+            return CategoryResponseDto.builder()
+                    .name(category.getName())
+                    .description(category.getDescription())
+                    .priority(category.getPriority())
+                    .createdAt(category.getCreatedAt())
+                    .build();
+        }
     }
 
     @AllArgsConstructor

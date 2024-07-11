@@ -182,8 +182,17 @@ public class UserRepositoryImpl implements UserRepository {
         userJpaRepository.decrementLikePostCount(userId);
     }
 
-    // --- search
+    @Override
+    public Optional<User> findUserWithCategories(Long userId) {
+        return userJpaRepository.findWithCategories(userId);
+    }
 
+    @Override
+    public User getUserWithCategories(Long userId) {
+        return findUserWithCategories(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    // --- search
     @Override
     public Page<User> search(UserSearchCond cond, Pageable pageable) {
         JPAQuery<User> jpaQuery = query(user, cond)

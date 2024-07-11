@@ -1,13 +1,17 @@
 package com.blog.bespoke.presentation.web.view.myblog;
 
+import com.blog.bespoke.application.dto.request.CategoryCreateRequestDto;
 import com.blog.bespoke.application.dto.request.PostCreateRequestDto;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
 import com.blog.bespoke.application.usecase.post.PostUseCase;
+import com.blog.bespoke.application.usecase.user.UserCategoryUseCase;
 import com.blog.bespoke.application.usecase.user.UserUseCase;
+import com.blog.bespoke.domain.model.category.Category;
 import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.post.PostSearchCond;
 import com.blog.bespoke.domain.model.post.PostStatusCmd;
 import com.blog.bespoke.domain.model.post.PostUpdateCmd;
+import com.blog.bespoke.domain.model.user.CategoryUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxRequest;
@@ -26,6 +30,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class MyBlogController {
     private final UserUseCase userUseCase;
     private final PostUseCase postUseCase;
+    private final UserCategoryUseCase userCategoryUseCase;
 
 
     /**
@@ -113,6 +118,108 @@ public class MyBlogController {
         postSearchCond.setPageSize(20);
         postSearchCond.setNickname(nickname);
         Page<PostResponseDto> postPage = postUseCase.postSearch(postSearchCond, currentUser);
+        return "";
+    }
+
+    @GetMapping("/blog/{nickname}/manage/category")
+    public String categoryManage(@PathVariable("nickname") String nickname,
+                                 @LoginUser User currentUser,
+                                 Model model) {
+        // page
+        User me = userUseCase.getUserByNickname(nickname);
+        if (!isOwner(nickname, currentUser)) {
+            return "redirect:/";
+        }
+        model.addAttribute("nickname", nickname);
+        model.addAttribute("owner", me);
+
+        User userWithCategory = userCategoryUseCase.getUserWithCategory(currentUser.getId());
+        model.addAttribute("categories", userWithCategory.getCategories());
+        return "page/myblog/categoryTable";
+    }
+
+    @GetMapping("/blog/{nickname}/manage/category/new")
+    public String categoryCreatePage(@PathVariable("nickname") String nickname,
+                                     @ModelAttribute("category") CategoryCreateRequestDto requestDto,
+                                     @LoginUser User currentUser,
+                                     Model model) {
+        User me = userUseCase.getUserByNickname(nickname);
+        if (!isOwner(nickname, currentUser)) {
+            return "redirect:/";
+        }
+        model.addAttribute("nickname", nickname);
+        model.addAttribute("owner", me);
+        model.addAttribute("action", String.format("/blog/%s/manage/category", nickname));
+        return "page/myblog/categoryForm";
+    }
+
+    @GetMapping("/blog/{nickname}/manage/category/{categoryId}")
+    public String editCategoryPage(@PathVariable("nickname") String nickname,
+                                   @PathVariable("categoryId") Long categoryId,
+                                   @LoginUser User currentUser,
+                                   RedirectAttributes redirectAttributes,
+                                   Model model) {
+        User me = userUseCase.getUserByNickname(nickname);
+        if (!isOwner(nickname, currentUser)) {
+            redirectAttributes.addFlashAttribute("error", "권한없음");
+            return "redirect:/";
+        }
+        User userWithCategory = userCategoryUseCase.getUserWithCategory(currentUser.getId());
+        Category category = userWithCategory.categories.stream().filter(c -> c.getId().equals(categoryId))
+                        .findAny().orElseThrow();
+
+        model.addAttribute("nickname", nickname);
+        model.addAttribute("owner", me);
+        model.addAttribute("category", category);
+        model.addAttribute("action", String.format("/blog/%s/manage/category/%d", nickname, categoryId));
+        return "page/myblog/categoryForm";
+    }
+
+    @PostMapping("/blog/{nickname}/manage/category/{categoryId}")
+    public String categoryUpdate(@PathVariable("nickname") String nickname,
+                                 @PathVariable("categoryId") Long categoryId,
+                                 @LoginUser User currentUser,
+                                 @Valid @ModelAttribute("category") CategoryUpdateCmd requestDto,
+                                 BindingResult bindingResult) {
+        User me = userUseCase.getUserByNickname(nickname);
+        if (!isOwner(nickname, currentUser)) {
+            return "redirect:/";
+        }
+        if (bindingResult.hasErrors()) {
+            return "page/myblog/categoryForm";
+        }
+        userCategoryUseCase.updateCategory(categoryId, requestDto, me);
+        return String.format("redirect:/blog/%s/manage/category", nickname);
+    }
+
+
+    @PostMapping("/blog/{nickname}/manage/category")
+    public String categoryCreate(@PathVariable("nickname") String nickname,
+                                 @LoginUser User currentUser,
+                                 @Valid @ModelAttribute("category") CategoryCreateRequestDto requestDto,
+                                 BindingResult bindingResult,
+                                 Model model) {
+        User me = userUseCase.getUserByNickname(nickname);
+        if (!isOwner(nickname, currentUser)) {
+            return "redirect:/";
+        }
+        userCategoryUseCase.createCategory(requestDto, me);
+        return String.format("redirect:/blog/%s/manage/category", nickname);
+    }
+
+    @ResponseBody
+    @DeleteMapping("/blog/{nickname}/manage/category/{categoryId}")
+    public String deleteCategory(@PathVariable("nickname") String nickname,
+                                 @PathVariable("categoryId") Long categoryId,
+                                 @LoginUser User currentUser,
+                                 Model model) {
+        User me = userUseCase.getUserByNickname(nickname);
+        if (!isOwner(nickname, currentUser)) {
+            return "redirect:/";
+        }
+        userCategoryUseCase.deleteCategory(categoryId, currentUser);
+        model.addAttribute("nickname", nickname);
+        model.addAttribute("owner", me);
         return "";
     }
 
@@ -234,13 +341,6 @@ public class MyBlogController {
         postUseCase.updatePost(postId, cmd, currentUser);
         return String.format("redirect:/blog/%s/manage/posts", nickname);
     }
-
-
-    @GetMapping("/blog/{nickname}/manage/categories")
-    public String categoryManage() {
-        return "";
-    }
-
 
     private boolean isOwner(String nickname, User currentUser) {
 

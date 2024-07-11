@@ -26,7 +26,6 @@ public class UserUseCase {
     private final UserService userService;
     private final EventPublisher eventPublisher;
 
-
     /**
      * 기본 회원가입. role 은 자동으로 USER 가 등록이됨. 어드민 유저는 DB 에서 직접 생성할것
      *

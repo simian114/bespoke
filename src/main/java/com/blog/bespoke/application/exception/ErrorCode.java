@@ -21,6 +21,9 @@ public enum ErrorCode {
     EXISTS_EMAIL(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
     EXISTS_NICKNAME(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다."),
 
+    NO_MORE_CATEGORY(HttpStatus.BAD_REQUEST, "카테고리는 최대 3개까지 생성 가능합니다."),
+    DUPLICATE_CATEGORY_NAME(HttpStatus.BAD_REQUEST, "카테고리 이름은 중복될 수 없습니다."),
+
     // token
     TOKEN_HAS_EXPIRED(HttpStatus.BAD_REQUEST, "토큰이 만료되었습니다."),
     TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "잘못된 토큰입니다."),

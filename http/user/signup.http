@@ -4,8 +4,8 @@ POST localhost:8080/api/user
 Content-Type: application/json
 
 {
-  "email": "email@gmail.com",
-  "nickname": "nickname",
+  "email": "email1@gmail.com",
+  "nickname": "nickname1",
   "name": "name",
   "password": "password"
 }
