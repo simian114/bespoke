@@ -9,4 +9,8 @@ public interface UserCategoryRepository {
     Optional<User> findUserWithCategories(Long userId);
 
     User getUserWithCategories(Long userId);
+
+    Optional<User> findUserForPostCreateByNickname(String nickname);
+
+    User getUserForPostCreateByNickname(String nickname);
 }

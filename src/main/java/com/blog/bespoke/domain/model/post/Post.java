@@ -80,7 +80,7 @@ public class Post extends TimeStamp {
     }
 
     public void update(PostUpdateCmd postUpdateCmd) {
-        if (postUpdateCmd.getTitle() != null) {
+        if (postUpdateCmd.getTitle() != null && !postUpdateCmd.getTitle().isBlank()) {
             title = postUpdateCmd.getTitle();
         }
         if (postUpdateCmd.getContent() != null) {
@@ -88,6 +88,9 @@ public class Post extends TimeStamp {
         }
         if (postUpdateCmd.getDescription() != null) {
             description = postUpdateCmd.getDescription();
+        }
+        if (postUpdateCmd.getCategory() != null) {
+            category = postUpdateCmd.getCategory();
         }
     }
 
@@ -125,6 +128,14 @@ public class Post extends TimeStamp {
     public void setLikedByUser(boolean b) {
         likedByUser = b;
     }
+
+    public void setCategory(Category category) {
+        if (category == null) {
+            return;
+        }
+        this.category = category;
+    }
+
 
     public enum Status {
         DRAFT,

@@ -42,6 +42,7 @@ public class UserResponseDto {
     @Data
     @Builder
     public static class CategoryResponseDto {
+        private Long id;
         private String name;
         private String description;
         private Integer priority;
@@ -49,6 +50,7 @@ public class UserResponseDto {
 
         static private CategoryResponseDto from(Category category) {
             return CategoryResponseDto.builder()
+                    .id(category.getId())
                     .name(category.getName())
                     .description(category.getDescription())
                     .priority(category.getPriority())

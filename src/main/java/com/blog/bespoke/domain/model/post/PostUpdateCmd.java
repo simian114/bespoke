@@ -1,6 +1,7 @@
 package com.blog.bespoke.domain.model.post;
 
-import jakarta.validation.constraints.NotEmpty;
+import com.blog.bespoke.domain.model.category.Category;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,9 +10,10 @@ import lombok.Data;
  */
 @Data
 @Builder
+@AllArgsConstructor
 public class PostUpdateCmd {
-    @NotEmpty
     private String title;
     private String description;
     private String content;
+    private Category category;
 }

@@ -2,17 +2,20 @@ package com.blog.bespoke.application.usecase.post;
 
 import com.blog.bespoke.application.dto.mapper.PostRequestMapper;
 import com.blog.bespoke.application.dto.request.PostCreateRequestDto;
+import com.blog.bespoke.application.dto.request.PostUpdateRequestDto;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
 import com.blog.bespoke.application.event.message.PublishPostEvent;
 import com.blog.bespoke.application.event.publisher.EventPublisher;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
+import com.blog.bespoke.domain.model.category.Category;
 import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.post.PostSearchCond;
 import com.blog.bespoke.domain.model.post.PostStatusCmd;
 import com.blog.bespoke.domain.model.post.PostUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.post.PostRepository;
+import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.blog.bespoke.domain.service.PostService;
 import com.blog.bespoke.domain.service.UserCountInfoService;
 import com.blog.bespoke.domain.service.UserService;
@@ -26,6 +29,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PostUseCase {
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
     private final PostService postService;
     private final UserService userService;
     private final PostSearchService postSearchService;
@@ -61,9 +65,14 @@ public class PostUseCase {
     @Transactional
     public PostResponseDto write(PostCreateRequestDto requestDto, User currentUser) {
         // user 의 상태를 검사해야하나?
-        User author = userService.getById(currentUser.getId());
+        User author = userRepository.getUserWithCategories(currentUser.getId());
+        //
         Post post = mapper.toDomain(requestDto);
+        Category category = author.getCategories().stream().filter(c -> c.getId().equals(requestDto.getCategoryId()))
+                .findFirst().orElse(null);
         post.init(author);
+        post.setCategory(category);
+
         if (requestDto.getStatus() != null) {
             post.changeStatus(requestDto.getStatus());
         }
@@ -123,12 +132,16 @@ public class PostUseCase {
 
 
     @Transactional
-    public PostResponseDto updatePost(Long postId, PostUpdateCmd postUpdateCmd, User currentUser) {
+    public PostResponseDto updatePost(Long postId, PostUpdateRequestDto requestDto, User currentUser) {
+        User author = userRepository.getUserWithCategories(currentUser.getId());
         Post post = postRepository.getById(postId);
         if (!post.canUpdateBy(currentUser)) {
             throw new BusinessException(ErrorCode.POST_FORBIDDEN);
         }
-        post.update(postUpdateCmd);
+        Category category = author.getCategories().stream().filter(c -> c.getId().equals(requestDto.getCategoryId()))
+                .findFirst().orElse(null);
+        PostUpdateCmd cmd = new PostUpdateCmd(requestDto.getTitle(), requestDto.getDescription(), requestDto.getContent(), category);
+        post.update(cmd);
         return PostResponseDto.from(postRepository.save(post));
     }
 
