@@ -52,14 +52,14 @@
                         <th><abbr title="Title" th:text="${category.name}">이름</abbr></th>
                         <th><abbr title="Status" th:text="${category.description}">설명</abbr></th>
                         <th class="buttons">
-                            <button hx-target="closest tr" hx:delete="@{/blog/{nickname}/manage/category/{categoryId}(nickname=${nickname},categoryId=${category.id})}" class="button is-danger is-small">delete</button>
+                            <button hx-target="closest tr" hx:delete="@{/blog/{nickname}/manage/categories/{categoryId}(nickname=${nickname},categoryId=${category.id})}" class="button is-danger is-small">delete</button>
                             <th:block th:if="${category.visible}">
                                 <button class="button is-small">hide</button>
                             </th:block>
                             <th:block th:unless="${category.visible}">
                                 <button class="button is-small">visible</button>
                             </th:block>
-                            <a th:href="@{/blog/{nickname}/manage/category/{categoryId}(nickname=${nickname},categoryId=${category.id})}" class="button is-small">edit</a>
+                            <a th:href="@{/blog/{nickname}/manage/categories/{categoryId}(nickname=${nickname},categoryId=${category.id})}" class="button is-small">edit</a>
                         </th>
                     </tr>
                 </th:block>

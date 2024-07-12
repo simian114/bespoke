@@ -46,6 +46,22 @@
                 })
             </script>
         </div>
+        <div layout:replace="~{fragments/form/layout-input :: input('url', 'Url', 'text', 'url', false)}">
+            <script layout:fragment="script">
+                me().on("input", ev => {
+                    const el = me(ev).querySelector("input");
+                    const value = el?.value;
+                    if (value.length === 0 || value.length > 10) {
+                        el.classList.add("is-danger");
+                        el.classList.remove("is-success");
+                    } else {
+                        el.classList.remove("is-danger");
+                        el.classList.add("is-success");
+                    }
+                })
+            </script>
+        </div>
+
 
 
         <div class="field is-grouped">

@@ -36,7 +36,7 @@
                 <a class="is-active" th:href="@{/blog/{nickname}/manage(nickname=${owner.nickname})}">프로필</a>
                 <a th:href="@{/blog/{nickname}/manage/posts(nickname=${owner.nickname})}">게시글</a>
                 <a th:href="@{/blog/{nickname}/manage/follows(nickname=${owner.nickname})}">팔로우</a>
-                <a th:href="@{/blog/{nickname}/manage/category(nickname=${owner.nickname})}">카테고리</a>
+                <a th:href="@{/blog/{nickname}/manage/categories(nickname=${owner.nickname})}">카테고리</a>
             </p>
         </nav>
         <th:block layout:fragment="content">

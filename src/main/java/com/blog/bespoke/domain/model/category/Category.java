@@ -28,10 +28,6 @@ import java.util.Set;
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener.class)
 public class Category {
-    @CreatedDate
-    @Column(updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    protected LocalDateTime createdAt;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
@@ -40,13 +36,17 @@ public class Category {
     private String description;
     private boolean visible;
     private Integer priority;
+    private String url;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "category")
-    private Set<Post> posts = new LinkedHashSet<>();
+    @CreatedDate
+    @Column(updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    protected LocalDateTime createdAt;
+
 
     public void setUser(User user) {
         this.user = user;
