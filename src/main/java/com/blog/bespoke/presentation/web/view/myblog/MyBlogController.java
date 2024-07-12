@@ -2,6 +2,7 @@ package com.blog.bespoke.presentation.web.view.myblog;
 
 import com.blog.bespoke.application.dto.request.CategoryCreateRequestDto;
 import com.blog.bespoke.application.dto.request.PostCreateRequestDto;
+import com.blog.bespoke.application.dto.request.PostUpdateRequestDto;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
 import com.blog.bespoke.application.usecase.post.PostUseCase;
 import com.blog.bespoke.application.usecase.user.UserCategoryUseCase;
@@ -10,7 +11,6 @@ import com.blog.bespoke.domain.model.category.Category;
 import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.post.PostSearchCond;
 import com.blog.bespoke.domain.model.post.PostStatusCmd;
-import com.blog.bespoke.domain.model.post.PostUpdateCmd;
 import com.blog.bespoke.domain.model.user.CategoryUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
@@ -101,9 +101,6 @@ public class MyBlogController {
 
             return "page/myblog/postTable :: .table-container";
         }
-        //
-        // page 는 url 을 통해..
-        // url 로 쏜다.
         return "page/myblog/postTable";
     }
 
@@ -166,7 +163,7 @@ public class MyBlogController {
         }
         User userWithCategory = userCategoryUseCase.getUserWithCategory(currentUser.getId());
         Category category = userWithCategory.categories.stream().filter(c -> c.getId().equals(categoryId))
-                        .findAny().orElseThrow();
+                .findAny().orElseThrow();
 
         model.addAttribute("nickname", nickname);
         model.addAttribute("owner", me);
@@ -223,18 +220,19 @@ public class MyBlogController {
         return "";
     }
 
-    // NOTE: 레이아웃이 있어야함
     @GetMapping("/blog/{nickname}/manage/posts/new")
     public String createPostPage(@PathVariable("nickname") String nickname,
                                  @LoginUser User currentUser,
                                  Model model) {
-        User me = userUseCase.getUserByNickname(nickname);
+        User me = userUseCase.getUserForPostWrite(nickname);
         if (!isOwner(nickname, currentUser)) {
             return "redirect:/";
         }
-        model.addAttribute("post", Post.builder().content("helloworld").build());
+        model.addAttribute("post", PostCreateRequestDto.builder().content("Write your stories").build());
+
         model.addAttribute("nickname", nickname);
         model.addAttribute("owner", me);
+        model.addAttribute("categories", me.getCategories());
 
         model.addAttribute("action", String.format("/blog/%s/manage/posts", nickname));
         return "page/myblog/postEditor";
@@ -255,6 +253,7 @@ public class MyBlogController {
             return "page/myblog/postEditor";
         }
 
+        // category
         PostResponseDto postDto = postUseCase.write(requestDto, currentUser);
         redirectAttributes.addFlashAttribute("success", "post created");
 
@@ -290,17 +289,12 @@ public class MyBlogController {
             throw new RuntimeException(e);
         }
 
-        /*
-         * 1. post 찾기
-         * 2. post 삭제
-         * 3. 해당 타겟 delete
-         */
         return "";
     }
 
 
     /**
-     * 수정페이지
+     * 게시글 수정페이지
      */
     @GetMapping("/blog/{nickname}/manage/posts/{postId}/edit")
     public String editPostPage(@PathVariable("nickname") String nickname,
@@ -312,11 +306,21 @@ public class MyBlogController {
             redirectAttributes.addFlashAttribute("error", "권한없음");
             return "redirect:/";
         }
-        User me = userUseCase.getUserByNickname(nickname);
+        // post -> postCreate
+        User me = userUseCase.getUserForPostWrite(nickname);
+        // User me = userUseCase.getUserByNickname(nickname);
         Post post = postUseCase.getPostById(postId);
-        model.addAttribute("post", post);
+        PostCreateRequestDto dto = PostCreateRequestDto.builder()
+                .title(post.getTitle())
+                .description(post.getDescription())
+                .content(post.getContent())
+                .categoryId(post.getCategory() != null ? post.getCategory().getId() : null)
+                .status(post.getStatus())
+                .build();
+        model.addAttribute("post", dto);
         model.addAttribute("nickname", nickname);
         model.addAttribute("owner", me);
+        model.addAttribute("categories", me.getCategories());
         model.addAttribute("action", String.format("/blog/%s/manage/posts/%d", nickname, postId));
         return "page/myblog/postEditor";
     }
@@ -326,7 +330,7 @@ public class MyBlogController {
     public String updatePost(@PathVariable("nickname") String nickname,
                              @PathVariable("postId") Long postId,
                              @LoginUser User currentUser,
-                             @Valid @ModelAttribute("post") PostUpdateCmd cmd,
+                             @Valid @ModelAttribute("post") PostUpdateRequestDto requestDto,
                              BindingResult bindingResult,
                              RedirectAttributes redirectAttributes,
                              Model model) {
@@ -338,7 +342,7 @@ public class MyBlogController {
             return "page/myblog/postEditor";
         }
         // TODO: update
-        postUseCase.updatePost(postId, cmd, currentUser);
+        postUseCase.updatePost(postId, requestDto, currentUser);
         return String.format("redirect:/blog/%s/manage/posts", nickname);
     }
 

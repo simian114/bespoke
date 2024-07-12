@@ -48,6 +48,20 @@
                     })
                 </script>
             </div>
+
+            <th:block th:if="${categories != null}">
+                <div class="field">
+                    <label class="label">Category</label>
+                    <div class="control">
+                        <div class="select">
+                            <select th:field="*{categoryId}">
+                                <option value="">Choose Category</option>
+                                <option th:value="${category.id}" th:each="category: ${categories}" th:text="${category.name}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
         </div>
 
         <div class="field">

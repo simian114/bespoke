@@ -77,4 +77,8 @@ public class UserUseCase {
     public User getUserByNickname(String nickname) {
         return userRepository.getByNickname(nickname);
     }
+
+    public User getUserForPostWrite(String nickname) {
+        return userRepository.getUserForPostCreateByNickname(nickname);
+    }
 }

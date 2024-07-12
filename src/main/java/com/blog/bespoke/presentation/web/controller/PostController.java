@@ -35,11 +35,6 @@ public class PostController {
         return ResponseEntity.ok(postUseCase.changeStatus(postId, cmd, currentUser));
     }
 
-    @PutMapping("/{postId}/edit")
-    public ResponseEntity<?> updatePost(@PathVariable Long postId, @RequestBody PostUpdateCmd postUpdateCmd, @LoginUser User currentUser) {
-        return ResponseEntity.ok(postUseCase.updatePost(postId, postUpdateCmd, currentUser));
-    }
-
     @GetMapping
     public ResponseEntity<?> search(@ModelAttribute PostSearchCond cond, @LoginUser User currentUser) {
         return ResponseEntity.ok(postUseCase.postSearch(cond, currentUser));

@@ -128,6 +128,18 @@ public class UserRepositoryImpl implements UserRepository {
         return findUserWithFollowByIdAndFollowingId(userId, followingId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.FOLLOW_NOT_FOUND));
     }
+
+    @Override
+    public Optional<User> findUserForPostCreateByNickname(String nickname) {
+        return userJpaRepository.findUserForPostCreate(nickname);
+    }
+
+    @Override
+    public User getUserForPostCreateByNickname(String nickname) {
+        return findUserForPostCreateByNickname(nickname)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    }
+
     // 나와 나 팔로워
 
 

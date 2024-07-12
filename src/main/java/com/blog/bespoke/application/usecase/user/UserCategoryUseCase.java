@@ -34,6 +34,7 @@ public class UserCategoryUseCase {
         }
 
         user.addCategory(category);
+        userRepository.save(user);
         return user;
     }
 

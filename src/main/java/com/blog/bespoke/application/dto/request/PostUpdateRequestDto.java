@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class PostCreateRequestDto {
+public class PostUpdateRequestDto {
     @NotEmpty
     private String title;
 
@@ -16,5 +16,4 @@ public class PostCreateRequestDto {
     private Long categoryId;
 
     private Post.Status status;
-    // todo: category, tags
 }

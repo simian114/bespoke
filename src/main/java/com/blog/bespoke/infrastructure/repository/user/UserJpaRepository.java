@@ -53,4 +53,7 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.categories c WHERE u.id = :userId ORDER BY c.priority desc")
     Optional<User> findWithCategories(Long userId);
+
+    @Query("select u from User u left join fetch u.categories c where u.nickname = :nickname order by c.priority desc")
+    Optional<User> findUserForPostCreate(@Param("nickname") String nickname);
 }
