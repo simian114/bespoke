@@ -1,13 +1,15 @@
 create table category
 (
     category_id bigint primary key auto_increment,
-    name varchar(20) not null,
+    name varchar(10) not null,
     description varchar(50) not null,
+    url varchar(20) not null,
     visible tinyint(1) not null default 0,
     priority int not null default 0, # 높을 수록 위에 나옴
     created_at timestamp default current_timestamp,
     user_id bigint not null,
-    foreign key (user_id) references users (user_id) on delete cascade
+    foreign key (user_id) references users (user_id) on delete cascade,
+    index idx_category_user_url (user_id, url)
 );
 
 create table post
@@ -24,13 +26,13 @@ create table post
 
     cover_image_id bigint,
 
-    category_id bigint,
+    category_id bigint null,
 
     # tags varchar(255), # ,로 구분되는 문자열.
 
     # TODO: category_id
     foreign key (author_id) references users (user_id) on delete cascade,
-    foreign key (category_id) references category (category_id),
+    foreign key (category_id) references category (category_id) on delete set null,
 
     created_at  timestamp   default current_timestamp,
     updated_at  timestamp on update current_timestamp,
