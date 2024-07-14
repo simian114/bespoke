@@ -1,0 +1,13 @@
+@use "bulma/sass/utilities/mixins";
+@use "bulma/sass/utilities/extends";
+
+
+.blog-page {
+  &__post-list {
+    // background-color: red;
+  }
+  .post-item {
+    @extend %block;
+    @include mixins.tablet-only
+  }
+}
