@@ -22,4 +22,6 @@ public class UserSignupRequestDto {
     private String nickname;
 
     private String name;
+
+    private String introduce;
 }

@@ -12,6 +12,14 @@ create table users
     deleted_at   timestamp    # 삭제 여부
 );
 
+create table user_profile
+(
+    profile_id bigint primary key auto_increment,
+    user_id    bigint not null,
+    introduce  text,
+    foreign key (user_id) references users (user_id) on delete cascade
+);
+
 create table role
 (
     role_id bigint primary key auto_increment,
