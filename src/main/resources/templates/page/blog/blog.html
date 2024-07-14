@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/blog/blogLayout}"
+      layout:fragment="content"
+>
+<head>
+    <title th:text="|${owner.name}'s blog'.|">Bespoke</title>
+</head>
+<body>
+<main class="section blog-page">
+    <!-- max-width: 640 이 읽기에 가장 좋아보인다.   -->
+    <div class="container pt-6 has-background-primary-100" style="max-width: 640px">
+        <div class="block is-flex is-justify-content-space-between">
+            <h1 class="has-text-weight-bold is-size-5">
+                <span class="hax-text-weight-bold" th:text="${owner.name}"></span> ﹒ <span class="hax-text-weight-bold"
+                                                                                           th:text="${owner.nickname}"></span>
+            </h1>
+            <a th:if="${isOwner}" th:href="@{/blog/{nickname}/manage(nickname=${owner.nickname})}"
+               class="button is-small">관리</a>
+        </div>
+
+        <div class="block content" th:utext="${owner.introduce}"></div>
+        <!--            TODO: sns list-->
+        <!--        <div class="block">-->
+        <!--        </div>-->
+
+        <div th:if="${owner.categories != null && #lists.size(owner.categories) > 0}" class="block is-flex">
+            <div class="mr-4 is-flex-shrink-0">카테고리</div>
+            <div class="is-flex-grow-5">
+                <div class="is-flex" th:each="category: ${owner.categories}">
+                    <a
+                            hx-boost="true"
+                            th:href="@{/blog/{nickname}/category/{url}(nickname=${nickname},url=${category.url})}"
+                            class="has-text-weight-semibold is-underlined mr-2 is-flex-shrink-0"
+                            th:text="${category.name}"></a>
+                    <p class="is-flex-grow-5" th:text="${category.description}"></p>
+                </div>
+            </div>
+        </div>
+
+        <!--        일단 전체 보기는 그냥 없어도 될듯 -->
+        <div class="block" hx-swap="outerHTML" hx-trigger="revealed" hx:get="@{/blog/{nickname}/posts(nickname=${nickname})}">
+            TODO: post list 를 리스트 형식으로 작게 보여줌... (무한스크롤?)
+        </div>
+<!--        TODO: loading -->
+    </div>
+</main>
+</body>
+</html>

@@ -27,6 +27,17 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends TimeStamp {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Long id;
+    @Column(unique = true)
+    private String email;
+    private String password;
+    @Column(unique = true)
+    private String nickname;
+    private String name;
+
     // --- relation
     @OneToMany(mappedBy = "followingId", cascade = CascadeType.ALL, orphanRemoval = true)
     public Set<Follow> followers = new HashSet<>();
@@ -40,18 +51,9 @@ public class User extends TimeStamp {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     public Set<Category> categories = new LinkedHashSet<>();
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long id;
-    @Column(unique = true)
-    private String email;
-    private String password;
-    @Column(unique = true)
-    private String nickname;
-    private String name;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserProfile userProfile;
 
-    // post
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserCountInfo userCountInfo;
 
@@ -77,6 +79,11 @@ public class User extends TimeStamp {
     public void init() {
         this.deActivate();
         this.userCountInfo = UserCountInfo.builder().user(this).build();
+    }
+
+    public void setProfile(UserProfile profile) {
+        this.userProfile = profile;
+        profile.setUser(this);
     }
 
     public void follow(Long followingId) {

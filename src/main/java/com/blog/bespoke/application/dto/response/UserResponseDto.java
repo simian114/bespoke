@@ -3,6 +3,7 @@ package com.blog.bespoke.application.dto.response;
 import com.blog.bespoke.domain.model.category.Category;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.model.user.UserCountInfo;
+import com.blog.bespoke.domain.model.user.UserProfile;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -17,6 +18,9 @@ public class UserResponseDto {
     private String email;
     private String nickname;
     private String name;
+    
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String introduce;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<CategoryResponseDto> categories;
@@ -34,8 +38,22 @@ public class UserResponseDto {
                         ? user.categories.stream().map(CategoryResponseDto::from).toList()
                         : null
                 )
+                .introduce(user.getUserProfile() != null ? user.getUserProfile().getIntroduce() : null)
                 .countInfo(UserCountInfoResponseDto.from(user.getUserCountInfo()))
                 .build();
+    }
+
+    @AllArgsConstructor
+    @Data
+    @Builder
+    public static class UserProfileResponseDto {
+        private String introduce;
+
+        static private UserProfileResponseDto from(UserProfile profile) {
+            return UserProfileResponseDto.builder()
+                    .introduce(profile.getIntroduce())
+                    .build();
+        }
     }
 
     @AllArgsConstructor
@@ -45,6 +63,7 @@ public class UserResponseDto {
         private Long id;
         private String name;
         private String description;
+        private String url;
         private Integer priority;
         private LocalDateTime createdAt;
 
@@ -53,6 +72,7 @@ public class UserResponseDto {
                     .id(category.getId())
                     .name(category.getName())
                     .description(category.getDescription())
+                    .url(category.getUrl())
                     .priority(category.getPriority())
                     .createdAt(category.getCreatedAt())
                     .build();

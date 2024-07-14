@@ -2,12 +2,14 @@ package com.blog.bespoke.application.usecase.user;
 
 import com.blog.bespoke.application.dto.mapper.UserRequestMapper;
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
+import com.blog.bespoke.application.dto.response.UserResponseDto;
 import com.blog.bespoke.application.event.message.UserRegistrationMessage;
 import com.blog.bespoke.application.event.publisher.EventPublisher;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.token.Token;
 import com.blog.bespoke.domain.model.user.User;
+import com.blog.bespoke.domain.model.user.UserProfile;
 import com.blog.bespoke.domain.repository.TokenRepository;
 import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.blog.bespoke.domain.service.UserService;
@@ -35,6 +37,11 @@ public class UserUseCase {
     @Transactional
     public User signup(UserSignupRequestDto requestDto) {
         User user = UserRequestMapper.INSTANCE.toDomain(requestDto);
+        UserProfile profile = UserProfile.builder()
+                .introduce(requestDto.getIntroduce())
+                .build();
+        user.setProfile(profile);
+
         userService.initUser(user);
         User savedUser = userRepository.save(user);
 
@@ -74,9 +81,14 @@ public class UserUseCase {
         return user;
     }
 
+    public UserResponseDto getUserWithCategoryByNickname(String nickname) {
+        return UserResponseDto.from(userRepository.getUserForPostCreateByNickname(nickname)) ;
+    }
+
     public User getUserByNickname(String nickname) {
         return userRepository.getByNickname(nickname);
     }
+
 
     public User getUserForPostWrite(String nickname) {
         return userRepository.getUserForPostCreateByNickname(nickname);
