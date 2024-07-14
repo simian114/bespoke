@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 >
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-<div th:fragment="postList">
-
-</div>
+<ul class="mt-3  blog-page__post-list">
+    <li class="post-item" th:each="post: ${posts}">
+        <a class="is-flex is-justify-content-space-between is-color-black-50" th:href>
+            <span style="position:absolute" th:text="${#temporals.year(post.createdAt)}"></span>
+            <h3 style="margin-left:20%" class="has-text-weight-semibold" th:text="${post.title}"></h3>
+            <span th:text="|${#temporals.format(post.createdAt, 'MM.dd')}.|"></span>
+        </a>
+    </li>
+</ul>
 </body>
 </html>

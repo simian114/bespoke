@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/blog/blogLayout}"
+      layout:fragment="content"
+>
+<head>
+    <title>Bespoke</title>
+</head>
+<body>
+<main class="section">
+    <!-- max-width: 640 이 읽기에 가장 좋아보인다.   -->
+    <div class="container pt-6 has-background-primary-100" style="max-width: 640px">
+        <h1 class="block has-text-weight-bold is-size-5">
+            <span class="hax-text-weight-bold" th:text="${owner.name}"></span> ﹒ <span class="hax-text-weight-bold" th:text="${owner.nickname}"></span>
+        </h1>
+        <div class="block content">
+            <p>남상혁입니다. 클라이언트에게 <b>더 좋은 경험을 제공하기 위해 노력합니다</b></p>
+            <p>프론트엔드 개발자로 근무하면서 <a href="https://loud.kr">라우드싱</a>과 <a href="https://notefolio.net">노트폴리오</a>를 개발했습니다.</p>
+            <p>지금은 웹개발자로서의 성장을 위해 백엔드 개발자로의 전향을 진행중입니다.</p>
+            <p>잘 부탁드리겠습니다.</p>
+        </div>
+
+        <div class="block">
+            TODO: sns list
+        </div>
+
+        <div class="block is-flex">
+            <div class="mr-4 is-flex-shrink-0">카테고리</div>
+            <div class="is-flex-grow-5">
+                <div class="is-flex" th:each="category: ${owner.categories}">
+                    <a
+                            hx-boost="true"
+                            th:href="@{/blog/{nickname}/category/{url}(nickname=${nickname},url=${category.url})}"
+                            class="has-text-weight-semibold is-underlined mr-2 is-flex-shrink-0" th:text="${category.name}"></a>
+                    <p class="is-flex-grow-5" th:text="${category.description}"></p>
+                </div>
+            </div>
+        </div>
+        <div class="block post-list">
+            TODO: post list 를 리스트 형식으로 작게 보여줌... (무한스크롤?)
+        </div>
+
+    </div>
+</main>
+</body>
+</html>
