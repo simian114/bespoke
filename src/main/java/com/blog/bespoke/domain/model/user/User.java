@@ -188,6 +188,18 @@ public class User extends TimeStamp {
                 .findFirst().ifPresent(category -> categories.remove(category));
     }
 
+    /**
+     * name과 introduce만 변경가능. nickname 은 변경 불가능함
+     */
+    public void update(UserUpdateCmd cmd) {
+        if (cmd.getName() != null && !cmd.getName().isBlank()) {
+            name = cmd.getName();
+        }
+        if (cmd.getIntroduce() != null && !cmd.getIntroduce().isBlank() && this.userProfile != null) {
+            this.userProfile.setIntroduce(cmd.getIntroduce());
+        }
+    }
+
 
     public enum Status {
         INACTIVE,

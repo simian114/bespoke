@@ -2,6 +2,7 @@ package com.blog.bespoke.application.usecase.user;
 
 import com.blog.bespoke.application.dto.mapper.UserRequestMapper;
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
+import com.blog.bespoke.application.dto.request.UserUpdateRequestDto;
 import com.blog.bespoke.application.dto.response.UserResponseDto;
 import com.blog.bespoke.application.event.message.UserRegistrationMessage;
 import com.blog.bespoke.application.event.publisher.EventPublisher;
@@ -10,6 +11,7 @@ import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.token.Token;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.model.user.UserProfile;
+import com.blog.bespoke.domain.model.user.UserUpdateCmd;
 import com.blog.bespoke.domain.repository.TokenRepository;
 import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.blog.bespoke.domain.service.UserService;
@@ -92,5 +94,14 @@ public class UserUseCase {
 
     public User getUserForPostWrite(String nickname) {
         return userRepository.getUserForPostCreateByNickname(nickname);
+    }
+
+    @Transactional
+    public User updateUser(UserUpdateRequestDto requestDto, Long userId) {
+        // requestDto to userUpdateCmd
+        UserUpdateCmd cmd = requestDto.toCmd();
+        User user = userRepository.getById(userId);
+        user.update(cmd);
+        return user;
     }
 }
