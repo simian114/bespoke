@@ -31,7 +31,6 @@ public class PostUseCase {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final PostService postService;
-    private final UserService userService;
     private final PostSearchService postSearchService;
     private final UserCountInfoService userCountInfoService;
     private final EventPublisher publisher;
@@ -44,12 +43,15 @@ public class PostUseCase {
      */
     @Transactional
     public PostResponseDto showPostById(Long postId, User currentUser) {
-        Post post = postService.getPostAndUpdateViewCountWhenNeeded(postId, currentUser);
+        Post post = postRepository.getById(postId);
+        boolean likedByUser = currentUser != null && postRepository.existsPostLikeByPostIdAndUserId(post.getId(), currentUser.getId());
+
+        postService.getPostAndUpdateViewCountWhenNeeded(post, likedByUser, currentUser);
         return PostResponseDto.from(post);
     }
 
     public PostResponseDto getPostById(Long postId) {
-        return PostResponseDto.from(postService.getById(postId));
+        return PostResponseDto.from(postRepository.getById(postId));
     }
 
     @Transactional

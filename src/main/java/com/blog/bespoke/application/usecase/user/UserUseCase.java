@@ -12,6 +12,7 @@ import com.blog.bespoke.domain.model.token.Token;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.model.user.UserProfile;
 import com.blog.bespoke.domain.model.user.UserUpdateCmd;
+import com.blog.bespoke.domain.model.user.role.Role;
 import com.blog.bespoke.domain.repository.TokenRepository;
 import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.blog.bespoke.domain.service.UserService;
@@ -39,12 +40,12 @@ public class UserUseCase {
     @Transactional
     public UserResponseDto signup(UserSignupRequestDto requestDto) {
         User user = UserRequestMapper.INSTANCE.toDomain(requestDto);
+        Role role = userRepository.getRoleByCode(Role.Code.USER);
         UserProfile profile = UserProfile.builder()
                 .introduce(requestDto.getIntroduce())
                 .build();
         user.setProfile(profile);
-
-        userService.initUser(user);
+        userService.initUser(user, role);
         User savedUser = userRepository.save(user);
 
         Token token = tokenRepository.save(

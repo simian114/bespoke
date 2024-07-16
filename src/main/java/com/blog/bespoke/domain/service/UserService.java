@@ -12,29 +12,18 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void initUser(User user) {
+    public void initUser(User user, Role role) {
         user.init();
         user.changePassword(encodePassword(user.getPassword()));
         // create
-        addRole(user, Role.Code.USER);
-    }
-
-    @Transactional
-    public void addRole(User user, Role.Code code) {
-        Role role = userRepository.getRoleByCode(code);
         UserRole userRole = UserRole.builder()
                 .role(role)
                 .user(user)
                 .build();
         user.addRole(userRole);
-    }
-
-    public User getById(Long id) {
-        return userRepository.getById(id);
     }
 
     public String encodePassword(String password) {

@@ -4,37 +4,29 @@ import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.user.User;
-import com.blog.bespoke.domain.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
-    private final PostRepository postRepository;
-
     /**
      * 1. currentUser 가 존재하면 likedByUser 가 필드에 추가됨
      * 2. currentUser 가 없으면 likedByUser 는 없음
      * 3. 조건에 따라 viewcount 를 실행함
      */
-    public Post getPostAndUpdateViewCountWhenNeeded(Long postId, User currentUser) {
-        Post post = postRepository.getById(postId);
-
+    public void getPostAndUpdateViewCountWhenNeeded(Post post, boolean likedByUser, User currentUser) {
         if (!canShow(post, currentUser)) {
             throw new BusinessException(ErrorCode.POST_FORBIDDEN);
         }
 
-        if (currentUser != null) {
-            if (postRepository.existsPostLikeByPostIdAndUserId(postId, currentUser.getId())) {
-                post.setLikedByUser(true);
-            }
+        if (likedByUser) {
+            post.setLikedByUser(true);
         }
 
         if (shouldIncreaseViewCount(post, currentUser)) {
             post.getPostCountInfo().increaseViewCount();
         }
-        return post;
     }
 
     /**
@@ -81,9 +73,5 @@ public class PostService {
         }
         return (toBe != Post.Status.BLOCKED || user.isAdmin())
                 && (!post.isBlocked() || user.isAdmin());
-    }
-
-    public Post getById(Long postId) {
-        return postRepository.getById(postId);
     }
 }
