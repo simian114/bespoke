@@ -57,17 +57,14 @@
         </div>
 
         <!--        일단 전체 보기는 그냥 없어도 될듯 -->
-        <th:block>
-            <ul class="mt-3 post-list">
-                <th:block th:if="${isEmpty}">
-                    <div class="container is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
-                <span style="font-size: 48px;">
-                🫠
+        <div class="mt-3 post-list">
+            <div th:if="${isEmpty}"
+                 class="post-item container is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
+                <span style="font-size: 48px;">🫠
                 </span>
-                        <span>empty!</span>
-                    </div>
-                </th:block>
-
+                <span>empty!</span>
+            </div>
+            <ul>
                 <li class="post-item" th:each="post: ${posts}">
                     <a class="is-flex is-align-items-baseline is-gap-2 is-color-black-50 is-position-relative"
                        th:href="@{/blog/posts/{postId}(postId=${post.id})}">
@@ -75,17 +72,18 @@
                         <span class="is-size-6" th:text="|${#temporals.format(post.createdAt, 'yyyy.MM.dd')}.|"></span>
                     </a>
                 </li>
-                <li class="post-item" th:if="${(hasNextPage ?: true)}">
-                    <span
-                            hx-swap="beforeend"
-                            hx-target="closest .post-list"
-                            hx-trigger="revealed"
-                            hx:get="@{/blog/{nickname}/posts(nickname=${nickname},category=${category.id},page=${page==null?0:page})}"
-                            hx-indicator="#htmx-skeleton"
-                    ></span>
-                </li>
+                <li class="post-item" th:if="${(hasNextPage ?: true)}"
+                    hx-swap="outerHTML"
+                    hx-select=".post-list .post-item"
+                    hx-target="closest .post-item"
+                    hx-trigger="revealed"
+                    hx:get="@{/blog/{nickname}/posts(nickname=${nickname},category=${category.id},page=${page==null?0:page})}"
+                    hx-indicator="#htmx-skeleton"
+                ></li>
             </ul>
-        </th:block>
+
+        </div>
+
 
         <!--        <div class="block" hx-swap="outerhtml" hx-trigger="revealed"-->
         <!--             hx:get="@{/blog/{nickname}/posts(nickname=${nickname},category=${category.id},page=${page})}">-->
