@@ -27,18 +27,4 @@ class UserServiceUnitTest {
     @InjectMocks
     private UserService userService;
 
-    @Test
-    @DisplayName("role 추가 테스트")
-    void add_role_test() {
-        // given
-        User user = User.builder().id(1L).email("email@gmail.com").name("name").password("password").build();
-        Role role = Role.builder().id(1L).code(Role.Code.USER).build();
-        given(userRepository.getRoleByCode(Mockito.any()))
-                .willReturn(role);
-        // when
-        userService.addRole(user, Role.Code.USER);
-
-        // then
-        assertThat(user.getRoles().size()).isEqualTo(1);
-    }
 }

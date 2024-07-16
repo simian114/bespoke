@@ -10,7 +10,6 @@ import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.TokenRepository;
 import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.blog.bespoke.domain.service.JwtService;
-import com.blog.bespoke.domain.service.RefreshTokenService;
 import com.blog.bespoke.infrastructure.security.principal.UserPrincipal;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +21,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class AuthUseCase {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final RefreshTokenService refreshTokenService;
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
 
@@ -51,7 +52,7 @@ public class AuthUseCase {
         }
         UserPrincipal userPrincipal = (UserPrincipal) authenticate.getPrincipal();
         User user = userPrincipal.getUser();
-        Token refreshToken = refreshTokenService.createRefreshToken(user);
+        Token refreshToken = createRefreshToken(user);
 
         return LoginResponseDto.builder()
                 .accessToken(jwtService.createAccessToken(user))
@@ -63,10 +64,20 @@ public class AuthUseCase {
     public LoginResponseDto reIssueToken(ReIssueTokenRequestDto requestDto) {
         Token refreshToken = tokenRepository.getByCode(requestDto.getRefreshToken());
         User user = userRepository.getById(refreshToken.getRefId());
-        Token reIssuedRefreshToken = refreshTokenService.createRefreshToken(user);
+        Token reIssuedRefreshToken = createRefreshToken(user);
         return LoginResponseDto.builder()
                 .accessToken(jwtService.createAccessToken(user))
                 .refreshToken(reIssuedRefreshToken.getCode())
                 .build();
+    }
+
+    public Token createRefreshToken(User user) {
+        return tokenRepository.save(Token.builder()
+                .refId(user.getId())
+                .type(Token.Type.REFRESH_TOKEN)
+                .refType(Token.RefType.USER)
+                .code(UUID.randomUUID().toString())
+                .expiredAt(LocalDateTime.now().plusMonths(1))
+                .build());
     }
 }
