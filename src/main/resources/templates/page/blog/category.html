@@ -67,6 +67,7 @@
             <ul>
                 <li class="post-item" th:each="post: ${posts}">
                     <a class="is-flex is-align-items-baseline is-gap-2 is-color-black-50 is-position-relative"
+                       hx-boost="true"
                        th:href="@{/blog/posts/{postId}(postId=${post.id})}">
                         <h3 class="has-text-weight-semibold is-size-5" th:text="${post.title}"></h3>
                         <span class="is-size-6" th:text="|${#temporals.format(post.createdAt, 'yyyy.MM.dd')}.|"></span>
