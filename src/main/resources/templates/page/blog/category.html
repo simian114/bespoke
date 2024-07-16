@@ -14,7 +14,8 @@
     <div class="container has-background-primary-100" style="max-width: 640px">
         <div class="block is-flex is-justify-content-space-between">
             <h1 class="has-text-weight-bold is-size-4">
-                <a th:href="@{/blog/{nickname}(nickname=${owner.nickname})}" th:text="${owner.nickname}"></a>'s&nbsp;<span th:text="${category.name}"></span>
+                <a th:href="@{/blog/{nickname}(nickname=${owner.nickname})}"
+                   th:text="${owner.nickname}"></a>'s&nbsp;<span th:text="${category.name}"></span>
             </h1>
 
             <a th:if="${isOwner}" th:href="@{/blog/{nickname}/manage/categories(nickname=${owner.nickname})}"
@@ -48,17 +49,47 @@
                 <th:block th:unless="${owner.categories != null && #lists.size(owner.categories) > 0}">
                     <div class="is-flex is-gap-2">
                         <p>empty space</p>
-                        <a class="button is-small" th:href="@{/blog/{nickname}/manage/categories(nickname=${owner.nickname})}">추가</a>
+                        <a class="button is-small"
+                           th:href="@{/blog/{nickname}/manage/categories(nickname=${owner.nickname})}">추가</a>
                     </div>
                 </th:block>
             </ul>
         </div>
 
         <!--        일단 전체 보기는 그냥 없어도 될듯 -->
-        <div class="block" hx-swap="outerHTML" hx-trigger="revealed"
-             hx:get="@{/blog/{nickname}/posts(nickname=${nickname},category=${category.id},page=${page})}">
-            TODO: post list 를 리스트 형식으로 작게 보여줌... (무한스크롤?)
-        </div>
+        <th:block>
+            <ul class="mt-3 post-list">
+                <th:block th:if="${isEmpty}">
+                    <div class="container is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
+                <span style="font-size: 48px;">
+                🫠
+                </span>
+                        <span>empty!</span>
+                    </div>
+                </th:block>
+
+                <li class="post-item" th:each="post: ${posts}">
+                    <a class="is-flex is-align-items-baseline is-gap-2 is-color-black-50 is-position-relative"
+                       th:href="@{/blog/posts/{postId}(postId=${post.id})}">
+                        <h3 class="has-text-weight-semibold is-size-5" th:text="${post.title}"></h3>
+                        <span class="is-size-6" th:text="|${#temporals.format(post.createdAt, 'yyyy.MM.dd')}.|"></span>
+                    </a>
+                </li>
+                <li class="post-item" th:if="${(hasNextPage ?: true)}">
+                    <span
+                            hx-swap="beforeend"
+                            hx-target="closest .post-list"
+                            hx-trigger="revealed"
+                            hx:get="@{/blog/{nickname}/posts(nickname=${nickname},category=${category.id},page=${page==null?0:page})}"
+                            hx-indicator="#htmx-skeleton"
+                    ></span>
+                </li>
+            </ul>
+        </th:block>
+
+        <!--        <div class="block" hx-swap="outerhtml" hx-trigger="revealed"-->
+        <!--             hx:get="@{/blog/{nickname}/posts(nickname=${nickname},category=${category.id},page=${page})}">-->
+        <!--        </div>-->
         <!--        TODO: loading -->
     </div>
 </main>

@@ -8,8 +8,11 @@
 </head>
 <body>
 <th:block th:if="${#lists.isEmpty(posts)}">
-    <div>
-        empty..!
+    <div class="container is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
+        <span style="font-size: 48px;">
+        🫠
+        </span>
+        <span>empty!</span>
     </div>
 </th:block>
 <th:block th:unless="${#lists.isEmpty(posts)}">
@@ -21,6 +24,17 @@
             </a>
         </li>
     </ul>
+    <div th:if="${(hasNextPage ?: true)}">
+                    <span hx-select=".post-list > .post-item"
+                          hx-swap="outerHTML"
+                          hx-target="closest .post-item"
+                          hx-trigger="revealed"
+                          hx:get="@{/blog/{nickname}/posts(nickname=${nickname},category=${category.id},page=${page})}">
+                          hx-indicator="#htmx-skeleton"
+                    ></span>
+
+    </div>
+    <div th:text="|page: ${page}|"></div>
 </th:block>
 
 </body>
