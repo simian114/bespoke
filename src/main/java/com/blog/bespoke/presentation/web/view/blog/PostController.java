@@ -1,5 +1,6 @@
 package com.blog.bespoke.presentation.web.view.blog;
 
+import com.blog.bespoke.application.dto.response.PostResponseDto;
 import com.blog.bespoke.application.dto.response.UserResponseDto;
 import com.blog.bespoke.application.usecase.post.PostUseCase;
 import com.blog.bespoke.application.usecase.user.UserUseCase;
@@ -22,7 +23,7 @@ public class PostController {
     public String postDetailPage(@PathVariable("postId") Long postId,
                                  @LoginUser User currentUser,
                                  Model model) {
-        Post post = postUseCase.getPostById(postId);
+        PostResponseDto post = postUseCase.getPostById(postId);
         UserResponseDto owner = userUseCase.getUserWithCategoryByNickname(post.getAuthor().getNickname());
 
         model.addAttribute("me", currentUser);

@@ -48,8 +48,8 @@ public class PostUseCase {
         return PostResponseDto.from(post);
     }
 
-    public Post getPostById(Long postId) {
-        return postService.getById(postId);
+    public PostResponseDto getPostById(Long postId) {
+        return PostResponseDto.from(postService.getById(postId));
     }
 
     @Transactional

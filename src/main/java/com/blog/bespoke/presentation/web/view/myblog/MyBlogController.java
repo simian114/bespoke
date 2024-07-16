@@ -339,7 +339,7 @@ public class MyBlogController {
         // post -> postCreate
         UserResponseDto me = userUseCase.getUserForPostWrite(nickname);
         // User me = userUseCase.getUserByNickname(nickname);
-        Post post = postUseCase.getPostById(postId);
+        PostResponseDto post = postUseCase.getPostById(postId);
         PostCreateRequestDto dto = PostCreateRequestDto.builder()
                 .title(post.getTitle())
                 .description(post.getDescription())
