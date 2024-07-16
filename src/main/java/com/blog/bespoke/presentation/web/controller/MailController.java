@@ -17,6 +17,6 @@ public class MailController {
     @Envelope("이메일 인증이 완료되었습니다.")
     @GetMapping("/email-validation")
     public ResponseEntity<UserResponseDto> emailValidation(@RequestParam(name = "code") String code) {
-        return ResponseEntity.ok(UserResponseDto.from(userUseCase.emailValidation(code)));
+        return ResponseEntity.ok(userUseCase.emailValidation(code));
     }
 }

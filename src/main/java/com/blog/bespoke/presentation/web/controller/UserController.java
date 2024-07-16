@@ -44,23 +44,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(userFollowUseCase.unfollow(id, currentUser));
     }
 
-    @Envelope("카테고리 생성")
-    @PostMapping("/{id}/category")
-    public ResponseEntity<?> createCategory(@PathVariable Long id,
-                                            @LoginUser User currentUser,
-                                            @RequestBody CategoryCreateRequestDto requestDto) {
-        User user = userCategoryUseCase.createCategory(requestDto, currentUser);
-
-        return ResponseEntity.ok(UserResponseDto.from(user));
-    }
-
-    @PutMapping("/{id}/category/{categoryId}")
-    public ResponseEntity<?> updateCategory(@PathVariable("id") Long id,
-                                            @PathVariable("categoryId") Long categoryId,
-                                            @RequestBody CategoryUpdateCmd cmd,
-                                            @LoginUser User currentUser
-    ) {
-        userCategoryUseCase.updateCategory(categoryId, cmd, currentUser);
-        return ResponseEntity.ok("");
-    }
+//    @PutMapping("/{id}/category/{categoryId}")
+//    public ResponseEntity<?> updateCategory(@PathVariable("id") Long id,
+//                                            @PathVariable("categoryId") Long categoryId,
+//                                            @RequestBody CategoryUpdateCmd cmd,
+//                                            @LoginUser User currentUser
+//    ) {
+//        userCategoryUseCase.updateCategory(categoryId, cmd, currentUser);
+//        return ResponseEntity.ok("");
+//    }
 }

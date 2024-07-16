@@ -37,7 +37,7 @@ public class UserUseCase {
      * @return db 에 저장된 영속성 user 가 return 됨
      */
     @Transactional
-    public User signup(UserSignupRequestDto requestDto) {
+    public UserResponseDto signup(UserSignupRequestDto requestDto) {
         User user = UserRequestMapper.INSTANCE.toDomain(requestDto);
         UserProfile profile = UserProfile.builder()
                 .introduce(requestDto.getIntroduce())
@@ -62,12 +62,11 @@ public class UserUseCase {
                         .code(token.getCode())
                         .build()
         );
-
-        return userRepository.save(user);
+        return UserResponseDto.from(userRepository.save(user));
     }
 
     @Transactional
-    public User emailValidation(String code) {
+    public UserResponseDto emailValidation(String code) {
         // 토큰 값을 이용해 Token 을 찾아옴
         Token token = tokenRepository.getByCode(code);
         // 토큰의 만료 기간을 체크함. 만료됐을 시 예외 throw 및 삭제
@@ -80,28 +79,28 @@ public class UserUseCase {
 
         // 아직 만료가 되지 않았다면, token 에 있는 유저의 상태를 ACTIVE 로 변경함
         // 동시에 토큰을 삭제한다.
-        return user;
+        return UserResponseDto.from(user);
     }
 
     public UserResponseDto getUserWithCategoryByNickname(String nickname) {
-        return UserResponseDto.from(userRepository.getUserForPostCreateByNickname(nickname)) ;
+        return UserResponseDto.from(userRepository.getUserForPostCreateByNickname(nickname));
     }
 
-    public User getUserByNickname(String nickname) {
-        return userRepository.getByNickname(nickname);
+    public UserResponseDto getUserByNickname(String nickname) {
+        return UserResponseDto.from(userRepository.getByNickname(nickname));
     }
 
 
-    public User getUserForPostWrite(String nickname) {
-        return userRepository.getUserForPostCreateByNickname(nickname);
+    public UserResponseDto getUserForPostWrite(String nickname) {
+        return UserResponseDto.from(userRepository.getUserForPostCreateByNickname(nickname));
     }
 
     @Transactional
-    public User updateUser(UserUpdateRequestDto requestDto, Long userId) {
+    public UserResponseDto updateUser(UserUpdateRequestDto requestDto, Long userId) {
         // requestDto to userUpdateCmd
         UserUpdateCmd cmd = requestDto.toCmd();
         User user = userRepository.getById(userId);
         user.update(cmd);
-        return user;
+        return UserResponseDto.from(user);
     }
 }

@@ -3,6 +3,7 @@ package com.blog.bespoke.application.usecase;
 import com.blog.bespoke.BespokeApplication;
 import com.blog.bespoke.application.dto.request.CategoryCreateRequestDto;
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
+import com.blog.bespoke.application.dto.response.UserResponseDto;
 import com.blog.bespoke.application.usecase.user.UserCategoryUseCase;
 import com.blog.bespoke.application.usecase.user.UserUseCase;
 import com.blog.bespoke.domain.model.user.User;
@@ -26,7 +27,7 @@ public class UserCategoryUseCaseTest {
     @DisplayName("category 생성 테스트")
     void test () {
         // given
-        User user = userUseCase.signup(
+        UserResponseDto user = userUseCase.signup(
                 UserSignupRequestDto.builder().nickname("nickname").name("name").password("password").email("email@gmail.com").build()
         );
         CategoryCreateRequestDto requestDto = new CategoryCreateRequestDto();
@@ -34,7 +35,7 @@ public class UserCategoryUseCaseTest {
         requestDto.setName("name");
 
         // when
-        User category = userCategoryUseCase.createCategory(requestDto, user);
+        UserResponseDto category = userCategoryUseCase.createCategory(requestDto, user.getId());
         // then
         System.out.println(category);
 
