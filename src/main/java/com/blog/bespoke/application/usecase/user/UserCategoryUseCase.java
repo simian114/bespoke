@@ -21,7 +21,7 @@ public class UserCategoryUseCase {
     private final UserCategoryService userCategoryService;
 
     public UserResponseDto getUserWithCategory(Long userId) {
-        return UserResponseDto.from(userRepository.getUserWithCategories(userId));
+        return UserResponseDto.from(userRepository.getUserWithCategories(userId), true);
     }
 
     @Transactional
@@ -35,7 +35,7 @@ public class UserCategoryUseCase {
 
         user.addCategory(category);
         userRepository.save(user);
-        return UserResponseDto.from(user);
+        return UserResponseDto.from(user, true);
     }
 
     @Transactional
@@ -46,14 +46,14 @@ public class UserCategoryUseCase {
                 .findFirst().orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND));
 
         category.update(cmd);
-        return UserResponseDto.from(user);
+        return UserResponseDto.from(user, true);
     }
 
     @Transactional
     public UserResponseDto deleteCategory(Long categoryId, User currentUser) {
         User user = userRepository.getUserWithCategories(currentUser.getId());
         user.removeCategory(categoryId);
-        return UserResponseDto.from(user);
+        return UserResponseDto.from(user, true);
     }
 
 
