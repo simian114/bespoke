@@ -9,42 +9,50 @@
     <title th:text="|${owner.name}'s blog'.|">Bespoke</title>
 </head>
 <body>
-<main class="section blog-page">
+<main class="section">
     <!-- max-width: 640 이 읽기에 가장 좋아보인다.   -->
-    <div class="container pt-6 has-background-primary-100" style="max-width: 640px">
+    <div class="container has-background-primary-100" style="max-width: 640px">
+        <!--        <div class="container pt-6 has-background-primary-100" style="max-width: 640px">-->
         <div class="block is-flex is-justify-content-space-between">
-            <h1 class="has-text-weight-bold is-size-5">
-                <span class="hax-text-weight-bold" th:text="${owner.name}"></span> ﹒ <span class="hax-text-weight-bold"
-                                                                                           th:text="${owner.nickname}"></span>
+            <h1 class="has-text-weight-bold is-size-4">
+                <a class="hax-text-weight-bold" th:text="${owner.nickname}"></a> ﹒ <span class="hax-text-weight-bold"
+                                                                                         th:text="${owner.name}"></span>
             </h1>
             <a th:if="${isOwner}" th:href="@{/blog/{nickname}/manage(nickname=${owner.nickname})}"
-               class="button is-small">관리</a>
+               class="button is-small">edit</a>
         </div>
 
-        <div class="block content" th:utext="${owner.introduce}"></div>
+        <div class="block is-flex is-align-items-baseline">
+            <div class="mr-4 is-flex-shrink-0 is-size-5 has-text-weight-semibold">space</div>
+            <ul class="space-list is-flex-grow-5">
+                <th:block th:if="${owner.categories != null && #lists.size(owner.categories) > 0}">
+                    <li class="is-flex" th:each="category: ${owner.categories}">
+                        <a
+                                hx-boost="true"
+                                th:href="@{/blog/{nickname}/category/{url}(nickname=${nickname},url=${category.url})}"
+                                class="has-text-weight-semibold is-underlined mr-2 is-flex-shrink-0"
+                                th:text="${category.name}"></a>
+                        <p style="text-align: end" class="is-flex-grow-5" th:text="${category.description}"></p>
+                    </li>
+                </th:block>
+                <th:block th:unless="${owner.categories != null && #lists.size(owner.categories) > 0}">
+                    <div class="is-flex is-gap-2">
+                        <p>empty space</p>
+                        <a th:if="${isOwner}" class="button is-small" th:href="@{/blog/{nickname}/manage/categories(nickname=${owner.nickname})}">추가</a>
+                    </div>
+                </th:block>
+            </ul>
+        </div>
+
+
+        <article class="block content">
+            <p th:utext="${owner.introduce}"></p>
+        </article>
         <!--            TODO: sns list-->
-        <!--        <div class="block">-->
-        <!--        </div>-->
-
-        <div th:if="${owner.categories != null && #lists.size(owner.categories) > 0}" class="block is-flex">
-            <div class="mr-4 is-flex-shrink-0">카테고리</div>
-            <div class="is-flex-grow-5">
-                <div class="is-flex" th:each="category: ${owner.categories}">
-                    <a
-                            hx-boost="true"
-                            th:href="@{/blog/{nickname}/category/{url}(nickname=${nickname},url=${category.url})}"
-                            class="has-text-weight-semibold is-underlined mr-2 is-flex-shrink-0"
-                            th:text="${category.name}"></a>
-                    <p class="is-flex-grow-5" th:text="${category.description}"></p>
-                </div>
-            </div>
+        <div class="block">
         </div>
 
-        <!--        일단 전체 보기는 그냥 없어도 될듯 -->
-        <div class="block" hx-swap="outerHTML" hx-trigger="revealed" hx:get="@{/blog/{nickname}/posts(nickname=${nickname})}">
-            TODO: post list 를 리스트 형식으로 작게 보여줌... (무한스크롤?)
-        </div>
-<!--        TODO: loading -->
+
     </div>
 </main>
 </body>

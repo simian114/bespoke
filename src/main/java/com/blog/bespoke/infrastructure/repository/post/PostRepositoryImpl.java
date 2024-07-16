@@ -119,7 +119,7 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public Page<Post> search(PostSearchCond cond) {
-        Pageable pageable = PageRequest.of(cond.getPage(), cond.getPageSize());
+        Pageable pageable = PageRequest.of(cond.getPage() == null ? 0 : cond.getPage(), cond.getPageSize() == null ? 20 : cond.getPageSize());
 
         // query(post, cond)
         // count = query(WildCard.ALL, cond).fetch().get(0) // left join 제외하고
@@ -155,6 +155,7 @@ public class PostRepositoryImpl implements PostRepository {
                         statusEq(cond),
                         authorIdEq(cond),
                         nicknameEq(cond),
+                        categoryEq(cond),
                         filterDeletePost()
                 );
     }
@@ -208,6 +209,7 @@ public class PostRepositoryImpl implements PostRepository {
                         statusEq(cond),
                         authorIdEq(cond),
                         nicknameEq(cond),
+                        categoryEq(cond),
                         filterDeletePost()
                 );
     }
@@ -278,6 +280,13 @@ public class PostRepositoryImpl implements PostRepository {
         return post.author.nickname.eq(cond.getNickname());
     }
 
+    private BooleanExpression categoryEq(PostSearchCond cond) {
+        if (cond == null || cond.getCategory() == null) {
+            return null;
+        }
+        return post.category.id.eq(cond.getCategory());
+    }
+
     /**
      * manage 가 false 인 경우 status 의 기본값은 PUBLISHED 로 세팅된다.
      * manage 가 true 인 경우 status 조건은 따지지 않는다.
@@ -291,4 +300,5 @@ public class PostRepositoryImpl implements PostRepository {
         }
         return post.status.eq(cond.getStatus());
     }
+
 }

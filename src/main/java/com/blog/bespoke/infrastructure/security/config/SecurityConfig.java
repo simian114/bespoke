@@ -89,6 +89,8 @@ public class SecurityConfig {
                 .requestMatchers("/hx/home/posts").permitAll()
                 .requestMatchers("/blog/{nickname}/{postId}").permitAll()
                 .requestMatchers("/blog/{nickname}").permitAll()
+                .requestMatchers("/blog/{nickname}/category/**").permitAll()
+                .requestMatchers("/blog/{nickname}/manage").authenticated()
                 .requestMatchers("/signup/success").anonymous()
                 .requestMatchers("/").permitAll()
                 .anyRequest().authenticated()

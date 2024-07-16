@@ -3,10 +3,10 @@
       th:fragment="blogHeader"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
 >
-<header class="container">
+<header class="section container header" style="max-width: 768px">
     <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-            <a class="navbar-item" href="/static" hx-boost="true">
+            <a class="navbar-item" href="/" hx-boost="true">
                 <svg width="205.8" height="36.2" viewBox="0 0 205.8 36.2" xmlns="http://www.w3.org/2000/svg">
                     <g id="svgGroup" stroke-linecap="round" fill-rule="evenodd" font-size="9pt" stroke="#000"
                        stroke-width="0.25mm" fill="#000" style="stroke:#000;stroke-width:0.25mm;fill:#000">
@@ -15,34 +15,36 @@
                     </g>
                 </svg>
             </a>
+            <th:block th:unless="${isOwner}">
+                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+                   data-target="navbarBasicExample">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <script>
+                        me().on("click", ev => {
+                            let el = me(ev);
+                            const target = el.dataset.target;
+                            let menu = document.getElementById(target);
+                            el.classList.toggle("is-active");
+                            menu.classList.toggle("is-active")
+                        })
+                    </script>
+                </a>
+            </th:block>
 
-            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
-               data-target="navbarBasicExample">
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <script>
-                    me().on("click", ev => {
-                        let el = me(ev);
-                        const target = el.dataset.target;
-                        let menu = document.getElementById(target);
-                        el.classList.toggle("is-active");
-                        menu.classList.toggle("is-active")
-                    })
-                </script>
-            </a>
         </div>
 
         <div id="navbarBasicExample" class="navbar-menu">
             <div class="navbar-end">
                 <div class="navbar-item">
                     <div sec:authorize="isAuthenticated()" class="buttons">
-                        <!--  model:  owner, me -->
-                        <!--  TODO: 만약 내 블로그면, 블로그 관리 버튼이 있어야함 -->
-                        <a class="button is-danger" href="/logout">
-                            Log out
-                        </a>
+                        <th:block th:unless="${isOwner}">
+                            <a class="button is-small if-info" hx-boost="true" th:href="@{/blog/{nickname}(nickname=${me.nickname})}">
+                                My Blog
+                            </a>
+                        </th:block>
                     </div>
                     <div sec:authorize="!isAuthenticated()" class="buttons">
                         <a class="button is-primary" href="/signup" hx-boost="true">
