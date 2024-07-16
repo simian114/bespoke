@@ -30,13 +30,24 @@ public class UserResponseDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UserCountInfoResponseDto countInfo;
 
-    static public UserResponseDto from(User user) {
+    static private UserResponseDtoBuilder base(User user) {
         return UserResponseDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .name(user.getName())
-                .categories(user.categories != null && !user.categories.isEmpty()
+                .userProfile(user.getUserProfile() != null ? UserProfileResponseDto.from(user.getUserProfile()) : null)
+                .introduce(user.getUserProfile() != null ? user.getUserProfile().getIntroduce() : null)
+                .countInfo(UserCountInfoResponseDto.from(user.getUserCountInfo()));
+    }
+
+    static public UserResponseDto from(User user) {
+        return base(user).build();
+    }
+
+    static public UserResponseDto from(User user, boolean withCategories) {
+        return base(user)
+                .categories(withCategories && user.categories != null && !user.categories.isEmpty()
                         ? user.categories.stream()
                         .sorted(Comparator.comparing(Category::getPriority).reversed()
                                 .thenComparing(Category::getCreatedAt))
@@ -44,9 +55,6 @@ public class UserResponseDto {
                         .toList()
                         : null
                 )
-                .userProfile(user.getUserProfile() != null ? UserProfileResponseDto.from(user.getUserProfile()) : null)
-                .introduce(user.getUserProfile() != null ? user.getUserProfile().getIntroduce() : null)
-                .countInfo(UserCountInfoResponseDto.from(user.getUserCountInfo()))
                 .build();
     }
 

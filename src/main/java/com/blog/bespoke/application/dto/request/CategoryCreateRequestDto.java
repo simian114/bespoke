@@ -7,4 +7,5 @@ public class CategoryCreateRequestDto {
     private String name;
     private String description;
     private String url;
+    private int priority;
 }
