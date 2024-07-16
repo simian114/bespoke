@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * me: 로그인 한 유저의 jwt 정보
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class BlogController {
     private final UserUseCase userUseCase;
     private final PostUseCase postUseCase;
+
 
     // NOTE: /{nickname}/{category}
     @GetMapping("/{nickname}")
@@ -51,15 +53,26 @@ public class BlogController {
     public String blogCategory(@PathVariable("nickname") String nickname,
                                @PathVariable("categoryUrl") String categoryUrl,
                                @LoginUser User currentUser,
-                               Model model) {
-        // NOTE: isOwner 은 사용하지 말것.
+                               Model model,
+                               RedirectAttributes redirectAttributes) {
         // TODO: category
         UserResponseDto owner = userUseCase.getUserWithCategoryByNickname(nickname);
+        // selected category
+        UserResponseDto.CategoryResponseDto selectedCategory = owner.getCategories().stream()
+                .filter(c -> categoryUrl.equals(c.getUrl()))
+                .findFirst()
+                .orElse(null);
+        if (selectedCategory == null) {
+            redirectAttributes.addFlashAttribute("error", "no category");
+            return String.format("redirect:/blog/%s", nickname);
+        }
 
         model.addAttribute("me", currentUser);
         model.addAttribute("owner", owner);
+        model.addAttribute("isOwner", owner.getId().equals(currentUser == null ? null : currentUser.getId()));
+        model.addAttribute("category", selectedCategory);
 
-        return "page/blog/blog";
+        return "page/blog/category";
     }
 
     // NOTE: 나중에..

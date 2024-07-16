@@ -10,6 +10,13 @@ public class PostSearchCond extends CommonSearchCond {
     private Long authorId;
     private String nickname; // author nickname
     private Post.Status status;
+
+    /**
+     * category 가 있음 이걸로만 검색하면 된다.
+     * category 는 유저마다 있기 때문
+     */
+    private Long category;
+
     /**
      * userId: post 의 postLike 에 주어진 userId 가 좋아요 postLikes 에 postLike 하나가 담김
      * userId & like is true: userId 가 좋아요 한 게시글 리스트

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Builder
@@ -18,7 +19,7 @@ public class UserResponseDto {
     private String email;
     private String nickname;
     private String name;
-    
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String introduce;
 
@@ -35,7 +36,11 @@ public class UserResponseDto {
                 .nickname(user.getNickname())
                 .name(user.getName())
                 .categories(user.categories != null && !user.categories.isEmpty()
-                        ? user.categories.stream().map(CategoryResponseDto::from).toList()
+                        ? user.categories.stream()
+                        .sorted(Comparator.comparing(Category::getPriority).reversed()
+                                .thenComparing(Category::getCreatedAt))
+                        .map(CategoryResponseDto::from)
+                        .toList()
                         : null
                 )
                 .introduce(user.getUserProfile() != null ? user.getUserProfile().getIntroduce() : null)
