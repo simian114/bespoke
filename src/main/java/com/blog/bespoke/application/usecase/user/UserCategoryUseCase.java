@@ -2,6 +2,7 @@ package com.blog.bespoke.application.usecase.user;
 
 import com.blog.bespoke.application.dto.mapper.CategoryRequestMapper;
 import com.blog.bespoke.application.dto.request.CategoryCreateRequestDto;
+import com.blog.bespoke.application.dto.response.UserResponseDto;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.category.Category;
@@ -19,14 +20,13 @@ public class UserCategoryUseCase {
     private final UserRepository userRepository;
     private final UserCategoryService userCategoryService;
 
-    public User getUserWithCategory(Long userId) {
-        User user = userRepository.getUserWithCategories(userId);
-        return user;
+    public UserResponseDto getUserWithCategory(Long userId) {
+        return UserResponseDto.from(userRepository.getUserWithCategories(userId));
     }
 
     @Transactional
-    public User createCategory(CategoryCreateRequestDto requestDto, User currentUser) {
-        User user = userRepository.getUserWithCategories(currentUser.getId());
+    public UserResponseDto createCategory(CategoryCreateRequestDto requestDto, Long userId) {
+        User user = userRepository.getUserWithCategories(userId);
         Category category = CategoryRequestMapper.INSTANCE.toDomain(requestDto);
 
         if (!userCategoryService.canMakeCategory(user, category)) {
@@ -35,25 +35,25 @@ public class UserCategoryUseCase {
 
         user.addCategory(category);
         userRepository.save(user);
-        return user;
+        return UserResponseDto.from(user);
     }
 
     @Transactional
-    public User updateCategory(Long categoryId, CategoryUpdateCmd cmd, User currentUser) {
-        User user = userRepository.getUserWithCategories(currentUser.getId());
+    public UserResponseDto updateCategory(Long categoryId, CategoryUpdateCmd cmd, Long userId) {
+        User user = userRepository.getUserWithCategories(userId);
 
         Category category = user.categories.stream().filter(c -> c.getId().equals(categoryId))
                 .findFirst().orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND));
 
         category.update(cmd);
-        return user;
+        return UserResponseDto.from(user);
     }
 
     @Transactional
-    public User deleteCategory(Long categoryId, User currentUser) {
+    public UserResponseDto deleteCategory(Long categoryId, User currentUser) {
         User user = userRepository.getUserWithCategories(currentUser.getId());
         user.removeCategory(categoryId);
-        return user;
+        return UserResponseDto.from(user);
     }
 
 

@@ -19,6 +19,7 @@ public class UserResponseDto {
     private String email;
     private String nickname;
     private String name;
+    private UserProfileResponseDto userProfile;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String introduce;
@@ -43,6 +44,7 @@ public class UserResponseDto {
                         .toList()
                         : null
                 )
+                .userProfile(user.getUserProfile() != null ? UserProfileResponseDto.from(user.getUserProfile()) : null)
                 .introduce(user.getUserProfile() != null ? user.getUserProfile().getIntroduce() : null)
                 .countInfo(UserCountInfoResponseDto.from(user.getUserCountInfo()))
                 .build();
@@ -68,6 +70,7 @@ public class UserResponseDto {
         private Long id;
         private String name;
         private String description;
+        private boolean visible;
         private String url;
         private Integer priority;
         private LocalDateTime createdAt;
@@ -78,6 +81,7 @@ public class UserResponseDto {
                     .name(category.getName())
                     .description(category.getDescription())
                     .url(category.getUrl())
+                    .visible(category.isVisible())
                     .priority(category.getPriority())
                     .createdAt(category.getCreatedAt())
                     .build();
@@ -98,10 +102,10 @@ public class UserResponseDto {
                 return null;
             }
             return UserCountInfoResponseDto.builder()
-                    .followerCount(info.getFollowerCount())
-                    .followingCount(info.getFollowingCount())
-                    .publishedPostCount(info.getPublishedPostCount())
-                    .likePostCount(info.getLikePostCount())
+                    .followerCount(info.getFollowerCount() == null ? 0 : info.getFollowerCount())
+                    .followingCount(info.getFollowingCount() == null ? 0 : info.getFollowingCount())
+                    .publishedPostCount(info.getPublishedPostCount() == null ? 0 : info.getPublishedPostCount())
+                    .likePostCount(info.getLikePostCount() == null ? 0 : info.getLikePostCount())
                     .build();
         }
     }

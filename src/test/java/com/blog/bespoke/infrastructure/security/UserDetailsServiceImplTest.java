@@ -2,6 +2,7 @@ package com.blog.bespoke.infrastructure.security;
 
 import com.blog.bespoke.application.dto.mapper.UserRequestMapper;
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
+import com.blog.bespoke.application.dto.response.UserResponseDto;
 import com.blog.bespoke.application.usecase.user.UserUseCase;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.repository.config.RepositoryConfig;
@@ -44,7 +45,7 @@ public class UserDetailsServiceImplTest {
     @DisplayName("User details 로 유저 찾기")
     void test() {
         // given
-        User user = userUseCase.signup(UserSignupRequestDto.builder().email("email@gmail.com").password("password").nickname("nickname").name("name").build());
+        UserResponseDto user = userUseCase.signup(UserSignupRequestDto.builder().email("email@gmail.com").password("password").nickname("nickname").name("name").build());
 
         // when
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());

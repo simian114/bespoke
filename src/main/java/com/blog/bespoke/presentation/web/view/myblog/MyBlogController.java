@@ -5,10 +5,10 @@ import com.blog.bespoke.application.dto.request.PostCreateRequestDto;
 import com.blog.bespoke.application.dto.request.PostUpdateRequestDto;
 import com.blog.bespoke.application.dto.request.UserUpdateRequestDto;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
+import com.blog.bespoke.application.dto.response.UserResponseDto;
 import com.blog.bespoke.application.usecase.post.PostUseCase;
 import com.blog.bespoke.application.usecase.user.UserCategoryUseCase;
 import com.blog.bespoke.application.usecase.user.UserUseCase;
-import com.blog.bespoke.domain.model.category.Category;
 import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.post.PostSearchCond;
 import com.blog.bespoke.domain.model.post.PostStatusCmd;
@@ -54,7 +54,7 @@ public class MyBlogController {
             return "redirect:/home";
         }
 
-        User owner = userUseCase.getUserByNickname(nickname);
+        UserResponseDto owner = userUseCase.getUserByNickname(nickname);
         UserUpdateRequestDto user = UserUpdateRequestDto.builder()
                 .name(owner.getName())
                 .introduce(owner.getUserProfile().getIntroduce())
@@ -76,7 +76,7 @@ public class MyBlogController {
             return "redirect:/home";
         }
         if (bindingResult.hasErrors()) {
-            User owner = userUseCase.getUserByNickname(nickname);
+            UserResponseDto owner = userUseCase.getUserByNickname(nickname);
             model.addAttribute("owner", owner);
             return "page/myblog/profile";
         }
@@ -112,7 +112,7 @@ public class MyBlogController {
 
         Page<PostResponseDto> postPage = postUseCase.postSearch(postSearchCond, currentUser);
 
-        User owner = userUseCase.getUserByNickname(nickname);
+        UserResponseDto owner = userUseCase.getUserByNickname(nickname);
         model.addAttribute("owner", owner);
         model.addAttribute("posts", postPage.getContent());
 
@@ -148,14 +148,14 @@ public class MyBlogController {
                                  @LoginUser User currentUser,
                                  Model model) {
         // page
-        User me = userUseCase.getUserByNickname(nickname);
+        UserResponseDto me = userUseCase.getUserByNickname(nickname);
         if (!isOwner(nickname, currentUser)) {
             return "redirect:/";
         }
         model.addAttribute("nickname", nickname);
         model.addAttribute("owner", me);
 
-        User userWithCategory = userCategoryUseCase.getUserWithCategory(currentUser.getId());
+        UserResponseDto userWithCategory = userCategoryUseCase.getUserWithCategory(currentUser.getId());
         model.addAttribute("categories", userWithCategory.getCategories());
         return "page/myblog/categoryTable";
     }
@@ -165,7 +165,7 @@ public class MyBlogController {
                                      @ModelAttribute("category") CategoryCreateRequestDto requestDto,
                                      @LoginUser User currentUser,
                                      Model model) {
-        User me = userUseCase.getUserByNickname(nickname);
+        UserResponseDto me = userUseCase.getUserByNickname(nickname);
         if (!isOwner(nickname, currentUser)) {
             return "redirect:/";
         }
@@ -181,13 +181,13 @@ public class MyBlogController {
                                    @LoginUser User currentUser,
                                    RedirectAttributes redirectAttributes,
                                    Model model) {
-        User me = userUseCase.getUserByNickname(nickname);
+        UserResponseDto me = userUseCase.getUserByNickname(nickname);
         if (!isOwner(nickname, currentUser)) {
             redirectAttributes.addFlashAttribute("error", "권한없음");
             return "redirect:/";
         }
-        User userWithCategory = userCategoryUseCase.getUserWithCategory(currentUser.getId());
-        Category category = userWithCategory.categories.stream().filter(c -> c.getId().equals(categoryId))
+        UserResponseDto userWithCategory = userCategoryUseCase.getUserWithCategory(currentUser.getId());
+        UserResponseDto.CategoryResponseDto category = userWithCategory.getCategories().stream().filter(c -> c.getId().equals(categoryId))
                 .findAny().orElseThrow();
 
         model.addAttribute("nickname", nickname);
@@ -203,14 +203,14 @@ public class MyBlogController {
                                  @LoginUser User currentUser,
                                  @Valid @ModelAttribute("category") CategoryUpdateCmd requestDto,
                                  BindingResult bindingResult) {
-        User me = userUseCase.getUserByNickname(nickname);
+        UserResponseDto me = userUseCase.getUserByNickname(nickname);
         if (!isOwner(nickname, currentUser)) {
             return "redirect:/";
         }
         if (bindingResult.hasErrors()) {
             return "page/myblog/categoryForm";
         }
-        userCategoryUseCase.updateCategory(categoryId, requestDto, me);
+        userCategoryUseCase.updateCategory(categoryId, requestDto, me.getId());
         return String.format("redirect:/blog/%s/manage/categories", nickname);
     }
 
@@ -221,14 +221,14 @@ public class MyBlogController {
                                  @Valid @ModelAttribute("category") CategoryCreateRequestDto requestDto,
                                  BindingResult bindingResult,
                                  Model model) {
-        User me = userUseCase.getUserByNickname(nickname);
+        UserResponseDto me = userUseCase.getUserByNickname(nickname);
         if (!isOwner(nickname, currentUser)) {
             return "redirect:/";
         }
         if (bindingResult.hasErrors()) {
             return "page/myblog/categoryForm";
         }
-        userCategoryUseCase.createCategory(requestDto, me);
+        userCategoryUseCase.createCategory(requestDto, me.getId());
         return String.format("redirect:/blog/%s/manage/categories", nickname);
     }
 
@@ -238,7 +238,7 @@ public class MyBlogController {
                                  @PathVariable("categoryId") Long categoryId,
                                  @LoginUser User currentUser,
                                  Model model) {
-        User me = userUseCase.getUserByNickname(nickname);
+        UserResponseDto me = userUseCase.getUserByNickname(nickname);
         if (!isOwner(nickname, currentUser)) {
             return "redirect:/";
         }
@@ -252,7 +252,7 @@ public class MyBlogController {
     public String createPostPage(@PathVariable("nickname") String nickname,
                                  @LoginUser User currentUser,
                                  Model model) {
-        User me = userUseCase.getUserForPostWrite(nickname);
+        UserResponseDto me = userUseCase.getUserForPostWrite(nickname);
         if (!isOwner(nickname, currentUser)) {
             return "redirect:/";
         }
@@ -274,7 +274,7 @@ public class MyBlogController {
                              RedirectAttributes redirectAttributes,
                              @Valid @ModelAttribute(name = "post") PostCreateRequestDto requestDto,
                              BindingResult bindingResult) {
-        User me = userUseCase.getUserForPostWrite(nickname);
+        UserResponseDto me = userUseCase.getUserForPostWrite(nickname);
         model.addAttribute("owner", me);
         model.addAttribute("nickname", nickname);
         model.addAttribute("categories", me.getCategories());
@@ -337,7 +337,7 @@ public class MyBlogController {
             return "redirect:/";
         }
         // post -> postCreate
-        User me = userUseCase.getUserForPostWrite(nickname);
+        UserResponseDto me = userUseCase.getUserForPostWrite(nickname);
         // User me = userUseCase.getUserByNickname(nickname);
         Post post = postUseCase.getPostById(postId);
         PostCreateRequestDto dto = PostCreateRequestDto.builder()
