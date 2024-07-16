@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/blog/blogLayout}"
+      layout:fragment="content"
+>
+<head>
+    <title th:text="|${post.title}|">Bespoke</title>
+</head>
+<body>
+<main class="section">
+    <!-- max-width: 640 이 읽기에 가장 좋아보인다.   -->
+    <div class="post-detail-page container has-background-primary-100" style="max-width: 640px">
+        <div class="post-header is-flex is-flex-direction-column">
+            <h1 class="is-size-3 has-text-weight-semibold" style="text-align: center;word-break: keep-all;" th:text="${post.title}"></h1>
+            <p style="text-align: end;" th:text="|${#temporals.format(post.createdAt, 'yyyy.MM.dd')}.|"></p>
+            <div class="is-flex is-align-items-baseline is-justify-content-flex-end">
+                <span>by</span>
+                &nbsp;
+                <a hx-boost="true" class="is-size-5 has-text-weight-semibold" th:text="${owner.nickname}" th:href="@{/blog/{nickname}(nickname=${owner.nickname})}"></a>
+                &nbsp;﹒&nbsp;
+                <ul class="is-flex is-gap-1">
+                    <li th:each="category :${owner.getCategories()}">
+                        <a hx-boost="true" th:text="${category.name}" th:href="@{/blog/{nickname}/category/{category}(nickname=${owner.nickname},category=${category.url})}"></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <article class="content mt-4" th:utext="${post.getContent()}">
+
+        </article>
+    </div>
+</main>
+</body>
+</html>

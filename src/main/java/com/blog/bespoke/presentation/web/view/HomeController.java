@@ -75,13 +75,4 @@ public class HomeController {
         return "page/home/home :: .post-list";
     }
 
-    // NOTE: static
-    @GetMapping("/blog/{nickname}/{postId}")
-    public String temp(@PathVariable("nickname") String nickname, @PathVariable("postId") Long postId,
-                       Model model) {
-        model.addAttribute("nickname", nickname);
-        model.addAttribute("postId", postId);
-        return "page/temp";
-    }
-
 }

@@ -27,8 +27,7 @@ import java.util.Set;
 
 @Configuration
 @RequiredArgsConstructor
-public class SecurityConfig {
-    private final JwtService jwtService;
+public class SecurityConfig { private final JwtService jwtService;
     private final ObjectMapper objectMapper;
 
     @Bean
@@ -89,6 +88,7 @@ public class SecurityConfig {
                 .requestMatchers("/hx/home/posts").permitAll()
                 .requestMatchers("/blog/{nickname}/{postId}").permitAll()
                 .requestMatchers("/blog/{nickname}").permitAll()
+                .requestMatchers("/blog/{nickname}/posts/**").permitAll()
                 .requestMatchers("/blog/{nickname}/category/**").permitAll()
                 .requestMatchers("/blog/{nickname}/manage").authenticated()
                 .requestMatchers("/signup/success").anonymous()
