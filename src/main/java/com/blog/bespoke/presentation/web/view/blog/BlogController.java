@@ -82,18 +82,30 @@ public class BlogController {
                                @ModelAttribute PostSearchCond cond,
                                @LoginUser User currentUser,
                                Model model) {
-        User owner = userUseCase.getUserByNickname(nickname);
+        UserResponseDto owner = userUseCase.getUserWithCategoryByNickname(nickname);
+
+        if (cond.getCategory()  != null) {
+            UserResponseDto.CategoryResponseDto selectedCategory = owner.getCategories().stream()
+                    .filter(c -> cond.getCategory().equals(c.getId()))
+                    .findFirst()
+                    .orElse(null);
+            if (selectedCategory == null) {
+                return String.format("redirect:/blog/%s", nickname);
+            }
+            model.addAttribute("category", selectedCategory);
+        }
         cond.setNickname(null);
         Page<PostResponseDto> posts = postUseCase.postSearch(cond, currentUser);
-//        Page<PostResponseDto> posts = postUseCase.postSearch(cond, currentUser);
+        model.addAttribute("isEmpty", posts.getTotalElements() == 0);
         model.addAttribute("totalElements", posts.getTotalElements());
         model.addAttribute("hasNextPage", posts.hasNext());
+        System.out.println("hasNextPage = " + posts.hasNext());
         model.addAttribute("posts", posts.getContent());
-        model.addAttribute("page", posts.getPageable().getPageNumber());
+        model.addAttribute("page", posts.getPageable().getPageNumber() + 1);
         model.addAttribute("owner", owner);
         model.addAttribute("me", currentUser);
 
-        return "page/blog/postList";
+        return "page/blog/category :: .post-list";
     }
 
     private boolean isOwner(String nickname, User currentUser) {
