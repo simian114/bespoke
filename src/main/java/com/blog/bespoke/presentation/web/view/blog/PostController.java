@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 @RequiredArgsConstructor
-public class PostPageController {
+public class PostController {
     private final PostUseCase postUseCase;
     private final UserUseCase userUseCase;
 

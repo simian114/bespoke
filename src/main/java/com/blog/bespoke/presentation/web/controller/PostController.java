@@ -3,10 +3,8 @@ package com.blog.bespoke.presentation.web.controller;
 import com.blog.bespoke.application.dto.request.PostCreateRequestDto;
 import com.blog.bespoke.application.usecase.post.PostLikeUseCase;
 import com.blog.bespoke.application.usecase.post.PostUseCase;
-import com.blog.bespoke.application.usecase.user.UserUseCase;
 import com.blog.bespoke.domain.model.post.PostSearchCond;
 import com.blog.bespoke.domain.model.post.PostStatusCmd;
-import com.blog.bespoke.domain.model.post.PostUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.aop.ResponseEnvelope.Envelope;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
@@ -16,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+//@RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
 public class PostController {

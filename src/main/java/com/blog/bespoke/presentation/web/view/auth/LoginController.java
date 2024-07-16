@@ -22,7 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-public class LoginPageController {
+public class LoginController {
     private final AuthUseCase authUseCase;
 
     @GetMapping("/login")
