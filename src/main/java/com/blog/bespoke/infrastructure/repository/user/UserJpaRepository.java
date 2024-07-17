@@ -11,6 +11,9 @@ import java.util.Optional;
 public interface UserJpaRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
+    @Query("select u from User u left join fetch u.roles where u.email = :email")
+    Optional<User> findByEmailWithRoles(@Param("email") String email);
+
     Optional<User> findByNickname(String nickname);
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.followings f WHERE f.followerId = :userId AND f.followingId = :followingId")
@@ -54,6 +57,12 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.categories c WHERE u.id = :userId ORDER BY c.priority desc")
     Optional<User> findWithCategories(Long userId);
 
-    @Query("select u from User u left join fetch u.categories c where u.nickname = :nickname order by c.priority desc")
+    @Query("""
+            select distinct u from User u
+            left join fetch u.categories
+            left join fetch u.userCountInfo
+            left join fetch u.userProfile
+            where u.nickname = :nickname
+            """)
     Optional<User> findUserForPostCreate(@Param("nickname") String nickname);
 }
