@@ -48,12 +48,17 @@ public class PostResponseDto {
                 .build();
     }
 
-    static public PostResponseDto from(Post post, boolean withCategory) {
+    static public PostResponseDto from(Post post, PostResponseDtoRelationUsage usage) {
         return base(post)
-                .category(withCategory ?  post.getCategory() : null)
+                .category(usage.category ?  post.getCategory() : null)
                 .build();
     }
 
+    @Builder
+    @Getter
+    public static class PostResponseDtoRelationUsage {
+        private boolean category;
+    }
 
     @Setter
     @Getter
