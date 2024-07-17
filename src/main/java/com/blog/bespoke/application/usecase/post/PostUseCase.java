@@ -17,7 +17,6 @@ import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.post.PostRepository;
 import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.blog.bespoke.domain.service.PostService;
-import com.blog.bespoke.domain.service.UserCountInfoService;
 import com.blog.bespoke.domain.service.post.PostSearchService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,6 @@ public class PostUseCase {
     private final UserRepository userRepository;
     private final PostService postService;
     private final PostSearchService postSearchService;
-    private final UserCountInfoService userCountInfoService;
     private final EventPublisher publisher;
     private final PostRequestMapper mapper = PostRequestMapper.INSTANCE;
 
@@ -125,7 +123,7 @@ public class PostUseCase {
 
         // NOTE: published 에서 다른 값으로 변경되면, published count 다운 해야함
         if (asIs == Post.Status.PUBLISHED && cmd.getStatus() != Post.Status.PUBLISHED) {
-            userCountInfoService.decrementPublishedPostCount(post.getAuthor().getId());
+            userRepository.decrementPublishedPostCount(post.getAuthor().getId());
         }
 
         return PostResponseDto.from(postRepository.save(post));
