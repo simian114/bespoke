@@ -18,7 +18,6 @@ import com.blog.bespoke.domain.repository.post.PostRepository;
 import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.blog.bespoke.domain.service.PostService;
 import com.blog.bespoke.domain.service.UserCountInfoService;
-import com.blog.bespoke.domain.service.UserService;
 import com.blog.bespoke.domain.service.post.PostSearchService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -47,11 +46,11 @@ public class PostUseCase {
         boolean likedByUser = currentUser != null && postRepository.existsPostLikeByPostIdAndUserId(post.getId(), currentUser.getId());
 
         postService.getPostAndUpdateViewCountWhenNeeded(post, likedByUser, currentUser);
-        return PostResponseDto.from(post);
+        return PostResponseDto.from(post, true);
     }
 
     public PostResponseDto getPostById(Long postId) {
-        return PostResponseDto.from(postRepository.getById(postId));
+        return PostResponseDto.from(postRepository.getById(postId), true);
     }
 
     @Transactional

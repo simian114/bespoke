@@ -38,11 +38,6 @@ public class PostController {
         return ResponseEntity.ok(postUseCase.postSearch(cond, currentUser));
     }
 
-    @GetMapping("/{postId}")
-    public ResponseEntity<?> showPostById(@PathVariable Long postId, @LoginUser User currentUser) {
-        return ResponseEntity.ok(postUseCase.showPostById(postId, currentUser));
-    }
-
     @Envelope("삭제했습니다.")
     @DeleteMapping("/{postId}")
     public ResponseEntity<?> deleteById(@PathVariable Long postId, @LoginUser User currentUser) {

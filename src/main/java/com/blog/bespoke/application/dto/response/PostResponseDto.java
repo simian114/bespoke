@@ -3,6 +3,7 @@ package com.blog.bespoke.application.dto.response;
 import com.blog.bespoke.domain.model.category.Category;
 import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.post.PostCountInfo;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -22,11 +23,13 @@ public class PostResponseDto {
     private LocalDateTime updatedAt;
     private PostCountInfoResponseDto countInfo;
     private UserResponseDto author;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Category category;
 
     private boolean likedByUser;
 
-    static public PostResponseDto from(Post post) {
+    static private PostResponseDtoBuilder base(Post post) {
         return PostResponseDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -35,12 +38,22 @@ public class PostResponseDto {
                 .status(post.getStatus())
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
-                .category(post.getCategory())
                 .countInfo(PostCountInfoResponseDto.from(post.getPostCountInfo()))
                 .author(UserResponseDto.from(post.getAuthor()))
-                .likedByUser(Boolean.TRUE.equals(post.getLikedByUser()))
+                .likedByUser(Boolean.TRUE.equals(post.getLikedByUser()));
+    }
+
+    static public PostResponseDto from(Post post) {
+        return base(post)
                 .build();
     }
+
+    static public PostResponseDto from(Post post, boolean withCategory) {
+        return base(post)
+                .category(withCategory ?  post.getCategory() : null)
+                .build();
+    }
+
 
     @Setter
     @Getter
