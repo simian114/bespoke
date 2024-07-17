@@ -4,7 +4,6 @@ import com.blog.bespoke.application.dto.response.PostResponseDto;
 import com.blog.bespoke.application.dto.response.UserResponseDto;
 import com.blog.bespoke.application.usecase.post.PostUseCase;
 import com.blog.bespoke.application.usecase.user.UserUseCase;
-import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,7 @@ public class PostController {
     public String postDetailPage(@PathVariable("postId") Long postId,
                                  @LoginUser User currentUser,
                                  Model model) {
-        PostResponseDto post = postUseCase.getPostById(postId);
+        PostResponseDto post = postUseCase.showPostById(postId, currentUser);
         UserResponseDto owner = userUseCase.getUserWithCategoryByNickname(post.getAuthor().getNickname());
 
         model.addAttribute("me", currentUser);
