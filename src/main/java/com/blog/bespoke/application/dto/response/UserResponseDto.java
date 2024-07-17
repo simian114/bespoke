@@ -45,9 +45,9 @@ public class UserResponseDto {
         return base(user).build();
     }
 
-    static public UserResponseDto from(User user, boolean withCategories) {
+    static public UserResponseDto from(User user, UserResponseDtoRelationUsage usage) {
         return base(user)
-                .categories(withCategories && user.categories != null && !user.categories.isEmpty()
+                .categories(usage.isCategories() && user.categories != null && !user.categories.isEmpty()
                         ? user.categories.stream()
                         .sorted(Comparator.comparing(Category::getPriority).reversed()
                                 .thenComparing(Category::getCreatedAt))
@@ -57,6 +57,26 @@ public class UserResponseDto {
                 )
                 .build();
     }
+
+    @Builder
+    @Getter
+    public static class UserResponseDtoRelationUsage {
+        private boolean categories;
+        private boolean hello; // hello 는 자동으로 false 로 세팅되어야만함
+    }
+
+//    static public UserResponseDto from(User user, UserResponseDtoRelationUsage usage) {
+//        return base(user)
+//                .categories(usage.isCategories() && user.categories != null && !user.categories.isEmpty()
+//                        ? user.categories.stream()
+//                        .sorted(Comparator.comparing(Category::getPriority).reversed()
+//                                .thenComparing(Category::getCreatedAt))
+//                        .map(CategoryResponseDto::from)
+//                        .toList()
+//                        : null
+//                )
+//                .build();
+//    }
 
     @AllArgsConstructor
     @Data
