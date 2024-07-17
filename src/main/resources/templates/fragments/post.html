@@ -3,7 +3,7 @@
 >
 <!-- post -->
 <th:block th:fragment="defaultCard(post)">
-    <a class="cell" hx-boost="true" th:href="@{/blog/{nickname}/{postId}(nickname=${post.author.nickname},postId=${post.id})}">
+    <a class="cell" hx-boost="true" th:href="@{/blog/posts/{postId}(postId=${post.id})}">
         <div class="card">
             <div class="card-image">
                 <figure class="image is-4by3">
