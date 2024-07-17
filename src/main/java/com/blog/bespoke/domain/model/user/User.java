@@ -57,7 +57,7 @@ public class User extends TimeStamp {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserCountInfo userCountInfo;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserRole> roles;
 
     @Enumerated(EnumType.STRING)
@@ -66,6 +66,9 @@ public class User extends TimeStamp {
 
     @JsonIgnore
     public List<String> getRolesAsString() {
+        if (roles == null) {
+            return List.of();
+        }
         return roles.stream()
                 .map(role -> role.getRole().getCode().name())
                 .toList();

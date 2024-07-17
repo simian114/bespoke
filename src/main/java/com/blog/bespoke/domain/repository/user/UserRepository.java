@@ -22,6 +22,8 @@ public interface UserRepository extends UserCountInfoRepository, UserCategoryRep
 
     User getByEmail(String email);
 
+    Optional<User> findByEmailWithRoles(String email);
+
     Optional<User> findByNickname(String nickname);
 
     User getByNickname(String nickname);

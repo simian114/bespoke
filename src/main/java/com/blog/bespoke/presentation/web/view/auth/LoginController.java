@@ -78,7 +78,6 @@ public class LoginController {
 
     @GetMapping("/logout")
     public String logoutPage(HttpServletResponse response) {
-        log.info("hello world");
         Cookie accessTokenCookie = new Cookie("access_token", null);
         accessTokenCookie.setMaxAge(0);
         accessTokenCookie.setHttpOnly(true);
