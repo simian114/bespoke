@@ -84,7 +84,7 @@ public class UserUseCase {
     }
 
     public UserResponseDto getUserWithCategoryByNickname(String nickname) {
-        return UserResponseDto.from(userRepository.getUserForPostCreateByNickname(nickname), com.blog.bespoke.application.dto.response.UserResponseDto.UserResponseDtoRelationUsage.builder().categories(true).build());
+        return UserResponseDto.from(userRepository.getUserForPostCreateByNickname(nickname), UserResponseDto.UserResponseDtoRelationUsage.builder().categories(true).build());
     }
 
     public UserResponseDto getUserByNickname(String nickname) {
@@ -93,7 +93,7 @@ public class UserUseCase {
 
 
     public UserResponseDto getUserForPostWrite(String nickname) {
-        return UserResponseDto.from(userRepository.getUserForPostCreateByNickname(nickname), com.blog.bespoke.application.dto.response.UserResponseDto.UserResponseDtoRelationUsage.builder().categories(true).build());
+        return UserResponseDto.from(userRepository.getUserForPostCreateByNickname(nickname), UserResponseDto.UserResponseDtoRelationUsage.builder().categories(true).build());
     }
 
     @Transactional

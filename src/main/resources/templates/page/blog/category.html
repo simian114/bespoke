@@ -78,7 +78,7 @@
                     hx-select=".post-list .post-item"
                     hx-target="closest .post-item"
                     hx-trigger="revealed"
-                    hx:get="@{/blog/{nickname}/posts(nickname=${nickname},category=${category.id},page=${page==null?0:page})}"
+                    hx:get="@{/blog/posts(category=${category.id},page=${page==null?0:page})}"
                     hx-indicator="#htmx-skeleton"
                 ></li>
             </ul>

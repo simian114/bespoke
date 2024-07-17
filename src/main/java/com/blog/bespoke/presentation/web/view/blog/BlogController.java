@@ -56,6 +56,7 @@ public class BlogController {
                                Model model,
                                RedirectAttributes redirectAttributes) {
         // TODO: category
+        // NOTE: userProfile 과 userCount 를 한번에 join 해오는 방법은 없을까?
         UserResponseDto owner = userUseCase.getUserWithCategoryByNickname(nickname);
         // selected category
         UserResponseDto.CategoryResponseDto selectedCategory = owner.getCategories().stream()
@@ -77,33 +78,16 @@ public class BlogController {
 
     // NOTE: 나중에..
     @HxRequest
-    @GetMapping("/{nickname}/posts")
-    public String getUserPosts(@PathVariable("nickname") String nickname,
-                               @ModelAttribute PostSearchCond cond,
+    @GetMapping("/posts")
+    public String getUserPosts(@ModelAttribute PostSearchCond cond,
                                @LoginUser User currentUser,
                                Model model) {
-        UserResponseDto owner = userUseCase.getUserWithCategoryByNickname(nickname);
-
-        if (cond.getCategory()  != null) {
-            UserResponseDto.CategoryResponseDto selectedCategory = owner.getCategories().stream()
-                    .filter(c -> cond.getCategory().equals(c.getId()))
-                    .findFirst()
-                    .orElse(null);
-            if (selectedCategory == null) {
-                return String.format("redirect:/blog/%s", nickname);
-            }
-            model.addAttribute("category", selectedCategory);
-        }
-        cond.setNickname(null);
         Page<PostResponseDto> posts = postUseCase.postSearch(cond, currentUser);
         model.addAttribute("isEmpty", posts.getTotalElements() == 0);
         model.addAttribute("totalElements", posts.getTotalElements());
         model.addAttribute("hasNextPage", posts.hasNext());
-        System.out.println("hasNextPage = " + posts.hasNext());
         model.addAttribute("posts", posts.getContent());
         model.addAttribute("page", posts.getPageable().getPageNumber() + 1);
-        model.addAttribute("owner", owner);
-        model.addAttribute("me", currentUser);
 
         return "page/blog/category :: .post-list";
     }
