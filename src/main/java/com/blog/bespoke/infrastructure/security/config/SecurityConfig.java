@@ -27,7 +27,8 @@ import java.util.Set;
 
 @Configuration
 @RequiredArgsConstructor
-public class SecurityConfig { private final JwtService jwtService;
+public class SecurityConfig {
+    private final JwtService jwtService;
     private final ObjectMapper objectMapper;
 
     @Bean
@@ -84,7 +85,14 @@ public class SecurityConfig { private final JwtService jwtService;
                 // 실제 서비스
                 .requestMatchers("/login").permitAll()
                 .requestMatchers("/signup").permitAll()
-                .requestMatchers(PathRequest.toStaticResources().at(Set.of(StaticResourceLocation.CSS, StaticResourceLocation.JAVA_SCRIPT))).permitAll()
+                .requestMatchers(
+                        PathRequest.toStaticResources().at(
+                                Set.of(
+                                        StaticResourceLocation.CSS,
+                                        StaticResourceLocation.JAVA_SCRIPT
+                                )
+                        )).permitAll()
+                .requestMatchers("/webfonts/**").permitAll()
                 .requestMatchers("/hx/home/posts").permitAll()
                 .requestMatchers("/blog/{nickname}/{postId}").permitAll()
                 .requestMatchers("/blog/{nickname}").permitAll()
