@@ -46,11 +46,11 @@ public class PostUseCase {
         boolean likedByUser = currentUser != null && postRepository.existsPostLikeByPostIdAndUserId(post.getId(), currentUser.getId());
 
         postService.getPostAndUpdateViewCountWhenNeeded(post, likedByUser, currentUser);
-        return PostResponseDto.from(post, true);
+        return PostResponseDto.from(post, PostResponseDto.PostResponseDtoRelationUsage.builder().category(true).build());
     }
 
     public PostResponseDto getPostById(Long postId) {
-        return PostResponseDto.from(postRepository.getById(postId), true);
+        return PostResponseDto.from(postRepository.getById(postId), PostResponseDto.PostResponseDtoRelationUsage.builder().category(true).build());
     }
 
     @Transactional
