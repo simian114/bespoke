@@ -29,8 +29,7 @@
                             let menu = document.getElementById(target);
                             el.classList.toggle("is-active");
                             menu.classList.toggle("is-active")
-                        })
-                    </script>
+                        }) </script>
                 </a>
             </th:block>
 
@@ -39,9 +38,17 @@
         <div id="navbarBasicExample" class="navbar-menu">
             <div class="navbar-end">
                 <div class="navbar-item">
-                    <div sec:authorize="isAuthenticated()" class="buttons">
+                    <div sec:authorize="isAuthenticated()" class="buttons has-addons are-small">
+                        <!--  TODO: 알림 처리  -->
+                        <a class="button is-position-relative">
+                            <span class="icon">
+                                <i class="fa-regular fa-bell"></i>
+                            <span class="tag is-info is-position-absolute" style="border-radius: 50%;width:10px;height:10px;padding:0px;"></span>
+                            </span>
+                        </a>
                         <th:block th:unless="${isOwner}">
-                            <a class="button is-small if-info" hx-boost="true" th:href="@{/blog/{nickname}(nickname=${me.nickname})}">
+                            <a class="button if-info" hx-boost="true"
+                               th:href="@{/blog/{nickname}(nickname=${me.nickname})}">
                                 My Blog
                             </a>
                         </th:block>

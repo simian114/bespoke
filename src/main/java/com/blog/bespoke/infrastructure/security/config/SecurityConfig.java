@@ -93,6 +93,7 @@ public class SecurityConfig {
                                 )
                         )).permitAll()
                 .requestMatchers("/webfonts/**").permitAll()
+                .requestMatchers("/noti/{nickname}").permitAll()
                 .requestMatchers("/hx/home/posts").permitAll()
                 .requestMatchers("/blog/{nickname}/{postId}").permitAll()
                 .requestMatchers("/blog/{nickname}").permitAll()
