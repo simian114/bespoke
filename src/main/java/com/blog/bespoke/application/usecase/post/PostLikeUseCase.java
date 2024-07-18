@@ -35,7 +35,7 @@ public class PostLikeUseCase {
         countInfo.setLikeCount(countInfo.getLikeCount() + 1);
 
         // 이벤트에서 실제 db값 증가. postCountInfo 와 userCountInfo 둘 다 해야함
-        publisher.publishPostLikeEvent(new PostLikeMessage(currentUser.getId(), postId, LocalDateTime.now()));
+        publisher.publishPostLikeEvent(new PostLikeMessage(currentUser.getId(), currentUser.getNickname(), post.getAuthor().getId(), post.getAuthor().getNickname(),postId, post.getTitle(), LocalDateTime.now()));
         return dto;
     }
 

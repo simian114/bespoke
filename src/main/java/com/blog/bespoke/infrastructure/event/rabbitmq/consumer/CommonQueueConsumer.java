@@ -2,7 +2,7 @@ package com.blog.bespoke.infrastructure.event.rabbitmq.consumer;
 
 import com.blog.bespoke.application.event.message.*;
 import com.blog.bespoke.application.usecase.CountUseCase;
-import com.blog.bespoke.application.usecase.NoticeUseCase;
+import com.blog.bespoke.application.usecase.notification.NotificationUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @RabbitListener(queues = "${rabbitmq.routing-key.common}")
 public class CommonQueueConsumer {
     private final CountUseCase countUseCase;
-    private final NoticeUseCase noticeUseCase;
+    private final NotificationUseCase notificationUseCase;
 
     @RabbitHandler
     public void receiveUserFollowMessage(UserFollowMessage message) {
@@ -45,7 +45,6 @@ public class CommonQueueConsumer {
         try {
             countUseCase.changeCountWhenPostPublished(message.getAuthorId());
             // NoticeUseCase 를 만들어서 알림 보내기
-            noticeUseCase.noticeToFollowers();
         } catch (Exception e) {
             log.error("error", e);
         }
@@ -55,7 +54,7 @@ public class CommonQueueConsumer {
     public void receivePostLikeMessage(PostLikeMessage message) {
         try {
             countUseCase.changeCountWhenPostLike(message.getUserId(), message.getPostId());
-            noticeUseCase.noticeToUser();
+            notificationUseCase.createNotification(message);
         } catch (Exception e) {
             log.error("receive post like message exception", e);
         }
