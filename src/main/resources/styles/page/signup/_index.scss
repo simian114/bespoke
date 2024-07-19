@@ -1,0 +1,18 @@
+@use "bulma/sass/utilities/mixins";
+@use "bulma/sass/utilities/extends";
+
+@include mixins.tablet {
+  .signup-page {
+    margin: auto;
+    max-width: 640px;
+    header {
+      .navbar {
+      }
+    }
+    main {
+      > * {
+        //max-width: 640px;
+      }
+    }
+  }
+}

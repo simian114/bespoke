@@ -2,20 +2,18 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/main/mainLayout}"
+      layout:decorate="~{layout/layout}"
       layout:fragment="content"
 >
 <head>
     <title>회원가입</title>
-    <script src="https://cdn.tiny.cloud/1/ss975ca1zu3j8n3y7ispewh9r3mc2qwcxz9ifmscxhlz8xi8/tinymce/7/tinymce.min.js"
-            referrerpolicy="origin"></script>
 </head>
 
 <body>
-<section class="section">
-    <form action="/signup" th:action target="this" hx-boost="true" th:object="${user}" method="post">
-        <div class="container">
-
+<main class="signup-page">
+    <header th:replace="~{layout/common/header :: header}"></header>
+    <section class="section px-2">
+        <form action="/signup" th:action target="this" hx-boost="true" th:object="${user}" method="post">
             <div layout:replace="~{fragments/form/layout-input :: input('email', 'Email', 'email', 'email@gmail.com', true)}"></div>
             <div layout:replace="~{fragments/form/layout-input :: input('nickname', 'Nickname', 'text', 'nickname', true)}"></div>
             <div layout:replace="~{fragments/form/layout-input :: input('name', 'Name', 'text', 'What is you name', false)}"></div>
@@ -43,8 +41,9 @@
                     <a class="button is-link is-light" href="/" hx-boost="true">Cancel</a>
                 </div>
             </div>
-        </div>
-    </form>
-</section>
+        </form>
+    </section>
+</main>
+
 </body>
 </html>

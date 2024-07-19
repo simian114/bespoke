@@ -9,9 +9,9 @@
     <title>Bespoke</title>
 </head>
 <body>
-<section class="myblog-page">
+<main class="myblog-page">
     <header th:replace="~{layout/common/header :: header}"></header>
-    <div class="container main-content">
+    <section class="section px-2">
         <nav th:replace="page/myblog/navigator :: navigator"></nav>
         <div class="block">
             <a class="button" th:href="@{/blog/manage/categories/new}">
@@ -64,8 +64,8 @@
                 </tbody>
             </table>
         </div>
-    </div>
-</section>
+    </section>
+</main>
 
 </body>
 </html>

@@ -9,9 +9,9 @@
     <title>프로필</title>
 </head>
 <body>
-<section class="myblog-page" >
+<main class="myblog-page" >
     <header th:replace="~{layout/common/header :: header}"></header>
-    <div class="main-content container">
+    <section class="section px-2">
         <nav th:replace="page/myblog/navigator :: navigator"></nav>
         <form th:object="${user}" method="post" hx-boost="true">
             <div layout:replace="~{fragments/form/layout-input :: input('name', 'Name', 'text', 'name...', true)}">
@@ -46,9 +46,9 @@
             </div>
             TODO: 패스워드 변경은 따로 경로 페이지 만들기
         </form>
-    </div>
+    </section>
 
-</section>
+</main>
 
 </body>
 </html>

@@ -9,9 +9,9 @@
     <title>게시글 작성 | 수정</title>
 </head>
 <body>
-<section class="myblog-page">
+<main class="myblog-page">
     <header th:replace="~{layout/common/header :: header}"></header>
-    <div class="container main-content">
+    <section class="section px-2">
         <nav th:replace="page/myblog/navigator :: navigator"></nav>
         <form th:action="${action}" th:object="${category}" method="post" style="max-width: 768px">
             <!--  TODO: category 선택  -->
@@ -75,8 +75,8 @@
 
 
         </form>
-    </div>
-</section>
+    </section>
+</main>
 
 
 

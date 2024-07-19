@@ -22479,5 +22479,17 @@ has-background-danger.is-hoverable:active {
     max-width: 640px;
   }
 }
+@media screen and (min-width: 769px), print {
+  .login-page {
+    margin: auto;
+    max-width: 640px;
+  }
+}
+@media screen and (min-width: 769px), print {
+  .signup-page {
+    margin: auto;
+    max-width: 640px;
+  }
+}
 
 /*# sourceMappingURL=application.css.map */
