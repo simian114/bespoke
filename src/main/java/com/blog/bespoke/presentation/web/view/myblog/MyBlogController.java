@@ -15,7 +15,6 @@ import com.blog.bespoke.domain.model.post.PostStatusCmd;
 import com.blog.bespoke.domain.model.user.CategoryUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
-import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxRequest;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxResponse;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
 import jakarta.validation.Valid;
@@ -95,9 +94,9 @@ public class MyBlogController {
      */
     @GetMapping("/blog/manage/posts")
     public String postManage(
-                             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
-                             @LoginUser User currentUser,
-                             Model model) {
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @LoginUser User currentUser,
+            Model model) {
 
         // TODO: 정리 필요함
         PostSearchCond postSearchCond = new PostSearchCond();
@@ -178,10 +177,10 @@ public class MyBlogController {
 
     @PostMapping("/blog/manage/categories/{categoryId}")
     public String categoryUpdate(
-                                 @PathVariable("categoryId") Long categoryId,
-                                 @LoginUser User currentUser,
-                                 @Valid @ModelAttribute("category") CategoryUpdateCmd requestDto,
-                                 BindingResult bindingResult) {
+            @PathVariable("categoryId") Long categoryId,
+            @LoginUser User currentUser,
+            @Valid @ModelAttribute("category") CategoryUpdateCmd requestDto,
+            BindingResult bindingResult) {
         UserResponseDto me = userUseCase.getUserByNickname(currentUser.getNickname());
         if (bindingResult.hasErrors()) {
             return "page/myblog/categoryForm";
@@ -262,14 +261,20 @@ public class MyBlogController {
 
     @HxRequest
     @PatchMapping("/blog/manage/posts/{postId}/status/{status}")
-    public void changeStatus(@PathVariable("postId") Long postId,
-                             @PathVariable("status") Post.Status status,
-                             @LoginUser User currentUser) {
+    public HtmxResponse changeStatus(@PathVariable("postId") Long postId,
+                                     @PathVariable("status") Post.Status status,
+                                     @LoginUser User currentUser,
+                                     Model model) {
 
         // TODO: 하나 집어서 수정할 수 있게 변경
         PostStatusCmd cmd = new PostStatusCmd();
         cmd.setStatus(status);
-        postUseCase.changeStatus(postId, cmd, currentUser);
+        PostResponseDto postResponseDto = postUseCase.changeStatus(postId, cmd, currentUser);
+        model.addAttribute("post", postResponseDto);
+
+        return HtmxResponse.builder()
+                .view("page/myblog/postTable :: post-item-row")
+                .build();
     }
 
     /**
@@ -321,10 +326,10 @@ public class MyBlogController {
     @HxRequest
     @PostMapping("/blog/manage/posts/{postId}")
     public HtmxResponse updatePost(
-                                   @PathVariable("postId") Long postId,
-                                   @LoginUser User currentUser,
-                                   @Valid @ModelAttribute("post") PostUpdateRequestDto requestDto,
-                                   BindingResult bindingResult) {
+            @PathVariable("postId") Long postId,
+            @LoginUser User currentUser,
+            @Valid @ModelAttribute("post") PostUpdateRequestDto requestDto,
+            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return HtmxResponse.builder().view("page/myblog/postEditor").preventHistoryUpdate().build();
         }
