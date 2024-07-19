@@ -11,7 +11,7 @@
 
 <body>
 <section class="section">
-    <form action="/login" th:action th:object="${user}" method="post">
+    <form action="/login" hx-target="this" th:action hx-boost="true" th:object="${user}" method="post">
         <div class="container">
             <div layout:replace="~{fragments/form/layout-input :: input('email', 'Email', 'email', 'email@gmail.com', true)}"></div>
             <div layout:replace="~{fragments/form/layout-input :: input('password', 'Password', 'password', '')}"></div>

@@ -9,7 +9,7 @@
     <title>게시글 작성 | 수정</title>
 </head>
 <body>
-<form class="container" th:action="${action}" th:object="${post}" method="post">
+<form class="container" th:action="${action}" hx-boost="true"  th:object="${post}" method="post">
     <div class="container normal-field" th:fragment="normal-field">
         <!--  TODO: category 선택  -->
         <!-- NOTE: 마음에 들지 않음 -->
@@ -60,12 +60,8 @@
         </th:block>
     </div>
 
-    <div class="field">
-        <label class="label">Content</label>
-        <div class="control has-icons-left has-icons-right">
-            <textarea th:field="*{content}" id="editor" class="textarea is-success" style="height: 0;visibility: hidden;" type="text"></textarea>
-        </div>
-    </div>
+    <div layout:replace="fragments/form/layout-input :: tinymce('content', 'Content','hello world!', true)"></div>
+
     <div class="field is-grouped">
         <div class="control">
             <button class="button is-link">Submit As Draft</button>
@@ -75,76 +71,5 @@
         </div>
     </div>
 </form>
-<script>
-    // LINK: https://www.tiny.cloud/docs/tinymce/latest/file-image-upload/#images_upload_handler
-    var imagesUploadHandler = (blobInfo, progress) => new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.withCredentials = true;
-        xhr.open('POST', '/api/file-upload');
-
-        xhr.upload.onprogress = (e) => {
-            progress(e.loaded / e.total * 100);
-        };
-
-        xhr.onload = () => {
-            if (xhr.status === 403) {
-                reject({message: 'HTTP Error: ' + xhr.status, remove: true});
-                return;
-            }
-
-            if (xhr.status < 200 || xhr.status >= 300) {
-                reject('HTTP Error: ' + xhr.status);
-                return;
-            }
-
-            const json = JSON.parse(xhr.responseText);
-
-            if (!json || !json.data || typeof json.data.location != 'string') {
-                reject('Invalid JSON: ' + xhr.responseText);
-                return;
-            }
-
-            resolve(json.data.location);
-        };
-
-        xhr.onerror = () => {
-            reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
-        };
-
-        const formData = new FormData();
-        formData.append('file', blobInfo.blob(), blobInfo.filename());
-
-        xhr.send(formData);
-    });
-
-    // 왜 요청 시 처음에는 데이터가 안들어가지?
-    function initEditor() {
-        tinymce.init({
-            selector: '#editor',
-            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker',
-            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-            content_css: ['/css/application.css'],
-            body_class: 'content',
-            content_style: 'body { margin: 16px; }',
-            height: 600,
-            resize: true,
-            images_upload_handler: imagesUploadHandler,
-            setup: function (editor) {
-                editor.on('init', function () {
-                    // const originalTextarea = document.querySelector("#editor");
-                    // if (originalTextarea) {
-                    //     originalTextarea.style.display = "none";
-                    // }
-                });
-            },
-        });
-    }
-
-    // TODO: 현재 아래의 설정에는 사용하지 못하는 플러그인도 포함되어있음. non-premium plugin setup 으로 변경하자 non-premium plugin setup
-    // LINK: https://www.tiny.cloud/docs/tinymce/latest/full-featured-open-source-demo
-    initEditor();
-
-
-</script>
 </body>
 </html>

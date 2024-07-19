@@ -5,6 +5,7 @@ import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.usecase.user.UserUseCase;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
+import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -40,12 +41,14 @@ public class SignupController {
 
     // 성공하면, signup/success 로 이동
     @PostMapping("/signup")
-    public String signup(@Valid @ModelAttribute("user") UserSignupRequestDto requestDto,
-                         BindingResult bindingResult,
-                         RedirectAttributes redirectAttributes
+    public HtmxResponse signup(@Valid @ModelAttribute("user") UserSignupRequestDto requestDto,
+                               BindingResult bindingResult,
+                               RedirectAttributes redirectAttributes
     ) {
         if (bindingResult.hasErrors()) {
-            return "/page/signup/signup";
+            return HtmxResponse.builder()
+                    .view("/page/signup/signup")
+                    .build();
         }
         try {
             userUseCase.signup(requestDto);
@@ -57,11 +60,16 @@ public class SignupController {
             // NOTE: global error - 이메일 중복됨 / nickname 중복됨
             // bindingResult.addError(new FieldError("user", "email", "이메일 중복됨"));
             bindingResult.addError(new ObjectError("user", e.getMessage()));
-            return "/page/signup/signup";
+            return HtmxResponse.builder()
+                    .view("/page/signup/signup")
+                    .build();
         }
 
         redirectAttributes.addFlashAttribute("signupSuccess", true);
-        return "redirect:/signup/success";
+        return HtmxResponse.builder()
+                .redirect("/signup/success")
+                .build();
+
     }
 
     @GetMapping("/signup/success")
