@@ -19,7 +19,7 @@
                 <div class="block">
                     <a class="button" hx-boost="true"
                        th:href="@{/blog/manage/posts/new}">
-                        게시글 작성
+                        write post
                     </a>
                 </div>
 
@@ -31,57 +31,72 @@
                         <thead>
                         <tr>
                             <th><abbr title="Post Id">id</abbr></th>
-                            <th><abbr title="Title">제목</abbr></th>
-                            <th><abbr title="Status">상태</abbr></th>
-                            <th><abbr title="Created At">생성일</abbr></th>
-                            <th>액션</th>
+                            <th><abbr title="Title">title</abbr></th>
+                            <th><abbr title="Status">status</abbr></th>
+                            <th><abbr title="Created At">createdAt</abbr></th>
+                            <th>action</th>
                         </tr>
                         </thead>
                         <!--  tfoot  -->
                         <tfoot>
                         <tr>
                             <th><abbr title="Post Id">id</abbr></th>
-                            <th><abbr title="Title">제목</abbr></th>
-                            <th><abbr title="Status">상태</abbr></th>
-                            <th><abbr title="Created At">생성일</abbr></th>
-                            <th>액션</th>
+                            <th><abbr title="Title">title</abbr></th>
+                            <th><abbr title="Status">status</abbr></th>
+                            <th><abbr title="Created At">createdAt</abbr></th>
+                            <th>action</th>
                         </tr>
                         </tfoot>
                         <tbody hx-swap="outerHTML swap:0.5s">
                         <!-- tbody -->
                         <th:block th:each="post: ${posts}">
                             <!--                    delete 된 post 라면 ...-->
-                            <tr>
+                            <tr th:fragment="post-item-row">
                                 <th><abbr title="Post Id" th:text="${post.id}">id</abbr></th>
-                                <th><abbr title="Title" th:text="${post.title}">제목</abbr></th>
-                                <th><abbr title="Status" th:text="${post.status}">상태</abbr></th>
-                                <th><abbr title="Created At" th:text="${post.createdAt}">생성일</abbr></th>
-                                <th>
-                                    <div class="buttons are-small">
-                                        <a th:href="@{/blog/manage/posts/{postId}/edit(postId=${post.id})}"
-                                           class="button">edit</a>
-                                        <button class="button is-danger" hx-confirm="Are you sure?"
+                                <th><abbr title="Title" th:text="${post.title}">title</abbr></th>
+                                <th><abbr title="Status" th:text="${post.status}">status</abbr></th>
+                                <th><abbr title="Created At" th:text="${post.createdAt}">createdAt</abbr></th>
+                                <th class="buttons are-small">
+                                    <a th:href="@{/blog/manage/posts/{postId}/edit(postId=${post.id})}"
+                                       class="button is-primary">edit</a>
+                                    <button class="button is-danger" hx-confirm="Are you sure?"
+                                            hx-target="closest tr"
+                                            hx:delete="@{/blog/manage/posts/{postId}(postId=${post.id})}">
+                                        delete
+                                    </button>
+                                    <th:block th:if="${post.status.name() == 'DRAFT'}">
+                                        <button hx:patch="@{/blog/manage/posts/{postId}/status/PUBLISHED(postId=${post.id})}"
+                                                hx-confirm="Are you sure?"
                                                 hx-target="closest tr"
-                                                hx:delete="@{/blog/manage/posts/{postId}(postId=${post.id})}">
-                                            delete
+                                                hx-swap="outerHTML"
+                                                class="button is-info">publish
                                         </button>
-                                        <th:block th:if="${post.status.name() == 'DRAFT'}">
-                                            <button hx:patch="@{/blog/manage/posts/{postId}/status/PUBLISHED(postId=${post.id})}"
-                                                    class="button">publish
-                                            </button>
-                                            <button hx:patch="@{/blog/manage/posts/{postId}/status/HIDDEN(postId=${post.id})}"
-                                                    class="button">hidden
-                                            </button>
-                                        </th:block>
-                                        <th:block th:unless="${post.status.name() == 'DRAFT'}">
-                                            <button hx:patch="@{/blog/manage/posts/{postId}/status/PUBLISHED(postId=${post.id})}"
-                                                    class="button" th:if="${post.status.name() == 'HIDDEN'}">publish
-                                            </button>
-                                            <button hx:patch="@{/blog/manage/posts/{postId}/status/HIDDEN(postId=${post.id})}"
-                                                    class="button" th:if="${post.status.name() == 'PUBLISHED'}">hidden
-                                            </button>
-                                        </th:block>
-                                    </div>
+                                        <button hx:patch="@{/blog/manage/posts/{postId}/status/HIDDEN(postId=${post.id})}"
+                                                hx-confirm="Are you sure?"
+                                                hx-target="closest tr"
+                                                hx-swap="outerHTML"
+                                                class="button is-warning">hidden
+                                        </button>
+                                    </th:block>
+                                    <th:block th:unless="${post.status.name() == 'DRAFT'}">
+                                        <button hx:patch="@{/blog/manage/posts/{postId}/status/PUBLISHED(postId=${post.id})}"
+                                                hx-confirm="Are you sure?"
+                                                class="button is-warning" th:if="${post.status.name() == 'HIDDEN'}"
+                                                hx-target="closest tr"
+                                                hx-swap="outerHTML"
+                                        >
+                                            publish
+                                        </button>
+                                        <button hx:patch="@{/blog/manage/posts/{postId}/status/HIDDEN(postId=${post.id})}"
+                                                hx-confirm="Are you sure?"
+                                                class="button is-info" th:if="${post.status.name() == 'PUBLISHED'}"
+                                                hx-target="closest tr"
+                                                hx-swap="outerHTML"
+                                        >
+                                            hidden
+                                        </button>
+                                    </th:block>
+
                                 </th>
                             </tr>
                         </th:block>
