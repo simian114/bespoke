@@ -22478,5 +22478,24 @@ has-background-danger.is-hoverable:active {
     padding-right: 1rem;
   }
 }
+.myblog-page .header {
+  padding-bottom: 0px;
+  max-width: 768px;
+}
+.myblog-page .main-content {
+  max-width: 640px !important;
+}
+
+.myblog-page {
+  padding-top: 0px;
+}
+
+@media screen and (max-width: 1023px) {
+  .blog-page .header {
+    padding-top: 2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
 
 /*# sourceMappingURL=application.css.map */

@@ -2,58 +2,62 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/blog/blogLayout}"
+      layout:decorate="~{layout/layout}"
       layout:fragment="content"
 >
 <head>
     <title th:text="|${owner.name}'s blog'.|">Bespoke</title>
 </head>
 <body>
-<main class="section">
-    <!-- max-width: 640 이 읽기에 가장 좋아보인다.   -->
-    <div class="container has-background-primary-100" style="max-width: 640px">
-        <!--        <div class="container pt-6 has-background-primary-100" style="max-width: 640px">-->
-        <div class="block is-flex is-justify-content-space-between">
-            <h1 class="has-text-weight-bold is-size-4">
-                <a class="hax-text-weight-bold" th:text="${owner.nickname}"></a> ﹒ <span class="hax-text-weight-bold"
-                                                                                         th:text="${owner.name}"></span>
-            </h1>
-            <a th:if="${isOwner}" th:href="@{/blog/{nickname}/manage(nickname=${owner.nickname})}"
-               class="button is-small">edit</a>
+<div class="blog-page">
+    <header th:replace="~{layout/common/header :: header}"></header>
+    <main class="section">
+        <!-- max-width: 640 이 읽기에 가장 좋아보인다.   -->
+        <div class="container has-background-primary-100" style="max-width: 640px">
+            <!--        <div class="container pt-6 has-background-primary-100" style="max-width: 640px">-->
+            <div class="block is-flex is-justify-content-space-between">
+                <h1 class="has-text-weight-bold is-size-4">
+                    <a class="hax-text-weight-bold" th:text="${owner.nickname}"></a> ﹒ <span class="hax-text-weight-bold"
+                                                                                             th:text="${owner.name}"></span>
+                </h1>
+                <a th:if="${isOwner}" th:href="@{/blog/{nickname}/manage(nickname=${owner.nickname})}"
+                   class="button is-small">edit</a>
+            </div>
+
+            <div class="block is-flex is-align-items-baseline">
+                <div class="mr-4 is-flex-shrink-0 is-size-5 has-text-weight-semibold">space</div>
+                <ul class="space-list is-flex-grow-5">
+                    <th:block th:if="${owner.categories != null && #lists.size(owner.categories) > 0}">
+                        <li class="is-flex" th:each="category: ${owner.categories}">
+                            <a
+                                    hx-boost="true"
+                                    th:href="@{/blog/{nickname}/category/{url}(nickname=${nickname},url=${category.url})}"
+                                    class="has-text-weight-semibold is-underlined mr-2 is-flex-shrink-0"
+                                    th:text="${category.name}"></a>
+                            <p style="text-align: end" class="is-flex-grow-5" th:text="${category.description}"></p>
+                        </li>
+                    </th:block>
+                    <th:block th:unless="${owner.categories != null && #lists.size(owner.categories) > 0}">
+                        <div class="is-flex is-gap-2">
+                            <p>empty space</p>
+                            <a th:if="${isOwner}" class="button is-small" th:href="@{/blog/{nickname}/manage/categories(nickname=${owner.nickname})}">추가</a>
+                        </div>
+                    </th:block>
+                </ul>
+            </div>
+
+
+            <article class="block content">
+                <p th:utext="${owner.introduce}"></p>
+            </article>
+            <!--            TODO: sns list-->
+            <div class="block">
+            </div>
+
+
         </div>
+    </main>
+</div>
 
-        <div class="block is-flex is-align-items-baseline">
-            <div class="mr-4 is-flex-shrink-0 is-size-5 has-text-weight-semibold">space</div>
-            <ul class="space-list is-flex-grow-5">
-                <th:block th:if="${owner.categories != null && #lists.size(owner.categories) > 0}">
-                    <li class="is-flex" th:each="category: ${owner.categories}">
-                        <a
-                                hx-boost="true"
-                                th:href="@{/blog/{nickname}/category/{url}(nickname=${nickname},url=${category.url})}"
-                                class="has-text-weight-semibold is-underlined mr-2 is-flex-shrink-0"
-                                th:text="${category.name}"></a>
-                        <p style="text-align: end" class="is-flex-grow-5" th:text="${category.description}"></p>
-                    </li>
-                </th:block>
-                <th:block th:unless="${owner.categories != null && #lists.size(owner.categories) > 0}">
-                    <div class="is-flex is-gap-2">
-                        <p>empty space</p>
-                        <a th:if="${isOwner}" class="button is-small" th:href="@{/blog/{nickname}/manage/categories(nickname=${owner.nickname})}">추가</a>
-                    </div>
-                </th:block>
-            </ul>
-        </div>
-
-
-        <article class="block content">
-            <p th:utext="${owner.introduce}"></p>
-        </article>
-        <!--            TODO: sns list-->
-        <div class="block">
-        </div>
-
-
-    </div>
-</main>
 </body>
 </html>
