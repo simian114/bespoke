@@ -1,26 +1,18 @@
 @use "bulma/sass/utilities/mixins";
 @use "bulma/sass/utilities/extends";
 
-.myblog-page {
-  .header {
-    padding-bottom: 0px;
-    max-width: 768px;
-  }
-  .main-content {
-    max-width: 640px !important;
-  }
-}
-
-.myblog-page {
-  padding-top: 0px;
-}
-
-@include mixins.touch {
-  .blog-page {
-    .header {
-      padding-top: 2rem;
-      padding-left: 1rem;
-      padding-right: 1rem;
+@include mixins.tablet {
+  .myblog-page {
+    margin: auto;
+    max-width: 640px;
+    header {
+      .navbar {
+      }
+    }
+    main {
+      > * {
+        //max-width: 640px;
+      }
     }
   }
 }
