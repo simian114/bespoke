@@ -2,62 +2,66 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/blog/blogLayout}"
+      layout:decorate="~{layout/layout}"
       layout:fragment="content"
 >
 <head>
     <title th:text="|${post.title}|">Bespoke</title>
 </head>
 <body>
-<main class="section">
-    <!-- max-width: 640 이 읽기에 가장 좋아보인다.   -->
-    <div class="post-detail-page container has-background-primary-100" style="max-width: 640px">
-        <div class="post-header is-flex is-flex-direction-column">
-            <h1 class="is-size-3 has-text-weight-semibold" style="text-align: center;word-break: keep-all;"
-                th:text="${post.title}">
-                title
-            </h1>
-            <!--  NOTE: 해당 영역은 api call로 변경하기  -->
-            <div class="buttons are-small has-addons is-right">
-                <button th:fragment="like" class="button" hx-target="this" hx-swap="outerHTML"
-                        hx:delete="@{/blog/posts/{postId}/like(postId=${post.id})}"
-                        th:if="${post.likedByUser}">
+<main class="common-page">
+    <header th:replace="~{layout/common/header :: header}"></header>
+    <section class="section px-2">
+        <div class="container has-background-primary-100">
+            <div class="post-header is-flex is-flex-direction-column">
+                <h1 class="is-size-3 has-text-weight-semibold" style="text-align: center;word-break: keep-all;"
+                    th:text="${post.title}">
+                    title
+                </h1>
+                <!--  NOTE: 해당 영역은 api call로 변경하기  -->
+                <div class="buttons are-small has-addons is-right">
+                    <button th:fragment="like" class="button" hx-target="this" hx-swap="outerHTML"
+                            hx:delete="@{/blog/posts/{postId}/like(postId=${post.id})}"
+                            th:if="${post.likedByUser}">
                     <span class="icon is-small is-color-danger">
                         <i class="fa-solid fa-heart"></i>
                     </span>
-                    <span th:text="${post.countInfo.getLikeCount()}"></span>
-                </button>
-                <button th:fragment="cancel-like" class="button" hx-target="this" hx-swap="outerHTML"
-                        hx:post="@{/blog/posts/{postId}/like(postId=${post.id})}"
-                        th:unless="${post.likedByUser}">
+                        <span th:text="${post.countInfo.getLikeCount()}"></span>
+                    </button>
+                    <button th:fragment="cancel-like" class="button" hx-target="this" hx-swap="outerHTML"
+                            hx:post="@{/blog/posts/{postId}/like(postId=${post.id})}"
+                            th:unless="${post.likedByUser}">
                     <span class="icon is-small">
                         <i class="fa-regular fa-heart"></i>
                     </span>
-                    <span th:text="${post.countInfo.getLikeCount()}"></span>
-                </button>
-                <button class="button">
+                        <span th:text="${post.countInfo.getLikeCount()}"></span>
+                    </button>
+                    <button class="button">
                     <span class="icon is-small">
                         <i class="fa-solid fa-user-plus"></i>
                     </span>
-                    <span class="icon is-small">
+                        <span class="icon is-small">
                         <i class="fa-solid fa-user-minus"></i>
                     </span>
-                </button>
-            </div>
-            <div class="is-flex is-align-items-baseline is-justify-content-flex-end">
+                    </button>
+                </div>
+                <div class="is-flex is-align-items-baseline is-justify-content-flex-end">
                 <span style="text-align: end;"
                       th:text="|${#temporals.format(post.createdAt, 'yyyy.MM.dd')}. by |"></span>
-                &nbsp;
-                <a hx-boost="true" class="is-size-5 has-text-weight-semibold" th:text="${owner.nickname}"
-                   th:href="@{/blog/{nickname}(nickname=${owner.nickname})}">
-                    닉네임
-                </a>
+                    &nbsp;
+                    <a hx-boost="true" class="is-size-5 has-text-weight-semibold" th:text="${owner.nickname}"
+                       th:href="@{/blog/{nickname}(nickname=${owner.nickname})}">
+                        닉네임
+                    </a>
+                </div>
             </div>
-        </div>
-        <article class="content mt-4" th:utext="${post.getContent()}">
+            <article class="content mt-4" th:utext="${post.getContent()}">
 
-        </article>
-    </div>
+            </article>
+        </div>
+    </section>
+
+
 </main>
 </body>
 </html>

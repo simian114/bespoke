@@ -48,6 +48,7 @@ public class SignupController {
         if (bindingResult.hasErrors()) {
             return HtmxResponse.builder()
                     .view("/page/signup/signup")
+                    .preventHistoryUpdate()
                     .build();
         }
         try {
@@ -62,6 +63,7 @@ public class SignupController {
             bindingResult.addError(new ObjectError("user", e.getMessage()));
             return HtmxResponse.builder()
                     .view("/page/signup/signup")
+                    .preventHistoryUpdate()
                     .build();
         }
 

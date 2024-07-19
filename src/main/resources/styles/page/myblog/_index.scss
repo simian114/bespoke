@@ -3,16 +3,6 @@
 
 @include mixins.tablet {
   .myblog-page {
-    margin: auto;
-    max-width: 640px;
-    header {
-      .navbar {
-      }
-    }
-    main {
-      > * {
-        //max-width: 640px;
-      }
-    }
+
   }
 }
