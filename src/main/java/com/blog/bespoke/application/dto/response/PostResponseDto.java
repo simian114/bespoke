@@ -38,7 +38,6 @@ public class PostResponseDto {
                 .status(post.getStatus())
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
-                .countInfo(PostCountInfoResponseDto.from(post.getPostCountInfo()))
                 .author(UserResponseDto.from(post.getAuthor()))
                 .likedByUser(Boolean.TRUE.equals(post.getLikedByUser()));
     }
@@ -48,16 +47,18 @@ public class PostResponseDto {
                 .build();
     }
 
-    static public PostResponseDto from(Post post, PostResponseDtoRelationUsage usage) {
+    static public PostResponseDto from(Post post, PostResponseDtoRelationJoin usage) {
         return base(post)
-                .category(usage.category ?  post.getCategory() : null)
+                .category(usage.category ? post.getCategory() : null)
+                .countInfo(usage.count ? PostCountInfoResponseDto.from(post.getPostCountInfo()) : null)
                 .build();
     }
 
     @Builder
     @Getter
-    public static class PostResponseDtoRelationUsage {
+    public static class PostResponseDtoRelationJoin {
         private boolean category;
+        private boolean count;
     }
 
     @Setter

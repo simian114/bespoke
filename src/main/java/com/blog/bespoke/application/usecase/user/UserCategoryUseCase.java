@@ -21,7 +21,7 @@ public class UserCategoryUseCase {
     private final UserCategoryService userCategoryService;
 
     public UserResponseDto getUserWithCategory(Long userId) {
-        return UserResponseDto.from(userRepository.getUserWithCategories(userId), com.blog.bespoke.application.dto.response.UserResponseDto.UserResponseDtoRelationUsage.builder().categories(true).build());
+        return UserResponseDto.from(userRepository.getUserWithCategories(userId), UserResponseDto.UserResponseDtoRelationJoin.builder().categories(true).build());
     }
 
     @Transactional
@@ -35,7 +35,7 @@ public class UserCategoryUseCase {
 
         user.addCategory(category);
         userRepository.save(user);
-        return UserResponseDto.from(user, UserResponseDto.UserResponseDtoRelationUsage.builder().categories(true).build());
+        return UserResponseDto.from(user, UserResponseDto.UserResponseDtoRelationJoin.builder().categories(true).build());
     }
 
     @Transactional
@@ -46,14 +46,14 @@ public class UserCategoryUseCase {
                 .findFirst().orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND));
 
         category.update(cmd);
-        return UserResponseDto.from(user, UserResponseDto.UserResponseDtoRelationUsage.builder().categories(true).build());
+        return UserResponseDto.from(user, UserResponseDto.UserResponseDtoRelationJoin.builder().categories(true).build());
     }
 
     @Transactional
     public UserResponseDto deleteCategory(Long categoryId, User currentUser) {
         User user = userRepository.getUserWithCategories(currentUser.getId());
         user.removeCategory(categoryId);
-        return UserResponseDto.from(user, UserResponseDto.UserResponseDtoRelationUsage.builder().categories(true).build());
+        return UserResponseDto.from(user, UserResponseDto.UserResponseDtoRelationJoin.builder().categories(true).build());
     }
 
 
