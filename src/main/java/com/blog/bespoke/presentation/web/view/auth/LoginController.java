@@ -63,6 +63,7 @@ public class LoginController {
             // NOTE: 이렇게 하면 login 페이지에서 form 만 전송함
             return HtmxResponse.builder()
                     .view("page/login/login :: form")
+                    .preventHistoryUpdate()
                     .build();
         }
         try {
@@ -77,6 +78,7 @@ public class LoginController {
             bindingResult.addError(new ObjectError("user", "email 과 password 확인 요망"));
             return HtmxResponse.builder()
                     .view("page/login/login :: form")
+                    .preventHistoryUpdate()
                     .build();
         }
     }

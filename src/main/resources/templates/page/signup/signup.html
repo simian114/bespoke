@@ -10,7 +10,7 @@
 </head>
 
 <body>
-<main class="signup-page">
+<main class="common-page">
     <header th:replace="~{layout/common/header :: header}"></header>
     <section class="section px-2">
         <form action="/signup" th:action target="this" hx-boost="true" th:object="${user}" method="post">

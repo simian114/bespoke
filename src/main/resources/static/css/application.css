@@ -22442,12 +22442,6 @@ has-background-danger.is-hoverable:active {
   pointer-events: all !important;
 }
 
-@media screen and (min-width: 769px), print {
-  .blog-page {
-    margin: auto;
-    max-width: 640px;
-  }
-}
 .blog-page {
   background-color: var(--bulma-danger-05-l);
   padding-top: 0px;
@@ -22474,19 +22468,7 @@ has-background-danger.is-hoverable:active {
 }
 
 @media screen and (min-width: 769px), print {
-  .myblog-page {
-    margin: auto;
-    max-width: 640px;
-  }
-}
-@media screen and (min-width: 769px), print {
-  .login-page {
-    margin: auto;
-    max-width: 640px;
-  }
-}
-@media screen and (min-width: 769px), print {
-  .signup-page {
+  .common-page {
     margin: auto;
     max-width: 640px;
   }
