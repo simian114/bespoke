@@ -11,6 +11,7 @@ import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.token.Token;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.model.user.UserProfile;
+import com.blog.bespoke.domain.model.user.UserRelation;
 import com.blog.bespoke.domain.model.user.UserUpdateCmd;
 import com.blog.bespoke.domain.model.user.role.Role;
 import com.blog.bespoke.domain.repository.TokenRepository;
@@ -83,17 +84,37 @@ public class UserUseCase {
         return UserResponseDto.from(user);
     }
 
-    public UserResponseDto getUserWithCategoryByNickname(String nickname) {
-        return UserResponseDto.from(userRepository.getUserForPostCreateByNickname(nickname), UserResponseDto.UserResponseDtoRelationJoin.builder().categories(true).build());
+    /**
+     * 아무 연관관계 없는 순수한 user
+     */
+    public UserResponseDto getUserById(Long userId) {
+        return UserResponseDto.from(userRepository.getById(userId));
     }
 
-    public UserResponseDto getUserByNickname(String nickname) {
-        return UserResponseDto.from(userRepository.getByNickname(nickname));
+    /**
+     * 유저홈 페이지
+     */
+    public UserResponseDto getUserForUserHome(String nickname) {
+        UserRelation relation = UserRelation.builder().profile(true).categories(true).build();
+        return UserResponseDto.from(userRepository.getUserByNickname(nickname, relation), relation);
+    }
+
+    /**
+     * user 의 정보 변경
+     */
+    public UserResponseDto getUserForProfileEdit(Long userId) {
+        UserRelation relation = UserRelation.builder().profile(true).build();
+        return UserResponseDto.from(userRepository.getById(userId, relation), relation);
     }
 
 
-    public UserResponseDto getUserForPostWrite(String nickname) {
-        return UserResponseDto.from(userRepository.getUserForPostCreateByNickname(nickname), UserResponseDto.UserResponseDtoRelationJoin.builder().categories(true).build());
+    /**
+     * 게시글 생성 / 수정
+     * - category 조인
+     */
+    public UserResponseDto getUserForPostWrite(Long userId) {
+        UserRelation relation = UserRelation.builder().categories(true).build();
+        return UserResponseDto.from(userRepository.getById(userId, relation), relation);
     }
 
     @Transactional

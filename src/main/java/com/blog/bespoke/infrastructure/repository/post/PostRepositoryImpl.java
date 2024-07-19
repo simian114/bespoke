@@ -2,11 +2,12 @@ package com.blog.bespoke.infrastructure.repository.post;
 
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
-import com.blog.bespoke.domain.model.post.Post;
-import com.blog.bespoke.domain.model.post.PostCountInfo;
-import com.blog.bespoke.domain.model.post.PostSearchCond;
+import com.blog.bespoke.domain.model.category.QCategory;
+import com.blog.bespoke.domain.model.post.*;
+import com.blog.bespoke.domain.model.user.QUser;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.post.PostRepository;
+import com.querydsl.core.NonUniqueResultException;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -55,6 +56,7 @@ public class PostRepositoryImpl implements PostRepository {
                 () -> new BusinessException(ErrorCode.POST_NOT_FOUND)
         );
     }
+
 
     @Override
     public void delete(Post post) {
@@ -116,6 +118,33 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     // --- search
+    @Override
+    public Optional<Post> findById(Long postId, PostRelation relation) {
+        JPAQuery<Post> query = queryFactory.selectFrom(post).where(post.id.eq(postId));
+        QCategory category = QCategory.category;
+        QPostCountInfo postCountInfo = QPostCountInfo.postCountInfo;
+        QUser user = QUser.user;
+        if (relation.isAuthor()) {
+            query.leftJoin(post.author, user).fetchJoin();
+        }
+        if (relation.isCategory()) {
+            query.leftJoin(post.category, category).fetchJoin();
+        }
+        if (relation.isCount()) {
+            query.leftJoin(post.postCountInfo, postCountInfo).fetchJoin();
+        }
+        try {
+            return Optional.ofNullable(query.fetchOne());
+        } catch (NonUniqueResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Post getById(Long id, PostRelation relation) throws RuntimeException {
+        return findById(id, relation)
+                .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
+    }
 
     @Override
     public Page<Post> search(PostSearchCond cond) {

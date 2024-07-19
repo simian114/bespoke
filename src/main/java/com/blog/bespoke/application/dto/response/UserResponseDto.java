@@ -4,6 +4,7 @@ import com.blog.bespoke.domain.model.category.Category;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.model.user.UserCountInfo;
 import com.blog.bespoke.domain.model.user.UserProfile;
+import com.blog.bespoke.domain.model.user.UserRelation;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -42,9 +43,9 @@ public class UserResponseDto {
         return base(user).build();
     }
 
-    static public UserResponseDto from(User user, UserResponseDtoRelationJoin usage) {
+    static public UserResponseDto from(User user, UserRelation relation) {
         return base(user)
-                .categories(usage.isCategories() && user.categories != null && !user.categories.isEmpty()
+                .categories(relation.isCategories() && user.categories != null && !user.categories.isEmpty()
                         ? user.categories.stream()
                         .sorted(Comparator.comparing(Category::getPriority).reversed()
                                 .thenComparing(Category::getCreatedAt))
@@ -52,18 +53,10 @@ public class UserResponseDto {
                         .toList()
                         : null
                 )
-                .countInfo(usage.count ? UserCountInfoResponseDto.from(user.getUserCountInfo()) : null)
-                .userProfile(usage.profile && user.getUserProfile() != null ? UserProfileResponseDto.from(user.getUserProfile()) : null)
-                .introduce(usage.profile && user.getUserProfile() != null ? user.getUserProfile().getIntroduce() : null)
+                .countInfo(relation.isCount() ? UserCountInfoResponseDto.from(user.getUserCountInfo()) : null)
+                .userProfile(relation.isProfile()&& user.getUserProfile() != null ? UserProfileResponseDto.from(user.getUserProfile()) : null)
+                .introduce(relation.isProfile() && user.getUserProfile() != null ? user.getUserProfile().getIntroduce() : null)
                 .build();
-    }
-
-    @Builder
-    @Getter
-    public static class UserResponseDtoRelationJoin {
-        private boolean categories;
-        private boolean count;
-        private boolean profile;
     }
 
     @AllArgsConstructor

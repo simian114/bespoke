@@ -39,7 +39,7 @@ public class BlogController {
                                @LoginUser User currentUser,
                                Model model) {
         // getUserForBlog -> profile & category
-        UserResponseDto owner = userUseCase.getUserWithCategoryByNickname(nickname);
+        UserResponseDto owner = userUseCase.getUserForUserHome(nickname);
 
         model.addAttribute("me", currentUser);
         model.addAttribute("owner", owner);
@@ -57,7 +57,7 @@ public class BlogController {
                                RedirectAttributes redirectAttributes) {
         // TODO: category
         // NOTE: userProfile 과 userCount 를 한번에 join 해오는 방법은 없을까?
-        UserResponseDto owner = userUseCase.getUserWithCategoryByNickname(nickname);
+        UserResponseDto owner = userUseCase.getUserForUserHome(nickname);
         // selected category
         UserResponseDto.CategoryResponseDto selectedCategory = owner.getCategories().stream()
                 .filter(c -> categoryUrl.equals(c.getUrl()))

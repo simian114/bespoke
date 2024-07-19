@@ -3,6 +3,7 @@ package com.blog.bespoke.presentation.web.view.blog;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
 import com.blog.bespoke.application.usecase.post.PostLikeUseCase;
 import com.blog.bespoke.application.usecase.post.PostUseCase;
+import com.blog.bespoke.domain.model.post.PostRelation;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
@@ -21,7 +22,7 @@ public class PostController {
     public String postDetailPage(@PathVariable("postId") Long postId,
                                  @LoginUser User currentUser,
                                  Model model) {
-        PostResponseDto post = postUseCase.showPostById(postId, currentUser);
+        PostResponseDto post = postUseCase.showPostById(postId,  currentUser);
 
         model.addAttribute("me", currentUser);
         model.addAttribute("isOwner", currentUser != null && currentUser.getNickname().equals(post.getAuthor().getNickname()));

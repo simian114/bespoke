@@ -9,11 +9,9 @@ import com.blog.bespoke.application.event.publisher.EventPublisher;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.category.Category;
-import com.blog.bespoke.domain.model.post.Post;
-import com.blog.bespoke.domain.model.post.PostSearchCond;
-import com.blog.bespoke.domain.model.post.PostStatusCmd;
-import com.blog.bespoke.domain.model.post.PostUpdateCmd;
+import com.blog.bespoke.domain.model.post.*;
 import com.blog.bespoke.domain.model.user.User;
+import com.blog.bespoke.domain.model.user.UserRelation;
 import com.blog.bespoke.domain.repository.post.PostRepository;
 import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.blog.bespoke.domain.service.PostService;
@@ -34,21 +32,31 @@ public class PostUseCase {
     private final PostRequestMapper mapper = PostRequestMapper.INSTANCE;
 
     /**
+     * 게시글 디테일 페이지
      * 1. 내가 좋아요 했는지 여부
      * 2. 좋아요수
      * 3. 조회수
      */
     @Transactional
     public PostResponseDto showPostById(Long postId, User currentUser) {
-        Post post = postRepository.getById(postId);
+        PostRelation relation = PostRelation.builder().count(true).author(true).category(true).build();
+
+        Post post = postRepository.findById(postId, relation)
+                .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
+
         boolean likedByUser = currentUser != null && postRepository.existsPostLikeByPostIdAndUserId(post.getId(), currentUser.getId());
 
         postService.getPostAndUpdateViewCountWhenNeeded(post, likedByUser, currentUser);
-        return PostResponseDto.from(post);
+        return PostResponseDto.from(post, relation);
     }
 
-    public PostResponseDto getPostById(Long postId) {
-        return PostResponseDto.from(postRepository.getById(postId), PostResponseDto.PostResponseDtoRelationJoin.builder().category(true).build());
+    /**
+     * 게시글 수정
+     * - category join
+     */
+    public PostResponseDto getPostForEdit(Long postId) {
+        PostRelation relation = PostRelation.builder().category(true).build();
+        return PostResponseDto.from(postRepository.getById(postId, relation), relation);
     }
 
     @Transactional
@@ -64,8 +72,8 @@ public class PostUseCase {
     @Transactional
     public PostResponseDto write(PostCreateRequestDto requestDto, User currentUser) {
         // user 의 상태를 검사해야하나?
-        User author = userRepository.getUserWithCategories(currentUser.getId());
-        //
+        UserRelation relation = UserRelation.builder().categories(true).build();
+        User author = userRepository.getById(currentUser.getId(), relation);
         Post post = mapper.toDomain(requestDto);
         Category category = author.getCategories().stream().filter(c -> c.getId().equals(requestDto.getCategoryId()))
                 .findFirst().orElse(null);
@@ -132,7 +140,8 @@ public class PostUseCase {
 
     @Transactional
     public PostResponseDto updatePost(Long postId, PostUpdateRequestDto requestDto, User currentUser) {
-        User author = userRepository.getUserWithCategories(currentUser.getId());
+        User author = userRepository.getById(currentUser.getId(), UserRelation.builder().categories(true).build());
+        //User author = userRepository.getUserWithCategories(currentUser.getId());
         Post post = postRepository.getById(postId);
         if (!post.canUpdateBy(currentUser)) {
             throw new BusinessException(ErrorCode.POST_FORBIDDEN);

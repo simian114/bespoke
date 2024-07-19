@@ -1,6 +1,7 @@
 package com.blog.bespoke.infrastructure.security.service;
 
 import com.blog.bespoke.domain.model.user.User;
+import com.blog.bespoke.domain.model.user.UserRelation;
 import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.blog.bespoke.infrastructure.security.principal.UserPrincipal;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmailWithRoles(email)
+        User user = userRepository.findByEmail(email, UserRelation.builder().roles(true).build())
                 .orElseThrow(() -> new UsernameNotFoundException(email + " 없음"));
         return new UserPrincipal(user);
     }

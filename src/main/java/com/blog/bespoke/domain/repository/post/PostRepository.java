@@ -1,6 +1,7 @@
 package com.blog.bespoke.domain.repository.post;
 
 import com.blog.bespoke.domain.model.post.Post;
+import com.blog.bespoke.domain.model.post.PostRelation;
 import com.blog.bespoke.domain.model.post.PostSearchCond;
 import org.springframework.data.domain.Page;
 
@@ -13,7 +14,10 @@ public interface PostRepository extends PostCountInfoRepository,
 
     Optional<Post> findById(Long id);
 
+    Optional<Post> findById(Long id, PostRelation relation);
+
     Post getById(Long id) throws RuntimeException;
+    Post getById(Long id, PostRelation relation) throws RuntimeException;
 
     void delete(Post post);
 
