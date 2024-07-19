@@ -56,7 +56,8 @@
             </div>
             <div class="navbar-end">
                 <div class="navbar-item">
-                    <div sec:authorize="isAuthenticated()" class="buttons has-addons are-small">
+                    <!--                        <div sec:authorize="isAuthenticated()" class="buttons has-addons">-->
+                    <div sec:authorize="isAuthenticated()" class="buttons">
                         <!--  TODO: 알림 처리  -->
                         <a class="button is-position-relative">
                             <span class="icon">
@@ -68,6 +69,9 @@
                         <a class="button if-info" hx-boost="true"
                            th:href="@{/blog/{nickname}(nickname=${me.nickname})}">
                             My Blog
+                        </a>
+                        <a class="button is-danger" href="/logout">
+                            Log out
                         </a>
                     </div>
                     <div sec:authorize="!isAuthenticated()" class="buttons">

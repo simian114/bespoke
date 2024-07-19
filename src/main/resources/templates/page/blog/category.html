@@ -9,10 +9,9 @@
     <title th:text="|${owner.name}'s blog'.|">Bespoke</title>
 </head>
 <body>
-<div class="blog-page">
+<main class="blog-page">
     <header th:replace="~{layout/common/header :: header}"></header>
-    <main class="section">
-        <!-- max-width: 640 이 읽기에 가장 좋아보인다.   -->
+    <section class="section px-2">
         <div class="container has-background-primary-100" style="max-width: 640px">
             <div class="block is-flex is-justify-content-space-between">
                 <h1 class="has-text-weight-bold is-size-4">
@@ -64,7 +63,7 @@
                      class="post-item container is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
                 <span style="font-size: 48px;">🫠
                 </span>
-                    <span>empty!</span>
+                    <span>empty space!</span>
                 </div>
                 <ul>
                     <li class="post-item" th:each="post: ${posts}">
@@ -72,7 +71,8 @@
                            hx-boost="true"
                            th:href="@{/blog/posts/{postId}(postId=${post.id})}">
                             <h3 class="has-text-weight-semibold is-size-5" th:text="${post.title}"></h3>
-                            <span class="is-size-6" th:text="|${#temporals.format(post.createdAt, 'yyyy.MM.dd')}.|"></span>
+                            <span class="is-size-6"
+                                  th:text="|${#temporals.format(post.createdAt, 'yyyy.MM.dd')}.|"></span>
                         </a>
                     </li>
                     <li class="post-item" th:if="${(hasNextPage ?: true)}"
@@ -93,8 +93,8 @@
             <!--        </div>-->
             <!--        TODO: loading -->
         </div>
-    </main>
-</div>
+    </section>
+</main>
 
 </body>
 </html>
