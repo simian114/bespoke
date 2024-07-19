@@ -2,74 +2,85 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/myblog/myBlogLayout}"
+      layout:decorate="~{layout/layout}"
       layout:fragment="content"
 >
 <head>
     <title>게시글 작성 | 수정</title>
 </head>
 <body>
-<form class="container" th:action="${action}" hx-boost="true"  th:object="${post}" method="post">
-    <div class="container normal-field" th:fragment="normal-field">
-        <!--  TODO: category 선택  -->
-        <!-- NOTE: 마음에 들지 않음 -->
-        <div layout:replace="~{fragments/form/layout-input :: input('title', 'Title', 'text', 'Title...', true)}">
-            <script layout:fragment="script">
-                me().on("input", ev => {
-                    const el = me(ev).querySelector("input");
-                    const value = el?.value;
-                    if (value.length === 0 || value.length > 50) {
-                        el.classList.add("is-danger");
-                        el.classList.remove("is-success");
-                    } else {
-                        el.classList.remove("is-danger");
-                        el.classList.add("is-success");
-                    }
-                })
-            </script>
-        </div>
+<section class="myblog-page">
+    <header th:replace="~{layout/common/header :: header}"></header>
+    <div class="container main-content">
+        <nav th:replace="page/myblog/navigator :: navigator"></nav>
+        <form th:action="${action}" hx-boost="true" th:object="${post}" method="post">
+            <div class="container normal-field" th:fragment="normal-field">
+                <!--  TODO: category 선택  -->
+                <!-- NOTE: 마음에 들지 않음 -->
+                <div layout:replace="~{fragments/form/layout-input :: input('title', 'Title', 'text', 'Title...', true)}">
+                    <script layout:fragment="script">
+                        me().on("input", ev => {
+                            const el = me(ev).querySelector("input");
+                            const value = el?.value;
+                            if (value.length === 0 || value.length > 50) {
+                                el.classList.add("is-danger");
+                                el.classList.remove("is-success");
+                            } else {
+                                el.classList.remove("is-danger");
+                                el.classList.add("is-success");
+                            }
+                        })
+                    </script>
+                </div>
 
-        <div layout:replace="~{fragments/form/layout-input :: input('description', 'Description', 'text', 'Description.. this will be used for seo and preview', false)}">
-            <script layout:fragment="script">
-                me().on("input", ev => {
-                    const el = me(ev).querySelector("input");
-                    const value = el?.value;
-                    if (value.length === 0 || value.length > 200) {
-                        el.classList.add("is-danger");
-                        el.classList.remove("is-success");
-                    } else {
-                        el.classList.remove("is-danger");
-                        el.classList.add("is-success");
-                    }
-                })
-            </script>
-        </div>
+                <div layout:replace="~{fragments/form/layout-input :: input('description', 'Description', 'text', 'Description.. this will be used for seo and preview', false)}">
+                    <script layout:fragment="script">
+                        me().on("input", ev => {
+                            const el = me(ev).querySelector("input");
+                            const value = el?.value;
+                            if (value.length === 0 || value.length > 200) {
+                                el.classList.add("is-danger");
+                                el.classList.remove("is-success");
+                            } else {
+                                el.classList.remove("is-danger");
+                                el.classList.add("is-success");
+                            }
+                        })
+                    </script>
+                </div>
 
-        <th:block th:if="${categories != null}">
-            <div class="field">
-                <label class="label">Category</label>
-                <div class="control">
-                    <div class="select">
-                        <select th:field="*{categoryId}">
-                            <option value="">Choose Category</option>
-                            <option th:value="${category.id}" th:each="category: ${categories}" th:text="${category.name}"></option>
-                        </select>
+                <th:block th:if="${categories != null}">
+                    <div class="field">
+                        <label class="label">Category</label>
+                        <div class="control">
+                            <div class="select">
+                                <select th:field="*{categoryId}">
+                                    <option value="">Choose Category</option>
+                                    <option th:value="${category.id}" th:each="category: ${categories}"
+                                            th:text="${category.name}"></option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
+                </th:block>
+            </div>
+
+            <div layout:replace="fragments/form/layout-input :: tinymce('content', 'Content','hello world!', true)"></div>
+
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-link">Submit As Draft</button>
+                </div>
+                <div class="control">
+                    <button class="button is-link is-light">Cancel</button>
                 </div>
             </div>
-        </th:block>
+        </form>
     </div>
 
-    <div layout:replace="fragments/form/layout-input :: tinymce('content', 'Content','hello world!', true)"></div>
 
-    <div class="field is-grouped">
-        <div class="control">
-            <button class="button is-link">Submit As Draft</button>
-        </div>
-        <div class="control">
-            <button class="button is-link is-light">Cancel</button>
-        </div>
-    </div>
-</form>
+</section>
+
+
 </body>
 </html>

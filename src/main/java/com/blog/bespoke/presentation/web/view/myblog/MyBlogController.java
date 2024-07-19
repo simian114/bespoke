@@ -34,6 +34,14 @@ public class MyBlogController {
     private final PostUseCase postUseCase;
     private final UserCategoryUseCase userCategoryUseCase;
 
+    @ModelAttribute
+    public String handleCommonAttribute(@LoginUser User currentUser,
+                                        Model model) {
+        model.addAttribute("me", currentUser);
+        model.addAttribute("nickname", currentUser.getNickname());
+        return "";
+    }
+
 
     /**
      * menu 가 선택 되어있지 않으면, post list
@@ -44,23 +52,14 @@ public class MyBlogController {
      * - follower
      * (내가 작성한 댓글도 관리하게 할 것인지 결정한기.)
      */
-    @GetMapping({"/blog/{nickname}/manage", "/blog/{nickname}/manage/profile"})
-    public String myBlog(@PathVariable("nickname") String nickname,
-                         @LoginUser User currentUser,
-                         Model model,
-                         RedirectAttributes redirectAttributes) {
-        // redirect to home and show message
-        if (!isOwner(nickname, currentUser)) {
-            redirectAttributes.addFlashAttribute("error", "주인장만 접근 가능");
-            return "redirect:/home";
-        }
-
-        UserResponseDto owner = userUseCase.getUserByNickname(nickname);
+    @GetMapping({"/blog/manage", "/blog/manage/profile"})
+    public String myBlog(@LoginUser User currentUser,
+                         Model model) {
+        UserResponseDto owner = userUseCase.getUserByNickname(currentUser.getNickname());
         UserUpdateRequestDto user = UserUpdateRequestDto.builder()
                 .name(owner.getName())
                 .introduce(owner.getUserProfile().getIntroduce())
                 .build();
-        model.addAttribute("owner", owner);
         model.addAttribute("user", user);
         return "page/myblog/profile";
     }
@@ -69,29 +68,22 @@ public class MyBlogController {
      * 프로필 수정 api
      */
     @HxRequest
-    @PostMapping({"/blog/{nickname}/manage", "/blog/{nickname}/manage/profile"})
+    @PostMapping({"/blog/manage", "/blog/manage/profile"})
     public HtmxResponse updateProfile(@Valid @ModelAttribute("user") UserUpdateRequestDto requestDto,
                                       BindingResult bindingResult,
                                       @LoginUser User currentUser,
                                       Model model,
-                                      @PathVariable("nickname") String nickname,
                                       RedirectAttributes redirectAttributes) {
-        if (!isOwner(nickname, currentUser)) {
-            redirectAttributes.addFlashAttribute("error", "주인장만 접근 가능");
-            return HtmxResponse.builder().redirect("/").build();
-        }
         if (bindingResult.hasErrors()) {
-            UserResponseDto owner = userUseCase.getUserByNickname(nickname);
+            UserResponseDto owner = userUseCase.getUserByNickname(currentUser.getNickname());
             model.addAttribute("owner", owner);
             return HtmxResponse.builder()
                     .view("page/myblog/profile")
                     .build();
         }
-        // update user
         userUseCase.updateUser(requestDto, currentUser.getId());
         return HtmxResponse.builder()
-//                .redirect(String.format("/blog/%s/manage/posts", nickname))
-                .redirect(String.format("/blog/%s", nickname))
+                .redirect(String.format("/blog/%s", currentUser.getNickname()))
                 .build();
     }
 
@@ -101,29 +93,24 @@ public class MyBlogController {
      * pageSize 는 기본값 사용
      * model 에 넣는 값은 pagination 정보와 post 리스트
      */
-    @GetMapping("/blog/{nickname}/manage/posts")
-    public String postManage(@PathVariable("nickname") String nickname,
+    @GetMapping("/blog/manage/posts")
+    public String postManage(
                              @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
                              @LoginUser User currentUser,
-                             Model model,
-                             RedirectAttributes redirectAttributes,
-                             HtmxRequest htmxRequest) {
-        if (!isOwner(nickname, currentUser)) {
-            redirectAttributes.addFlashAttribute("error", "주인장만 접근 가능");
-            return "redirect:/home";
-        }
+                             Model model) {
 
         // TODO: 정리 필요함
         PostSearchCond postSearchCond = new PostSearchCond();
         postSearchCond.setPage(page);
         postSearchCond.setPageSize(20);
         postSearchCond.setManage(true);
-        postSearchCond.setNickname(nickname);
+        postSearchCond.setNickname(currentUser.getNickname());
 
         Page<PostResponseDto> postPage = postUseCase.postSearch(postSearchCond, currentUser);
 
-        UserResponseDto owner = userUseCase.getUserByNickname(nickname);
+        UserResponseDto owner = userUseCase.getUserByNickname(currentUser.getNickname());
         model.addAttribute("owner", owner);
+        model.addAttribute("me", owner);
         model.addAttribute("posts", postPage.getContent());
 
         // 페이지네이션 관련된 객체로 하나 만들고 그거 넣으면 페이제네이션 완성되도록 하기.
@@ -136,16 +123,15 @@ public class MyBlogController {
         return "page/myblog/postTable";
     }
 
-    @GetMapping("/blog/{nickname}/manage/follows")
+    @GetMapping("/blog/manage/follows")
     public String followManage(@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
-                               @PathVariable("nickname") String nickname,
                                @LoginUser User currentUser
     ) {
         // page
         PostSearchCond postSearchCond = new PostSearchCond();
         postSearchCond.setPage(page);
         postSearchCond.setPageSize(20);
-        postSearchCond.setNickname(nickname);
+        postSearchCond.setNickname(currentUser.getNickname());
         Page<PostResponseDto> postPage = postUseCase.postSearch(postSearchCond, currentUser);
         return "";
     }
@@ -153,16 +139,10 @@ public class MyBlogController {
     /**
      * 카테고리 리스트
      */
-    @GetMapping("/blog/{nickname}/manage/categories")
-    public String categoryManage(@PathVariable("nickname") String nickname,
-                                 @LoginUser User currentUser,
+    @GetMapping("/blog/manage/categories")
+    public String categoryManage(@LoginUser User currentUser,
                                  Model model) {
-        // page
-        UserResponseDto me = userUseCase.getUserByNickname(nickname);
-        if (!isOwner(nickname, currentUser)) {
-            return "redirect:/";
-        }
-        model.addAttribute("nickname", nickname);
+        UserResponseDto me = userUseCase.getUserByNickname(currentUser.getNickname());
         model.addAttribute("owner", me);
 
         UserResponseDto userWithCategory = userCategoryUseCase.getUserWithCategory(currentUser.getId());
@@ -170,90 +150,66 @@ public class MyBlogController {
         return "page/myblog/categoryTable";
     }
 
-    @GetMapping("/blog/{nickname}/manage/categories/new")
-    public String categoryCreatePage(@PathVariable("nickname") String nickname,
-                                     @ModelAttribute("category") CategoryCreateRequestDto requestDto,
+    @GetMapping("/blog/manage/categories/new")
+    public String categoryCreatePage(@ModelAttribute("category") CategoryCreateRequestDto requestDto,
                                      @LoginUser User currentUser,
                                      Model model) {
-        UserResponseDto me = userUseCase.getUserByNickname(nickname);
-        if (!isOwner(nickname, currentUser)) {
-            return "redirect:/";
-        }
-        model.addAttribute("nickname", nickname);
+        UserResponseDto me = userUseCase.getUserByNickname(currentUser.getNickname());
         model.addAttribute("owner", me);
-        model.addAttribute("action", String.format("/blog/%s/manage/categories", nickname));
+        model.addAttribute("action", "/blog/manage/categories");
         return "page/myblog/categoryForm";
     }
 
-    @GetMapping("/blog/{nickname}/manage/categories/{categoryId}")
-    public String editCategoryPage(@PathVariable("nickname") String nickname,
-                                   @PathVariable("categoryId") Long categoryId,
+    @GetMapping("/blog/manage/categories/{categoryId}")
+    public String editCategoryPage(@PathVariable("categoryId") Long categoryId,
                                    @LoginUser User currentUser,
                                    RedirectAttributes redirectAttributes,
                                    Model model) {
-        UserResponseDto me = userUseCase.getUserByNickname(nickname);
-        if (!isOwner(nickname, currentUser)) {
-            redirectAttributes.addFlashAttribute("error", "권한없음");
-            return "redirect:/";
-        }
+        UserResponseDto me = userUseCase.getUserByNickname(currentUser.getNickname());
         UserResponseDto userWithCategory = userCategoryUseCase.getUserWithCategory(currentUser.getId());
         UserResponseDto.CategoryResponseDto category = userWithCategory.getCategories().stream().filter(c -> c.getId().equals(categoryId))
                 .findAny().orElseThrow();
 
-        model.addAttribute("nickname", nickname);
         model.addAttribute("owner", me);
         model.addAttribute("category", category);
-        model.addAttribute("action", String.format("/blog/%s/manage/categories/%d", nickname, categoryId));
+        model.addAttribute("action", String.format("/blog/manage/categories/%d", categoryId));
         return "page/myblog/categoryForm";
     }
 
-    @PostMapping("/blog/{nickname}/manage/categories/{categoryId}")
-    public String categoryUpdate(@PathVariable("nickname") String nickname,
+    @PostMapping("/blog/manage/categories/{categoryId}")
+    public String categoryUpdate(
                                  @PathVariable("categoryId") Long categoryId,
                                  @LoginUser User currentUser,
                                  @Valid @ModelAttribute("category") CategoryUpdateCmd requestDto,
                                  BindingResult bindingResult) {
-        UserResponseDto me = userUseCase.getUserByNickname(nickname);
-        if (!isOwner(nickname, currentUser)) {
-            return "redirect:/";
-        }
+        UserResponseDto me = userUseCase.getUserByNickname(currentUser.getNickname());
         if (bindingResult.hasErrors()) {
             return "page/myblog/categoryForm";
         }
         userCategoryUseCase.updateCategory(categoryId, requestDto, me.getId());
-        return String.format("redirect:/blog/%s/manage/categories", nickname);
+        return "redirect:/blog/manage/categories";
     }
 
 
-    @PostMapping("/blog/{nickname}/manage/categories")
-    public String categoryCreate(@PathVariable("nickname") String nickname,
-                                 @LoginUser User currentUser,
+    @PostMapping("/blog/manage/categories")
+    public String categoryCreate(@LoginUser User currentUser,
                                  @Valid @ModelAttribute("category") CategoryCreateRequestDto requestDto,
-                                 BindingResult bindingResult,
-                                 Model model) {
-        UserResponseDto me = userUseCase.getUserByNickname(nickname);
-        if (!isOwner(nickname, currentUser)) {
-            return "redirect:/";
-        }
+                                 BindingResult bindingResult) {
+        UserResponseDto me = userUseCase.getUserByNickname(currentUser.getNickname());
         if (bindingResult.hasErrors()) {
             return "page/myblog/categoryForm";
         }
         userCategoryUseCase.createCategory(requestDto, me.getId());
-        return String.format("redirect:/blog/%s/manage/categories", nickname);
+        return "redirect:/blog/manage/categories";
     }
 
     @ResponseBody
-    @DeleteMapping("/blog/{nickname}/manage/categories/{categoryId}")
-    public String deleteCategory(@PathVariable("nickname") String nickname,
-                                 @PathVariable("categoryId") Long categoryId,
+    @DeleteMapping("/blog/manage/categories/{categoryId}")
+    public String deleteCategory(@PathVariable("categoryId") Long categoryId,
                                  @LoginUser User currentUser,
                                  Model model) {
-        UserResponseDto me = userUseCase.getUserByNickname(nickname);
-        if (!isOwner(nickname, currentUser)) {
-            return "redirect:/";
-        }
+        UserResponseDto me = userUseCase.getUserByNickname(currentUser.getNickname());
         userCategoryUseCase.deleteCategory(categoryId, currentUser);
-        model.addAttribute("nickname", nickname);
         model.addAttribute("owner", me);
         return "";
     }
@@ -261,21 +217,16 @@ public class MyBlogController {
     /**
      * 게시글 생성 페이지
      */
-    @GetMapping("/blog/{nickname}/manage/posts/new")
-    public String createPostPage(@PathVariable("nickname") String nickname,
-                                 @LoginUser User currentUser,
+    @GetMapping("/blog/manage/posts/new")
+    public String createPostPage(@LoginUser User currentUser,
                                  Model model) {
-        UserResponseDto me = userUseCase.getUserForPostWrite(nickname);
-        if (!isOwner(nickname, currentUser)) {
-            return "redirect:/";
-        }
+        UserResponseDto me = userUseCase.getUserForPostWrite(currentUser.getNickname());
         model.addAttribute("post", PostCreateRequestDto.builder().content("Write your stories").build());
 
-        model.addAttribute("nickname", nickname);
         model.addAttribute("owner", me);
         model.addAttribute("categories", me.getCategories());
 
-        model.addAttribute("action", String.format("/blog/%s/manage/posts", nickname));
+        model.addAttribute("action", "/blog/manage/posts");
         return "page/myblog/postEditor";
     }
 
@@ -283,20 +234,19 @@ public class MyBlogController {
      * 게시글 생성 api
      */
     @HxRequest
-    @PostMapping("/blog/{nickname}/manage/posts")
-    public HtmxResponse createPost(@PathVariable("nickname") String nickname,
-                                   @LoginUser User currentUser,
+    @PostMapping("/blog/manage/posts")
+    public HtmxResponse createPost(@LoginUser User currentUser,
                                    Model model,
                                    RedirectAttributes redirectAttributes,
                                    @Valid @ModelAttribute(name = "post") PostCreateRequestDto requestDto,
                                    BindingResult bindingResult) {
-        UserResponseDto me = userUseCase.getUserForPostWrite(nickname);
+        UserResponseDto me = userUseCase.getUserForPostWrite(currentUser.getNickname());
         model.addAttribute("owner", me);
-        model.addAttribute("nickname", nickname);
         model.addAttribute("categories", me.getCategories());
-        model.addAttribute("action", String.format("/blog/%s/manage/posts", nickname));
+        model.addAttribute("action", "/blog/manage/posts");
         if (bindingResult.hasErrors()) {
             return HtmxResponse.builder()
+                    .preventHistoryUpdate()
                     .view("page/myblog/postEditor")
                     .build();
         }
@@ -306,14 +256,13 @@ public class MyBlogController {
         redirectAttributes.addFlashAttribute("success", "post created");
 
         return HtmxResponse.builder()
-                .redirect(String.format("/blog/%s/manage/posts", nickname))
+                .redirect("/blog/manage/posts")
                 .build();
     }
 
     @HxRequest
-    @PatchMapping("/blog/{nickname}/manage/posts/{postId}/status/{status}")
-    public void changeStatus(@PathVariable("nickname") String nickname,
-                             @PathVariable("postId") Long postId,
+    @PatchMapping("/blog/manage/posts/{postId}/status/{status}")
+    public void changeStatus(@PathVariable("postId") Long postId,
                              @PathVariable("status") Post.Status status,
                              @LoginUser User currentUser) {
 
@@ -328,10 +277,9 @@ public class MyBlogController {
      * 삭제 된 게시글은 리스트에 보이면 안됨 -> search 에서 삭제 된 게시글은 알아서 걸러져야 한다.
      */
     @HxRequest
-    @DeleteMapping("/blog/{nickname}/manage/posts/{postId}")
+    @DeleteMapping("/blog/manage/posts/{postId}")
     @ResponseBody
-    public String deletePost(@PathVariable("nickname") String nickname,
-                             @PathVariable("postId") Long postId,
+    public String deletePost(@PathVariable("postId") Long postId,
                              @LoginUser User currentUser) {
         try {
             postUseCase.deletePost(postId, currentUser);
@@ -346,18 +294,12 @@ public class MyBlogController {
     /**
      * 게시글 수정페이지
      */
-    @GetMapping("/blog/{nickname}/manage/posts/{postId}/edit")
-    public String editPostPage(@PathVariable("nickname") String nickname,
-                               @PathVariable("postId") Long postId,
+    @GetMapping("/blog/manage/posts/{postId}/edit")
+    public String editPostPage(@PathVariable("postId") Long postId,
                                @LoginUser User currentUser,
-                               RedirectAttributes redirectAttributes,
                                Model model) {
-        if (!isOwner(nickname, currentUser)) {
-            redirectAttributes.addFlashAttribute("error", "권한없음");
-            return "redirect:/";
-        }
         // post -> postCreate
-        UserResponseDto me = userUseCase.getUserForPostWrite(nickname);
+        UserResponseDto me = userUseCase.getUserForPostWrite(currentUser.getNickname());
         // User me = userUseCase.getUserByNickname(nickname);
         PostResponseDto post = postUseCase.getPostById(postId);
         PostCreateRequestDto dto = PostCreateRequestDto.builder()
@@ -368,43 +310,27 @@ public class MyBlogController {
                 .status(post.getStatus())
                 .build();
         model.addAttribute("post", dto);
-        model.addAttribute("nickname", nickname);
         model.addAttribute("owner", me);
         model.addAttribute("categories", me.getCategories());
-        model.addAttribute("action", String.format("/blog/%s/manage/posts/%d", nickname, postId));
+        model.addAttribute("action", String.format("/blog/manage/posts/%d", postId));
         model.addAttribute("method", "put");
         return "page/myblog/postEditor";
     }
 
     // 수정 api
     @HxRequest
-    @PostMapping("/blog/{nickname}/manage/posts/{postId}")
-    public HtmxResponse updatePost(@PathVariable("nickname") String nickname,
+    @PostMapping("/blog/manage/posts/{postId}")
+    public HtmxResponse updatePost(
                                    @PathVariable("postId") Long postId,
                                    @LoginUser User currentUser,
                                    @Valid @ModelAttribute("post") PostUpdateRequestDto requestDto,
-                                   BindingResult bindingResult,
-                                   RedirectAttributes redirectAttributes,
-                                   Model model) {
-        if (!isOwner(nickname, currentUser)) {
-            redirectAttributes.addFlashAttribute("error", "권한없음");
-            return HtmxResponse.builder().redirect("/").build();
-        }
+                                   BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return HtmxResponse.builder().view("page/myblog/postEditor").build();
+            return HtmxResponse.builder().view("page/myblog/postEditor").preventHistoryUpdate().build();
         }
         postUseCase.updatePost(postId, requestDto, currentUser);
         return HtmxResponse.builder()
-                .redirect(String.format("redirect:/blog/%s/manage/posts", nickname))
+                .redirect("/blog/manage/posts")
                 .build();
     }
-
-    private boolean isOwner(String nickname, User currentUser) {
-
-        if (currentUser == null) {
-            return false;
-        }
-        return nickname.equals(currentUser.getNickname());
-    }
-
 }

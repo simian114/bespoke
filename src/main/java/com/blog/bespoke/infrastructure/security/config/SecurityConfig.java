@@ -99,7 +99,7 @@ public class SecurityConfig {
                 .requestMatchers("/blog/{nickname}").permitAll()
                 .requestMatchers("/blog/{nickname}/posts/**").permitAll()
                 .requestMatchers("/blog/{nickname}/category/**").permitAll()
-                .requestMatchers("/blog/{nickname}/manage").authenticated()
+                .requestMatchers("/blog/manage").authenticated()
                 .requestMatchers("/signup/success").anonymous()
                 .requestMatchers("/").permitAll()
                 .anyRequest().authenticated()
