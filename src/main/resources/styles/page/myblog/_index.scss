@@ -5,4 +5,22 @@
   .myblog-page {
 
   }
+  .post-manage-page {
+
+  }
 }
+
+@include mixins.tablet {
+  .post-manage-page {
+    header {
+      .navbar {
+      }
+    }
+    main {
+      > * {
+        //max-width: 640px;
+      }
+    }
+  }
+}
+

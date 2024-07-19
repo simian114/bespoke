@@ -9,19 +9,17 @@
     <title>Bespoke</title>
 </head>
 <body>
-<main class="common-page">
+<main class="post-manage-page">
     <header th:replace="~{layout/common/header :: header}"></header>
     <section class="section px-2">
         <nav th:replace="page/myblog/navigator :: navigator"></nav>
-        <div class="block">
-            <a class="button" th:href="@{/blog/manage/categories/new}">
-                카테고리 생성
-            </a>
-        </div>
+        <div class="container table-container is-flex is-flex-direction-column is-justify-content-center">
+            <div class="block">
+                <a class="button" th:href="@{/blog/manage/categories/new}">
+                    create category
+                </a>
+            </div>
 
-        <div class="block">filter</div>
-
-        <div class="table-container is-flex is-flex-direction-column is-justify-content-center	">
             <!--  테이블 넣기  -->
             <table class="table">
                 <thead>

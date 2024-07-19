@@ -9,11 +9,11 @@
     <title>게시글 작성 | 수정</title>
 </head>
 <body>
-<main class="common-page">
+<main>
     <header th:replace="~{layout/common/header :: header}"></header>
     <section class="section px-2">
         <nav th:replace="page/myblog/navigator :: navigator"></nav>
-        <form th:action="${action}" hx-boost="true" th:object="${post}" method="post">
+        <form class="container" th:action="${action}" hx-boost="true" th:object="${post}" method="post" style="max-width: 640px;">
             <div class="container normal-field" th:fragment="normal-field">
                 <!--  TODO: category 선택  -->
                 <!-- NOTE: 마음에 들지 않음 -->

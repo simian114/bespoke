@@ -9,10 +9,9 @@
     <title>Bespoke</title>
 </head>
 <body>
-<section class="common-page">
+<main class="post-manage-page">
     <header th:replace="~{layout/common/header :: header}"></header>
     <section class="section px-2">
-        <!--        filter -->
         <nav th:replace="page/myblog/navigator :: navigator"></nav>
         <div class="container">
             <div>
@@ -105,10 +104,10 @@
 
                     <!--            TODO: 페이지네이션 컴포넌트로 분리해서 거기서 처리할 것.-->
                     <nav class="pagination" role="navigation" aria-label="pagination">
-                        <a hx-boost="true" hx-target=".table-container"
+                        <a hx-boost="true"
                            th:href="@{/blog/manage/posts(page=${page - 1})}"
                            class="pagination-previous">Previous</a>
-                        <a hx-boost="true" hx-target=".table-container"
+                        <a hx-boost="true"
                            th:href="@{/blog/manage/posts(page=${page + 1})}"
                            class="pagination-next">Next</a>
                     </nav>
@@ -116,7 +115,7 @@
             </div>
         </div>
     </section>
-</section>
+</main>
 
 
 </body>
