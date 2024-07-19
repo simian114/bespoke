@@ -16,6 +16,7 @@ import com.blog.bespoke.domain.model.user.CategoryUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxRequest;
+import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxResponse;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -64,25 +65,34 @@ public class MyBlogController {
         return "page/myblog/profile";
     }
 
+    /**
+     * 프로필 수정 api
+     */
+    @HxRequest
     @PostMapping({"/blog/{nickname}/manage", "/blog/{nickname}/manage/profile"})
-    public String updateProfile(@Valid @ModelAttribute("user") UserUpdateRequestDto requestDto,
-                                BindingResult bindingResult,
-                                @LoginUser User currentUser,
-                                Model model,
-                                @PathVariable("nickname") String nickname,
-                                RedirectAttributes redirectAttributes) {
+    public HtmxResponse updateProfile(@Valid @ModelAttribute("user") UserUpdateRequestDto requestDto,
+                                      BindingResult bindingResult,
+                                      @LoginUser User currentUser,
+                                      Model model,
+                                      @PathVariable("nickname") String nickname,
+                                      RedirectAttributes redirectAttributes) {
         if (!isOwner(nickname, currentUser)) {
             redirectAttributes.addFlashAttribute("error", "주인장만 접근 가능");
-            return "redirect:/home";
+            return HtmxResponse.builder().redirect("/").build();
         }
         if (bindingResult.hasErrors()) {
             UserResponseDto owner = userUseCase.getUserByNickname(nickname);
             model.addAttribute("owner", owner);
-            return "page/myblog/profile";
+            return HtmxResponse.builder()
+                    .view("page/myblog/profile")
+                    .build();
         }
         // update user
         userUseCase.updateUser(requestDto, currentUser.getId());
-        return String.format("redirect:/blog/%s", nickname);
+        return HtmxResponse.builder()
+//                .redirect(String.format("/blog/%s/manage/posts", nickname))
+                .redirect(String.format("/blog/%s", nickname))
+                .build();
     }
 
     /**
@@ -248,6 +258,9 @@ public class MyBlogController {
         return "";
     }
 
+    /**
+     * 게시글 생성 페이지
+     */
     @GetMapping("/blog/{nickname}/manage/posts/new")
     public String createPostPage(@PathVariable("nickname") String nickname,
                                  @LoginUser User currentUser,
@@ -266,28 +279,35 @@ public class MyBlogController {
         return "page/myblog/postEditor";
     }
 
-    // NOTE: hx?
+    /**
+     * 게시글 생성 api
+     */
+    @HxRequest
     @PostMapping("/blog/{nickname}/manage/posts")
-    public String createPost(@PathVariable("nickname") String nickname,
-                             @LoginUser User currentUser,
-                             Model model,
-                             RedirectAttributes redirectAttributes,
-                             @Valid @ModelAttribute(name = "post") PostCreateRequestDto requestDto,
-                             BindingResult bindingResult) {
+    public HtmxResponse createPost(@PathVariable("nickname") String nickname,
+                                   @LoginUser User currentUser,
+                                   Model model,
+                                   RedirectAttributes redirectAttributes,
+                                   @Valid @ModelAttribute(name = "post") PostCreateRequestDto requestDto,
+                                   BindingResult bindingResult) {
         UserResponseDto me = userUseCase.getUserForPostWrite(nickname);
         model.addAttribute("owner", me);
         model.addAttribute("nickname", nickname);
         model.addAttribute("categories", me.getCategories());
         model.addAttribute("action", String.format("/blog/%s/manage/posts", nickname));
         if (bindingResult.hasErrors()) {
-            return "page/myblog/postEditor";
+            return HtmxResponse.builder()
+                    .view("page/myblog/postEditor")
+                    .build();
         }
 
         // category
         PostResponseDto postDto = postUseCase.write(requestDto, currentUser);
         redirectAttributes.addFlashAttribute("success", "post created");
 
-        return String.format("redirect:/blog/%s/manage/posts", nickname);
+        return HtmxResponse.builder()
+                .redirect(String.format("/blog/%s/manage/posts", nickname))
+                .build();
     }
 
     @HxRequest
@@ -352,28 +372,31 @@ public class MyBlogController {
         model.addAttribute("owner", me);
         model.addAttribute("categories", me.getCategories());
         model.addAttribute("action", String.format("/blog/%s/manage/posts/%d", nickname, postId));
+        model.addAttribute("method", "put");
         return "page/myblog/postEditor";
     }
 
     // 수정 api
+    @HxRequest
     @PostMapping("/blog/{nickname}/manage/posts/{postId}")
-    public String updatePost(@PathVariable("nickname") String nickname,
-                             @PathVariable("postId") Long postId,
-                             @LoginUser User currentUser,
-                             @Valid @ModelAttribute("post") PostUpdateRequestDto requestDto,
-                             BindingResult bindingResult,
-                             RedirectAttributes redirectAttributes,
-                             Model model) {
+    public HtmxResponse updatePost(@PathVariable("nickname") String nickname,
+                                   @PathVariable("postId") Long postId,
+                                   @LoginUser User currentUser,
+                                   @Valid @ModelAttribute("post") PostUpdateRequestDto requestDto,
+                                   BindingResult bindingResult,
+                                   RedirectAttributes redirectAttributes,
+                                   Model model) {
         if (!isOwner(nickname, currentUser)) {
             redirectAttributes.addFlashAttribute("error", "권한없음");
-            return "redirect:/";
+            return HtmxResponse.builder().redirect("/").build();
         }
         if (bindingResult.hasErrors()) {
-            return "page/myblog/postEditor";
+            return HtmxResponse.builder().view("page/myblog/postEditor").build();
         }
-        // TODO: update
         postUseCase.updatePost(postId, requestDto, currentUser);
-        return String.format("redirect:/blog/%s/manage/posts", nickname);
+        return HtmxResponse.builder()
+                .redirect(String.format("redirect:/blog/%s/manage/posts", nickname))
+                .build();
     }
 
     private boolean isOwner(String nickname, User currentUser) {
