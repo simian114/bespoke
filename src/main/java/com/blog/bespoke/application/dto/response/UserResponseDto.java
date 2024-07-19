@@ -35,17 +35,14 @@ public class UserResponseDto {
                 .id(user.getId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
-                .name(user.getName())
-                .userProfile(user.getUserProfile() != null ? UserProfileResponseDto.from(user.getUserProfile()) : null)
-                .introduce(user.getUserProfile() != null ? user.getUserProfile().getIntroduce() : null)
-                .countInfo(UserCountInfoResponseDto.from(user.getUserCountInfo()));
+                .name(user.getName());
     }
 
     static public UserResponseDto from(User user) {
         return base(user).build();
     }
 
-    static public UserResponseDto from(User user, UserResponseDtoRelationUsage usage) {
+    static public UserResponseDto from(User user, UserResponseDtoRelationJoin usage) {
         return base(user)
                 .categories(usage.isCategories() && user.categories != null && !user.categories.isEmpty()
                         ? user.categories.stream()
@@ -55,28 +52,19 @@ public class UserResponseDto {
                         .toList()
                         : null
                 )
+                .countInfo(usage.count ? UserCountInfoResponseDto.from(user.getUserCountInfo()) : null)
+                .userProfile(usage.profile && user.getUserProfile() != null ? UserProfileResponseDto.from(user.getUserProfile()) : null)
+                .introduce(usage.profile && user.getUserProfile() != null ? user.getUserProfile().getIntroduce() : null)
                 .build();
     }
 
     @Builder
     @Getter
-    public static class UserResponseDtoRelationUsage {
+    public static class UserResponseDtoRelationJoin {
         private boolean categories;
-        private boolean hello; // hello 는 자동으로 false 로 세팅되어야만함
+        private boolean count;
+        private boolean profile;
     }
-
-//    static public UserResponseDto from(User user, UserResponseDtoRelationUsage usage) {
-//        return base(user)
-//                .categories(usage.isCategories() && user.categories != null && !user.categories.isEmpty()
-//                        ? user.categories.stream()
-//                        .sorted(Comparator.comparing(Category::getPriority).reversed()
-//                                .thenComparing(Category::getCreatedAt))
-//                        .map(CategoryResponseDto::from)
-//                        .toList()
-//                        : null
-//                )
-//                .build();
-//    }
 
     @AllArgsConstructor
     @Data

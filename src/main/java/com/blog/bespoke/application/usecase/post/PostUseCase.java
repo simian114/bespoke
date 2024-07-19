@@ -48,7 +48,7 @@ public class PostUseCase {
     }
 
     public PostResponseDto getPostById(Long postId) {
-        return PostResponseDto.from(postRepository.getById(postId), PostResponseDto.PostResponseDtoRelationUsage.builder().category(true).build());
+        return PostResponseDto.from(postRepository.getById(postId), PostResponseDto.PostResponseDtoRelationJoin.builder().category(true).build());
     }
 
     @Transactional
