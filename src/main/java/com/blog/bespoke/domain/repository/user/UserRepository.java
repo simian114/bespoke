@@ -2,6 +2,7 @@ package com.blog.bespoke.domain.repository.user;
 
 
 import com.blog.bespoke.domain.model.user.User;
+import com.blog.bespoke.domain.model.user.UserRelation;
 import com.blog.bespoke.domain.model.user.UserSearchCond;
 import com.blog.bespoke.domain.model.user.role.Role;
 import org.springframework.data.domain.Page;
@@ -11,8 +12,11 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends UserCountInfoRepository, UserCategoryRepository {
+public interface UserRepository extends UserCountInfoRepository {
     User save(User user);
+
+    Optional<User> findById(Long id, UserRelation relation);
+    User getById(Long id, UserRelation relation);
 
     Optional<User> findById(Long id);
 
@@ -20,11 +24,14 @@ public interface UserRepository extends UserCountInfoRepository, UserCategoryRep
 
     Optional<User> findByEmail(String email);
 
+    Optional<User> findByEmail(String email, UserRelation relation);
+
     User getByEmail(String email);
 
-    Optional<User> findByEmailWithRoles(String email);
-
     Optional<User> findByNickname(String nickname);
+
+    Optional<User> findByNickname(String nickname, UserRelation relation);
+    User getUserByNickname(String nickname, UserRelation relation);
 
     User getByNickname(String nickname);
 

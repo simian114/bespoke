@@ -3,6 +3,7 @@ package com.blog.bespoke.application.dto.response;
 import com.blog.bespoke.domain.model.category.Category;
 import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.post.PostCountInfo;
+import com.blog.bespoke.domain.model.post.PostRelation;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
@@ -38,7 +39,6 @@ public class PostResponseDto {
                 .status(post.getStatus())
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
-                .author(UserResponseDto.from(post.getAuthor()))
                 .likedByUser(Boolean.TRUE.equals(post.getLikedByUser()));
     }
 
@@ -47,18 +47,12 @@ public class PostResponseDto {
                 .build();
     }
 
-    static public PostResponseDto from(Post post, PostResponseDtoRelationJoin usage) {
+    static public PostResponseDto from(Post post, PostRelation relation) {
         return base(post)
-                .category(usage.category ? post.getCategory() : null)
-                .countInfo(usage.count ? PostCountInfoResponseDto.from(post.getPostCountInfo()) : null)
+                .category(relation.isCategory() ? post.getCategory() : null)
+                .countInfo(relation.isCount() ? PostCountInfoResponseDto.from(post.getPostCountInfo()) : null)
+                .author(relation.isAuthor() ? UserResponseDto.from(post.getAuthor()) : null)
                 .build();
-    }
-
-    @Builder
-    @Getter
-    public static class PostResponseDtoRelationJoin {
-        private boolean category;
-        private boolean count;
     }
 
     @Setter

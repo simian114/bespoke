@@ -16,13 +16,13 @@ import lombok.experimental.SuperBuilder;
 @Setter
 public class UserProfile {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "profile_id")
-    private Long id;
+    @Column(name = "user_id")
+    private Long userId;
 
     private String introduce;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
     @JoinColumn(name = "user_id")
     private User user;
 }

@@ -2,13 +2,17 @@ package com.blog.bespoke.infrastructure.repository.user;
 
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
-import com.blog.bespoke.domain.model.user.User;
-import com.blog.bespoke.domain.model.user.UserSearchCond;
+import com.blog.bespoke.domain.model.category.QCategory;
+import com.blog.bespoke.domain.model.user.*;
+import com.blog.bespoke.domain.model.user.role.QRole;
+import com.blog.bespoke.domain.model.user.role.QUserRole;
 import com.blog.bespoke.domain.model.user.role.Role;
 import com.blog.bespoke.domain.repository.user.UserRepository;
+import com.querydsl.core.NonUniqueResultException;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +38,72 @@ public class UserRepositoryImpl implements UserRepository {
     private final JPAQueryFactory queryFactory;
     private final UserJpaRepository userJpaRepository;
     private final RoleJpaRepository roleJpaRepository;
+
+
+    @Override
+    public Optional<User> findById(Long userId, UserRelation relation) {
+        JPQLQuery<User> query = findWithRelation(relation);
+        try {
+            return Optional.ofNullable(query.where(user.id.eq(userId)).fetchOne());
+        } catch (NonUniqueResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email, UserRelation relation) {
+        JPQLQuery<User> query = findWithRelation(relation);
+        try {
+            return Optional.ofNullable(query.where(user.email.eq(email)).fetchOne());
+        } catch (NonUniqueResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public User getById(Long userId, UserRelation relation) {
+        return findById(userId, relation)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    @Override
+    public Optional<User> findByNickname(String nickname, UserRelation relation) {
+        JPQLQuery<User> query = findWithRelation(relation);
+        try {
+            return Optional.ofNullable(query.where(user.nickname.eq(nickname)).fetchOne());
+        } catch (NonUniqueResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public User getUserByNickname(String nickname, UserRelation relation) {
+        return findByNickname(nickname, relation)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    private JPQLQuery<User> findWithRelation(UserRelation relation) {
+        QUser user = QUser.user;
+        QUserCountInfo userCountInfo = QUserCountInfo.userCountInfo;
+        QUserProfile userProfile = QUserProfile.userProfile;
+        QCategory category = QCategory.category;
+        QUserRole userRole = QUserRole.userRole;
+        JPQLQuery<User> query = queryFactory.selectFrom(user);
+        if (relation.isCount()) {
+            query.leftJoin(user.userCountInfo, userCountInfo).fetchJoin();
+        }
+        if (relation.isProfile()) {
+            query.leftJoin(user.userProfile, userProfile).fetchJoin();
+        }
+        if (relation.isCategories()) {
+            query.leftJoin(user.categories, category).fetchJoin();
+        }
+        if (relation.isRoles()) {
+            query.leftJoin(user.roles, userRole).fetchJoin();
+        }
+        return query;
+    }
+
 
     @Override
     public User save(User user) {
@@ -95,11 +165,6 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByEmailWithRoles(String email) {
-        return userJpaRepository.findByEmailWithRoles(email);
-    }
-
-    @Override
     public Optional<User> findByNickname(String nickname) {
         return userJpaRepository.findByNickname(nickname);
     }
@@ -133,20 +198,6 @@ public class UserRepositoryImpl implements UserRepository {
         return findUserWithFollowByIdAndFollowingId(userId, followingId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.FOLLOW_NOT_FOUND));
     }
-
-    @Override
-    public Optional<User> findUserForPostCreateByNickname(String nickname) {
-        return userJpaRepository.findUserForPostCreate(nickname);
-    }
-
-    @Override
-    public User getUserForPostCreateByNickname(String nickname) {
-        return findUserForPostCreateByNickname(nickname)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-    }
-
-    // 나와 나 팔로워
-
 
     @Override
     public Optional<User> findUserWithFollowByIdAndFollowerId(Long userId, Long followerId) {
@@ -199,15 +250,15 @@ public class UserRepositoryImpl implements UserRepository {
         userJpaRepository.decrementLikePostCount(userId);
     }
 
-    @Override
-    public Optional<User> findUserWithCategories(Long userId) {
-        return userJpaRepository.findWithCategories(userId);
-    }
-
-    @Override
-    public User getUserWithCategories(Long userId) {
-        return findUserWithCategories(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-    }
+//    @Override
+//    public Optional<User> findUserWithCategories(Long userId) {
+//        return userJpaRepository.findWithCategories(userId);
+//    }
+//
+//    @Override
+//    public User getUserWithCategories(Long userId) {
+//        return findUserWithCategories(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+//    }
 
     // --- search
     @Override

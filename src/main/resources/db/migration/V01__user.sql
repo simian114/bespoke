@@ -14,8 +14,7 @@ create table users
 
 create table user_profile
 (
-    profile_id bigint primary key auto_increment,
-    user_id    bigint not null,
+    user_id    bigint primary key not null,
     introduce  text,
     foreign key (user_id) references users (user_id) on delete cascade
 );
