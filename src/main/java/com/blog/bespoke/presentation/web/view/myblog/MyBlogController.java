@@ -54,10 +54,10 @@ public class MyBlogController {
     @GetMapping({"/blog/manage", "/blog/manage/profile"})
     public String myBlog(@LoginUser User currentUser,
                          Model model) {
-        UserResponseDto owner = userUseCase.getUserForProfileEdit(currentUser.getId());
+        UserResponseDto me = userUseCase.getUserForProfileEdit(currentUser.getId());
         UserUpdateRequestDto user = UserUpdateRequestDto.builder()
-                .name(owner.getName())
-                .introduce(owner.getUserProfile().getIntroduce())
+                .name(me.getName())
+                .introduce(me.getUserProfile().getIntroduce())
                 .build();
         model.addAttribute("user", user);
         return "page/myblog/profile";
@@ -70,12 +70,10 @@ public class MyBlogController {
     @PostMapping({"/blog/manage", "/blog/manage/profile"})
     public HtmxResponse updateProfile(@Valid @ModelAttribute("user") UserUpdateRequestDto requestDto,
                                       BindingResult bindingResult,
-                                      @LoginUser User currentUser,
-                                      Model model) {
+                                      @LoginUser User currentUser) {
         if (bindingResult.hasErrors()) {
-            UserResponseDto owner = userUseCase.getUserById(currentUser.getId());
-            model.addAttribute("owner", owner);
             return HtmxResponse.builder()
+                    .preventHistoryUpdate()
                     .view("page/myblog/profile")
                     .build();
         }
@@ -106,9 +104,6 @@ public class MyBlogController {
 
         Page<PostResponseDto> postPage = postUseCase.postSearch(postSearchCond, currentUser);
 
-        UserResponseDto owner = userUseCase.getUserById(currentUser.getId());
-        model.addAttribute("owner", owner);
-        model.addAttribute("me", owner);
         model.addAttribute("posts", postPage.getContent());
 
         // 페이지네이션 관련된 객체로 하나 만들고 그거 넣으면 페이제네이션 완성되도록 하기.
@@ -140,9 +135,6 @@ public class MyBlogController {
     @GetMapping("/blog/manage/categories")
     public String categoryManage(@LoginUser User currentUser,
                                  Model model) {
-        UserResponseDto me = userUseCase.getUserById(currentUser.getId());
-        model.addAttribute("owner", me);
-
         UserResponseDto userWithCategory = userCategoryUseCase.getUserWithCategory(currentUser.getId());
         model.addAttribute("categories", userWithCategory.getCategories());
         return "page/myblog/categoryTable";
@@ -161,14 +153,11 @@ public class MyBlogController {
     @GetMapping("/blog/manage/categories/{categoryId}")
     public String editCategoryPage(@PathVariable("categoryId") Long categoryId,
                                    @LoginUser User currentUser,
-                                   RedirectAttributes redirectAttributes,
                                    Model model) {
-        UserResponseDto me = userUseCase.getUserById(currentUser.getId());
         UserResponseDto userWithCategory = userCategoryUseCase.getUserWithCategory(currentUser.getId());
         UserResponseDto.CategoryResponseDto category = userWithCategory.getCategories().stream().filter(c -> c.getId().equals(categoryId))
                 .findAny().orElseThrow();
 
-        model.addAttribute("owner", me);
         model.addAttribute("category", category);
         model.addAttribute("action", String.format("/blog/manage/categories/%d", categoryId));
         return "page/myblog/categoryForm";
@@ -180,11 +169,10 @@ public class MyBlogController {
             @LoginUser User currentUser,
             @Valid @ModelAttribute("category") CategoryUpdateCmd requestDto,
             BindingResult bindingResult) {
-        UserResponseDto me = userUseCase.getUserById(currentUser.getId());
         if (bindingResult.hasErrors()) {
             return "page/myblog/categoryForm";
         }
-        userCategoryUseCase.updateCategory(categoryId, requestDto, me.getId());
+        userCategoryUseCase.updateCategory(categoryId, requestDto, currentUser.getId());
         return "redirect:/blog/manage/categories";
     }
 
@@ -193,22 +181,19 @@ public class MyBlogController {
     public String categoryCreate(@LoginUser User currentUser,
                                  @Valid @ModelAttribute("category") CategoryCreateRequestDto requestDto,
                                  BindingResult bindingResult) {
-        UserResponseDto me = userUseCase.getUserById(currentUser.getId());
         if (bindingResult.hasErrors()) {
             return "page/myblog/categoryForm";
         }
-        userCategoryUseCase.createCategory(requestDto, me.getId());
+        userCategoryUseCase.createCategory(requestDto, currentUser.getId());
         return "redirect:/blog/manage/categories";
     }
 
     @ResponseBody
     @DeleteMapping("/blog/manage/categories/{categoryId}")
     public String deleteCategory(@PathVariable("categoryId") Long categoryId,
-                                 @LoginUser User currentUser,
-                                 Model model) {
-        UserResponseDto me = userUseCase.getUserById(currentUser.getId());
+                                 @LoginUser User currentUser
+        ) {
         userCategoryUseCase.deleteCategory(categoryId, currentUser);
-        model.addAttribute("owner", me);
         return "";
     }
 
@@ -220,10 +205,7 @@ public class MyBlogController {
                                  Model model) {
         UserResponseDto me = userUseCase.getUserForPostWrite(currentUser.getId());
         model.addAttribute("post", PostCreateRequestDto.builder().content("Write your stories").build());
-
-        model.addAttribute("owner", me);
         model.addAttribute("categories", me.getCategories());
-
         model.addAttribute("action", "/blog/manage/posts");
         return "page/myblog/postEditor";
     }
@@ -239,7 +221,6 @@ public class MyBlogController {
                                    @Valid @ModelAttribute(name = "post") PostCreateRequestDto requestDto,
                                    BindingResult bindingResult) {
         UserResponseDto me = userUseCase.getUserForPostWrite(currentUser.getId());
-        model.addAttribute("owner", me);
         model.addAttribute("categories", me.getCategories());
         model.addAttribute("action", "/blog/manage/posts");
         if (bindingResult.hasErrors()) {
@@ -313,7 +294,6 @@ public class MyBlogController {
                 .status(post.getStatus())
                 .build();
         model.addAttribute("post", dto);
-        model.addAttribute("owner", me);
         model.addAttribute("categories", me.getCategories());
         model.addAttribute("action", String.format("/blog/manage/posts/%d", postId));
         model.addAttribute("method", "put");
