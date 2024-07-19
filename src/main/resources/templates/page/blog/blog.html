@@ -9,18 +9,20 @@
     <title th:text="|${owner.name}'s blog'.|">Bespoke</title>
 </head>
 <body>
+
 <div class="blog-page">
     <header th:replace="~{layout/common/header :: header}"></header>
     <main class="section">
         <!-- max-width: 640 이 읽기에 가장 좋아보인다.   -->
-        <div class="container has-background-primary-100" style="max-width: 640px">
-            <!--        <div class="container pt-6 has-background-primary-100" style="max-width: 640px">-->
+        <!--        <div class="container has-background-primary-100" style="max-width: 640px">-->
+        <div class="container has-background-primary-100">
             <div class="block is-flex is-justify-content-space-between">
                 <h1 class="has-text-weight-bold is-size-4">
-                    <a class="hax-text-weight-bold" th:text="${owner.nickname}"></a> ﹒ <span class="hax-text-weight-bold"
-                                                                                             th:text="${owner.name}"></span>
+                    <a class="hax-text-weight-bold" th:text="${owner.nickname}"></a> ﹒ <span
+                        class="hax-text-weight-bold"
+                        th:text="${owner.name}"></span>
                 </h1>
-                <a th:if="${isOwner}" th:href="@{/blog/{nickname}/manage(nickname=${owner.nickname})}"
+                <a th:if="${isOwner}" th:href="@{/blog/manage}"
                    class="button is-small">edit</a>
             </div>
 
@@ -40,7 +42,8 @@
                     <th:block th:unless="${owner.categories != null && #lists.size(owner.categories) > 0}">
                         <div class="is-flex is-gap-2">
                             <p>empty space</p>
-                            <a th:if="${isOwner}" class="button is-small" th:href="@{/blog/{nickname}/manage/categories(nickname=${owner.nickname})}">추가</a>
+                            <a th:if="${isOwner}" class="button is-small"
+                               th:href="@{/blog/{nickname}/manage/categories(nickname=${owner.nickname})}">추가</a>
                         </div>
                     </th:block>
                 </ul>

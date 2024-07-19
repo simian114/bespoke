@@ -1,17 +1,40 @@
 @use "bulma/sass/utilities/mixins";
 @use "bulma/sass/utilities/extends";
 
-
-.blog-page {
-  .header {
-    padding-bottom: 0px;
-    max-width: 768px;
-
-    .navbar {
-      //width: ;
+@include mixins.mobile {
+  .blog-page {
+    header {
+      .navbar {
+      }
     }
   }
 }
+
+@include mixins.tablet {
+  .blog-page {
+    margin: auto;
+    max-width: 640px;
+    header {
+      .navbar {
+      }
+    }
+    main {
+      > * {
+        //max-width: 640px;
+      }
+    }
+  }
+}
+
+@include mixins.desktop {
+  .blog-page {
+    header {
+      .navbar {
+        //background-color: yellow;
+      } }
+  }
+}
+
 
 .blog-page {
   background-color: var(--bulma-danger-05-l);
@@ -48,11 +71,6 @@
 
 @include mixins.touch {
   .blog-page {
-    .header {
-      padding-top: 2rem;
-      padding-left: 1rem;
-      padding-right: 1rem;
-    }
   }
 }
 

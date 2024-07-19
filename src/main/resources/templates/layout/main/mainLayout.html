@@ -33,7 +33,8 @@
 
 <body>
 <!--Header 영역을 참조합니다.-->
-<header th:replace="~{layout/main/header :: mainHeader}" style="max-width: 640px"></header>
+<header th:replace="~{layout/common/header :: header}"></header>
+
 
 <!--Content 내용 영역을 참조합니다-->
 <th:block layout:fragment="content">
