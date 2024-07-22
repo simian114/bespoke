@@ -30,7 +30,7 @@ public class JwtService {
 
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
-    @Value("${JWT_SECRET_KEY}")
+    @Value("${jwt.secret-key}")
     private String jwtSecretKey;
     private Key key;
 
