@@ -19,6 +19,10 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u LEFT JOIN Follow f on u.id = f.followingId WHERE u.id = :userId AND f.followerId = :followerId")
     Optional<User> findUserWithFollowByIdAndFollowerId(@Param("userId") Long userId, @Param("followerId") Long followerId);
 
+    @Query("SELECT distinct u from User u left join fetch u.followers where u.id = :userId")
+    Optional<User> findByidWithFollowers(@Param("userId") Long userId);
+
+
     @Modifying
     @Query("UPDATE UserCountInfo u SET u.followerCount = u.followerCount + 1 WHERE u.userId =:userId")
     void incrementFollowerCount(@Param("userId") Long userId);
@@ -50,4 +54,5 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("UPDATE UserCountInfo u SET u.likePostCount = u.likePostCount - 1 WHERE u.userId = :userId")
     void decrementLikePostCount(@Param("userId") Long userId);
+
 }

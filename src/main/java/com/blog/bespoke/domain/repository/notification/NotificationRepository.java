@@ -14,4 +14,6 @@ public interface NotificationRepository {
     Notification getById(Long id) throws BusinessException;
 
     List<Notification> findAllByUserId(Long userId);
+
+    void saveAll(Iterable<Notification> notifications);
 }

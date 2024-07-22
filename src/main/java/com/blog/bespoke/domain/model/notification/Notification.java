@@ -96,5 +96,6 @@ public class Notification {
         COMMENT_CREATED,
         POST_LIKE,
         COMMENT_LIKE,
+        FOLLOW,
     }
 }

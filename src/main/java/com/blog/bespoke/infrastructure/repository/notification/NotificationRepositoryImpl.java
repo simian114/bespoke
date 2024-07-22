@@ -33,4 +33,9 @@ public class NotificationRepositoryImpl implements NotificationRepository {
     public List<Notification> findAllByUserId(Long recipientId) {
         return notificationJpaRepository.findAllByRecipientId(recipientId);
     }
+
+    @Override
+    public void saveAll(Iterable<Notification> notifications) {
+        notificationJpaRepository.saveAll(notifications);
+    }
 }

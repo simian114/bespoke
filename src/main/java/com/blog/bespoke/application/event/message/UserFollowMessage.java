@@ -8,4 +8,6 @@ import lombok.Data;
 public class UserFollowMessage {
     private Long followingId;
     private Long followerId;
+    private String followingUserNickname;
+    private String followerUserNickname;
 }

@@ -37,7 +37,8 @@ out/
 .vscode/
 
 ### env ###
-.env
+env/.env
+env/*
 
 
 ### node ###
@@ -45,3 +46,6 @@ node_modules/*
 
 ### credentials ###
 credentials/*
+
+### aws ###
+aws/*
