@@ -1,5 +1,8 @@
 package com.blog.bespoke.infrastructure.event.rabbitmq.consumer;
 
+import com.blog.bespoke.application.dto.notification.FollowNotificationDto;
+import com.blog.bespoke.application.dto.notification.PostLikeNotificationDto;
+import com.blog.bespoke.application.dto.notification.PublishNotificationDto;
 import com.blog.bespoke.application.event.message.*;
 import com.blog.bespoke.application.usecase.CountUseCase;
 import com.blog.bespoke.application.usecase.notification.NotificationUseCase;
@@ -23,6 +26,14 @@ public class CommonQueueConsumer {
 
         try {
             countUseCase.changeCountWhenFollowCreated(message.getFollowingId(), message.getFollowerId());
+            notificationUseCase.createNotification(
+                    FollowNotificationDto.builder()
+                            .recipientId(message.getFollowingId())
+                            .recipientNickname(message.getFollowingUserNickname())
+                            .publisherId(message.getFollowerId())
+                            .publisherNickname(message.getFollowerUserNickname())
+                            .build()
+            );
         } catch (Exception e) {
             log.error("error", e);
         }
@@ -43,7 +54,16 @@ public class CommonQueueConsumer {
     public void receivePublishPostMessage(PublishPostEvent message) {
 
         try {
+            //
             countUseCase.changeCountWhenPostPublished(message.getAuthorId());
+            notificationUseCase.createNotifications(
+                    PublishNotificationDto.builder()
+                            .postTittle(message.getTitle())
+                            .publisherId(message.getAuthorId())
+                            .postId(message.getPostId())
+                            .build()
+
+            );
             // NoticeUseCase 를 만들어서 알림 보내기
         } catch (Exception e) {
             log.error("error", e);
@@ -54,7 +74,16 @@ public class CommonQueueConsumer {
     public void receivePostLikeMessage(PostLikeMessage message) {
         try {
             countUseCase.changeCountWhenPostLike(message.getUserId(), message.getPostId());
-            notificationUseCase.createNotification(message);
+            notificationUseCase.createNotification(
+                    PostLikeNotificationDto.builder()
+                            .authorId(message.getAuthorId())
+                            .authorNickname(message.getAuthorNickname())
+                            .userNickname(message.getUserNickname())
+                            .userId(message.getUserId())
+                            .postId(message.getPostId())
+                            .postTitle(message.getPostTitle())
+                            .build()
+            );
         } catch (Exception e) {
             log.error("receive post like message exception", e);
         }

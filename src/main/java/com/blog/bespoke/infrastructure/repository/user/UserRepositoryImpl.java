@@ -211,6 +211,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public Optional<User> findUserWithFollowers(Long userId) {
+        return userJpaRepository.findByidWithFollowers(userId);
+    }
+
+    @Override
     public void incrementFollowerCount(Long userId) {
         userJpaRepository.incrementFollowerCount(userId);
     }

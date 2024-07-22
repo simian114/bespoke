@@ -36,13 +36,24 @@
                     </span>
                         <span th:text="${post.countInfo.getLikeCount()}"></span>
                     </button>
-                    <button class="button">
-                    <span class="icon is-small">
-                        <i class="fa-solid fa-user-plus"></i>
-                    </span>
+
+                    <!--  팔로우   -->
+                    <button hx-swap="outerHTML" th:fragment="follow"  th:unless="${follow}" class="button"
+                            hx:post="@{/blog/user/{userId}/follow(userId=${post.author.id})}"
+                    >
                         <span class="icon is-small">
-                        <i class="fa-solid fa-user-minus"></i>
-                    </span>
+                            <i th:if="${follow}" class="fa-solid fa-user-minus"></i>
+                            <i th:unless="${follow}" class="fa-solid fa-user-plus"></i>
+                        </span>
+                    </button>
+                    <!--  언팔로우   -->
+                    <button hx-swap="outerHTML" th:fragment="unfollow" th:if="${follow}" class="button"
+                            hx:delete="@{/blog/user/{userId}/follow(userId=${post.author.id})}"
+                    >
+                        <span class="icon is-small">
+                            <i th:if="${follow}" class="fa-solid fa-user-minus"></i>
+                            <i th:unless="${follow}" class="fa-solid fa-user-plus"></i>
+                        </span>
                     </button>
                 </div>
                 <div class="is-flex is-align-items-baseline is-justify-content-flex-end">

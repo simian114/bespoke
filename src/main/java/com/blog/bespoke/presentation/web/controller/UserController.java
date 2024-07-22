@@ -43,14 +43,4 @@ public class UserController {
     public ResponseEntity<?> unfollow(@PathVariable Long id, @LoginUser User currentUser) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(userFollowUseCase.unfollow(id, currentUser));
     }
-
-//    @PutMapping("/{id}/category/{categoryId}")
-//    public ResponseEntity<?> updateCategory(@PathVariable("id") Long id,
-//                                            @PathVariable("categoryId") Long categoryId,
-//                                            @RequestBody CategoryUpdateCmd cmd,
-//                                            @LoginUser User currentUser
-//    ) {
-//        userCategoryUseCase.updateCategory(categoryId, cmd, currentUser);
-//        return ResponseEntity.ok("");
-//    }
 }

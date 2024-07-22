@@ -49,6 +49,9 @@ public interface UserRepository extends UserCountInfoRepository {
     // NOTE: 나와 팔로워
     Optional<User> findUserWithFollowByIdAndFollowerId(Long userId, Long followerId);
 
+    // NOTE: 나 & 모든 팔로워
+    Optional<User> findUserWithFollowers(Long userId);
+
     User getUserWithFollowByIdAndFollowerId(Long userId, Long followerId);
 
 
