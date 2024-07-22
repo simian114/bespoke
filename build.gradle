@@ -38,8 +38,8 @@ dependencies {
     // security
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    // redis
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // redis 나중에 redis 사요하게 되면 그때 오픈
+    // implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     // rabbitMQ
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
