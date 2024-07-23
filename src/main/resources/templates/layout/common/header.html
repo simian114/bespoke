@@ -59,7 +59,7 @@
                     <!--                        <div sec:authorize="isAuthenticated()" class="buttons has-addons">-->
                     <div sec:authorize="isAuthenticated()" class="buttons">
                         <!--  TODO: 알림 처리  -->
-                        <a class="button is-position-relative">
+                        <a hx-boost="true" href="/notification" class="button is-position-relative">
                             <span class="icon">
                                 <i class="fa-regular fa-bell"></i>
                             <span class="tag is-info is-position-absolute"

@@ -48,12 +48,12 @@ public class Notification {
      * db 에서 가져올 때
      */
     @PostLoad
-    private void loadExtraInfo() {
+    public void loadExtraInfo() {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            this.extraInfo = objectMapper.readValue(extra, ExtraInfo.class);
+             this.extraInfo = objectMapper.readValue(extra, ExtraInfo.class);
         } catch (IOException e) {
-            this.extra = null;
+            this.extraInfo = null;
         }
     }
 
@@ -90,6 +90,11 @@ public class Notification {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publisher_id")
     private User publisher;
+
+    @Transient
+    public String getContent() {
+        return "publisher is " + extraInfo.getPublisher() + " and recipient is " + extraInfo.getRecipient() + " and type is " + type.name();
+    }
 
     public enum NotificationType {
         POST_PUBLISHED,

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+      layout:fragment="content"
+>
+<head>
+    <title th:text="notifications">title</title>
+</head>
+<body>
+<main class="common-page">
+    <header th:replace="~{layout/common/header :: header}"></header>
+    <section class="section px-2">
+        <div class="container">
+            <div>
+                <h1 class="is-size-2">notifications</h1>
+            </div>
+            <!-- 무한스크롤 -->
+            <div class="block is-flex is-justify-content-space-between">
+                <div class="buttons are-small mb-0 has-addons">
+                    <button class="button">not read</button>
+                    <button class="button">all</button>
+                </div>
+                <div class="buttons are-small has-addons">
+                    <a class="button">delete all</a>
+                </div>
+            </div>
+            <div class="block is-flex is-flex-direction-column">
+                <ul class="notification-list" th:fragment="notification-list">
+                    <li class="notification-item"
+                        th:each="notification: ${notifications}"
+                        th:text="${notification.content}"
+                    >
+                        content
+                    </li>
+                    <!--   NOTE: notification list    -->
+                    <li th:if="${hasNextPage ?: true}"
+                        class="notification-item"
+                        hx-swap="outerHTML"
+                        hx-select=".notification-list .notification-item"
+                        hx-target="closest .notification-item"
+                        hx-trigger="revealed"
+                        hx:get="@{/notification/list(page=${page ?: 0},readed=${param.readed})}"
+                    >
+
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+
+</main>
+</body>
+</html>
