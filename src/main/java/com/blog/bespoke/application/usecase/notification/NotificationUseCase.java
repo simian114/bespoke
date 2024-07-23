@@ -3,14 +3,20 @@ package com.blog.bespoke.application.usecase.notification;
 import com.blog.bespoke.application.dto.notification.FollowNotificationDto;
 import com.blog.bespoke.application.dto.notification.PostLikeNotificationDto;
 import com.blog.bespoke.application.dto.notification.PublishNotificationDto;
+import com.blog.bespoke.application.dto.response.NotificationResponseDto;
+import com.blog.bespoke.application.exception.BusinessException;
+import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.notification.ExtraInfo;
 import com.blog.bespoke.domain.model.notification.Notification;
+import com.blog.bespoke.domain.model.notification.NotificationSearchCond;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.notification.NotificationRepository;
 import com.blog.bespoke.domain.repository.user.UserRepository;
+import com.blog.bespoke.domain.service.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -21,8 +27,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NotificationUseCase {
     private final NotificationRepository notificationRepository;
+    private final NotificationService notificationService;
     private final UserRepository userRepository;
     // TODO: SSE 리스트를 주입 받아서, 이벤트 생성 후 연결 된 emitter 가 있다면 데이터 전송하기
+
+    @Transactional
+    public Page<NotificationResponseDto> search(NotificationSearchCond cond, User currentUser) {
+        if (!notificationService.canSearch(cond, currentUser)) {
+            throw new BusinessException(ErrorCode.BAD_REQUEST);
+        }
+
+        return notificationRepository.search(cond).
+                map(NotificationResponseDto::from);
+    }
 
     // TODO: message 타입 말고, 새로운 타입 만들기
     @Transactional

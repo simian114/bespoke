@@ -56,6 +56,6 @@ public class RepositoryConfig {
 
     @Bean
     public NotificationRepository notificationRepository() {
-        return new NotificationRepositoryImpl(notificationJpaRepository);
+        return new NotificationRepositoryImpl(jpaQueryFactory(), notificationJpaRepository);
     }
 }
