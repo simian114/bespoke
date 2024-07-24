@@ -19,9 +19,7 @@
     <script type="text/javascript" th:src="@{/js/surreal.js}"></script>
     <script type="text/javascript" th:src="@{/js/htmx-sse.js}"></script>
     <!-- toastify -->
-    <script type="text/javascript" th:src="@{/js/toastify.min.js}"></script>
-    <!-- tinymce -->
-<!--    <script type="text/javascript" th:src="@{/js/tinymce/tinymce.min.js}"></script>-->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <!--Common CSS -->
     <link rel="stylesheet" href="/css/application.css">
@@ -29,22 +27,22 @@
     <link href="/css/fontawesome/fontawesome.min.css" rel="stylesheet"/>
     <link href="/css/fontawesome/solid.min.css" rel="stylesheet"/>
     <link href="/css/fontawesome/regular.min.css" rel="stylesheet"/>
-    <link href="/css/toastify.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
 
 </head>
 
-<body hx-boost="true" hx-target="#main" hx-select="#main" hx-swap="outerHTML show:window:top">
+<body hx-boost="true">
 <header th:replace="~{layout/common/header :: header}"></header>
-<th:block layout:fragment="content" >
+<th:block layout:fragment="content">
 </th:block>
 <!-- TODO: footer -->
 <footer th:replace="fragments/footer :: mainFooter"></footer>
 <div id="toast"></div>
 <!--surreal-->
-
 </body>
 <!-- 한번만 실행되어야한다. -->
-<script hx-preserve="true">
+<script>
     document.addEventListener("DOMContentLoaded", () => {
         document.body.addEventListener("htmx:responseError", function (res) {
             let response = res.detail?.xhr?.response;

@@ -49,3 +49,6 @@ credentials/*
 
 ### aws ###
 aws/*
+
+### yaml ###
+/src/main/resources/application-prod.yml

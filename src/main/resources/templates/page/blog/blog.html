@@ -30,7 +30,7 @@
                         <li class="is-flex" th:each="category: ${owner.categories}">
                             <a
                                     hx-boost="true"
-                                    th:href="@{/blog/{nickname}/category/{url}(nickname=${nickname},url=${category.url})}"
+                                    th:href="@{/blog/{nickname}/category/{url}(nickname=${owner.nickname},url=${category.url})}"
                                     class="has-text-weight-semibold is-underlined mr-2 is-flex-shrink-0"
                                     th:text="${category.name}"></a>
                             <p style="text-align: end" class="is-flex-grow-5" th:text="${category.description}"></p>
