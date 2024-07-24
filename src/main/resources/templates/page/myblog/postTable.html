@@ -9,14 +9,13 @@
     <title>Bespoke</title>
 </head>
 <body>
-<main class="post-manage-page">
-    <header th:replace="~{layout/common/header :: header}"></header>
+<main id="main" class="post-manage-page">
     <section class="section px-2">
         <nav th:replace="page/myblog/navigator :: navigator"></nav>
         <div class="container">
             <div>
                 <div class="block">
-                    <a class="button" hx-boost="true"
+                    <a class="button" hx-boost="false"
                        th:href="@{/blog/manage/posts/new}">
                         write post
                     </a>

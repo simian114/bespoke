@@ -21,7 +21,7 @@
     <!-- toastify -->
     <script type="text/javascript" th:src="@{/js/toastify.min.js}"></script>
     <!-- tinymce -->
-    <script type="text/javascript" th:src="@{/js/tinymce/tinymce.min.js}"></script>
+<!--    <script type="text/javascript" th:src="@{/js/tinymce/tinymce.min.js}"></script>-->
 
     <!--Common CSS -->
     <link rel="stylesheet" href="/css/application.css">
@@ -33,14 +33,14 @@
 
 </head>
 
-<body hx-boost="true">
+<body hx-boost="true" hx-target="#main" hx-select="#main" hx-swap="outerHTML show:window:top">
+<header th:replace="~{layout/common/header :: header}"></header>
 <th:block layout:fragment="content" >
 </th:block>
 <!-- TODO: footer -->
 <footer th:replace="fragments/footer :: mainFooter"></footer>
 <div id="toast"></div>
 <!--surreal-->
-
 
 </body>
 <!-- 한번만 실행되어야한다. -->

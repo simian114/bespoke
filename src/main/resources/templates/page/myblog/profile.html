@@ -7,10 +7,10 @@
 >
 <head>
     <title>프로필</title>
+    <script type="text/javascript" th:src="@{/js/tinymce/tinymce.min.js}"></script>
 </head>
 <body>
-<main>
-    <header th:replace="~{layout/common/header :: header}"></header>
+<main id="main">
     <section class="section px-2">
         <nav th:replace="page/myblog/navigator :: navigator"></nav>
         <form class="container" style="max-width: 640px;" th:object="${user}" method="post" hx-boost="true">

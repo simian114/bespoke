@@ -10,8 +10,7 @@
 </head>
 <body>
 <!--<main class="common-page">-->
-<main class="">
-    <header th:replace="~{layout/common/header :: header}"></header>
+<main id="main" class="">
     <section class="section px-2">
         <nav th:replace="page/myblog/navigator :: navigator"></nav>
             <form class="container" th:action="${action}" th:object="${category}" method="post" style="max-width: 640px">

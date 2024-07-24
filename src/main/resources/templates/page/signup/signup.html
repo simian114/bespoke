@@ -10,8 +10,7 @@
 </head>
 
 <body>
-<main class="common-page">
-    <header th:replace="~{layout/common/header :: header}"></header>
+<main id="main" class="common-page">
     <section class="section px-2">
         <form action="/signup" th:action target="this" hx-boost="true" th:object="${user}" method="post">
             <div layout:replace="~{fragments/form/layout-input :: input('email', 'Email', 'email', 'email@gmail.com', true)}"></div>

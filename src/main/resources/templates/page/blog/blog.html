@@ -10,8 +10,7 @@
 </head>
 <body>
 
-<main class="common-page blog-page">
-    <header th:replace="~{layout/common/header :: header}"></header>
+<main id="main" class="common-page blog-page">
     <section class="section px-2">
         <div class="container has-background-primary-100">
             <div class="block is-flex is-justify-content-space-between">
@@ -20,7 +19,7 @@
                         class="hax-text-weight-bold"
                         th:text="${owner.name}"></span>
                 </h1>
-                <a th:if="${isOwner}" hx-boost="true" th:href="@{/blog/manage}"
+                <a th:if="${isOwner}" hx-boost="false" th:href="@{/blog/manage}"
                    class="button is-small">edit</a>
             </div>
 

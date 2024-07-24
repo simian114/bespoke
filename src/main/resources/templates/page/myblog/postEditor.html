@@ -7,10 +7,11 @@
 >
 <head>
     <title>게시글 작성 | 수정</title>
+    <!-- tinymce   -->
+    <script type="text/javascript" th:src="@{/js/tinymce/tinymce.min.js}"></script>
 </head>
 <body>
-<main>
-    <header th:replace="~{layout/common/header :: header}"></header>
+<main id="main">
     <section class="section px-2">
         <nav th:replace="page/myblog/navigator :: navigator"></nav>
         <form class="container" th:action="${action}" hx-boost="true" th:object="${post}" method="post" style="max-width: 640px;">
