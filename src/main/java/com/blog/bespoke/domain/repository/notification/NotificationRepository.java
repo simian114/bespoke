@@ -20,4 +20,6 @@ public interface NotificationRepository {
     void saveAll(Iterable<Notification> notifications);
 
     Page<Notification> search(NotificationSearchCond cond);
+
+    void readNotification(Long notificationId);
 }
