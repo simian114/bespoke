@@ -5,13 +5,14 @@ import com.blog.bespoke.application.usecase.notification.NotificationUseCase;
 import com.blog.bespoke.domain.model.notification.NotificationSearchCond;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
+import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxResponse;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -41,6 +42,13 @@ public class NotificationController {
         model.addAttribute("hasPreviousPage", res.hasPrevious());
         model.addAttribute("page", res.getPageable().getPageNumber() + 1);
         return "page/notification/notification :: notification-list";
+    }
+
+    @PatchMapping("/notification/{notificationId}")
+    @ResponseBody
+    public ResponseEntity<?> checkReadNotification(@PathVariable("notificationId") Long notificationId) {
+        notificationUseCase.readNotification(notificationId);
+        return ResponseEntity.noContent().build();
     }
 
 }

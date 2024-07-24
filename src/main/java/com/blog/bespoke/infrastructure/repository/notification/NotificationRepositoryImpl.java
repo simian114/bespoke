@@ -52,6 +52,11 @@ public class NotificationRepositoryImpl implements NotificationRepository {
         notificationJpaRepository.saveAll(notifications);
     }
 
+    @Override
+    public void readNotification(Long notificationId) {
+        notificationJpaRepository.read(notificationId);
+    }
+
     // querydsl 사용
     @Override
     public Page<Notification> search(NotificationSearchCond cond) {

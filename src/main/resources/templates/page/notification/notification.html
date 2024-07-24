@@ -19,20 +19,93 @@
             <!-- 무한스크롤 -->
             <div class="block is-flex is-justify-content-space-between">
                 <div class="buttons are-small mb-0 has-addons">
-                    <button class="button">not read</button>
-                    <button class="button">all</button>
+                    <a
+                            class="button"
+                            th:href="@{/notification(readed=false)}"
+                    >
+                        not read
+                    </a>
+                    <a
+                            class="button"
+                            th:href="@{/notification}"
+                    >
+                        all
+                    </a>
                 </div>
-                <div class="buttons are-small has-addons">
-                    <a class="button">delete all</a>
-                </div>
+                <!-- TODO: 모두 읽음처리 / 삭제 -->
+<!--                <div class="buttons are-small has-addons">-->
+<!--                    <button class="button" hx-confirm="미구현">delete all</button>-->
+<!--                    <button class="button" hx-confirm="미구현" >read all</button>-->
+<!--                </div>-->
             </div>
             <div class="block is-flex is-flex-direction-column">
-                <ul class="notification-list" th:fragment="notification-list">
-                    <li class="notification-item"
+                <!--  페이지네이션이 더 좋을듯?  -->
+                <ul class="notification-list is-flex is-flex-direction-column" th:fragment="notification-list">
+                    <li class="notification-item box"
                         th:each="notification: ${notifications}"
-                        th:text="${notification.content}"
+                        th:data-notification-id="${notification.id}"
                     >
-                        content
+                        <script>
+                            me().on("click", async ev => {
+                                let target = me(ev);
+                                const id = target.dataset.notificationId;
+                                await fetch("/notification/" + id, {
+                                    method: "PATCH"
+                                })
+                            })
+                        </script>
+                        <th:block th:switch="${#strings.toString(notification.type)}">
+                            <th:block th:case="POST_PUBLISHED">
+                                <a th:href="@{/blog/posts/{postId}(postId=${notification.refId})}"
+                                   class="is-flex is-justify-content-space-between is-gap-2 is-color-black">
+                                    <span class="tag is-flex-shrink-0" th:text="${notification.type}"
+                                          th:classappend="is-primary"></span>
+                                    <p th:text="${notification.content}"></p>
+                                    <span class="is-flex-shrink-0"
+                                          th:text="|${#temporals.format(notification.createdAt, 'yyyy.MM.dd')}|"></span>
+                                </a>
+                            </th:block>
+                            <th:block th:case="COMMENT_CREATED">
+                                <a th:href="@{/blog/posts/{postId}(postId=${notification.refId})}"
+                                   class="is-flex is-justify-content-space-between is-gap-2 is-color-black">
+                                    <span class="tag is-flex-shrink-0" th:text="${notification.type}"
+                                          th:classappend="is-link"></span>
+                                    <p th:text="${notification.content}"></p>
+                                    <span class="is-flex-shrink-0"
+                                          th:text="|${#temporals.format(notification.createdAt, 'yyyy.MM.dd')}|"></span>
+                                </a>
+                            </th:block>
+                            <th:block th:case="POST_LIKE">
+                                <a th:href="@{/blog/posts/{postId}(postId=${notification.refId})}"
+                                   class="is-flex is-justify-content-space-between is-gap-2 is-color-black">
+                                    <span class="tag is-flex-shrink-0" th:text="${notification.type}"
+                                          th:classappend="is-info">like</span>
+                                    <p th:text="${notification.content}"></p>
+                                    <span class="is-flex-shrink-0"
+                                          th:text="|${#temporals.format(notification.createdAt, 'yyyy.MM.dd')}|"></span>
+                                </a>
+                            </th:block>
+                            <th:block th:case="COMMENT_LIKE">
+                                <a th:href="@{/blog/posts/{postId}(postId=${notification.refId})}"
+                                   class="is-flex is-justify-content-space-between is-gap-2 is-color-black">
+                                    <span class="tag is-flex-shrink-0" th:text="${notification.type}"
+                                          th:classappend="is-success"></span>
+                                    <p th:text="${notification.content}"></p>
+                                    <span class="is-flex-shrink-0"
+                                          th:text="|${#temporals.format(notification.createdAt, 'yyyy.MM.dd')}|"></span>
+                                </a>
+                            </th:block>
+                            <th:block th:case="FOLLOW">
+                                <a th:href="@{/blog/{nickname}(nickname=${notification.publisher})}"
+                                   class="is-flex is-justify-content-space-between is-gap-2 is-color-black">
+                                    <span class="tag is-flex-shrink-0" th:text="${notification.type}"
+                                          th:classappend="is-danger"></span>
+                                    <p th:text="${notification.content}"></p>
+                                    <span class="is-flex-shrink-0"
+                                          th:text="|${#temporals.format(notification.createdAt, 'yyyy.MM.dd')}|"></span>
+                                </a>
+                            </th:block>
+                        </th:block>
                     </li>
                     <!--   NOTE: notification list    -->
                     <li th:if="${hasNextPage ?: true}"

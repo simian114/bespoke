@@ -98,4 +98,9 @@ public class NotificationUseCase {
 
         notificationRepository.saveAll(notifications);
     }
+
+    @Transactional
+    public void readNotification(Long notificationId) {
+        notificationRepository.readNotification(notificationId);
+    }
 }

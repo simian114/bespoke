@@ -4,6 +4,8 @@ import com.blog.bespoke.domain.model.notification.Notification;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Builder
 @Data
 public class NotificationResponseDto {
@@ -13,6 +15,8 @@ public class NotificationResponseDto {
 
     private String publisher; // publisher nickname
     private String recipient; // recipient nickname
+
+    private LocalDateTime createdAt;
 
     //    private String type;
     private Notification.NotificationType type;
@@ -27,6 +31,7 @@ public class NotificationResponseDto {
                 .publisher(notification.getExtraInfo().getPublisher())
                 .recipient(notification.getExtraInfo().getRecipient())
                 .content(notification.getContent())
+                .createdAt(notification.getCreatedAt())
                 .build();
     }
 }
