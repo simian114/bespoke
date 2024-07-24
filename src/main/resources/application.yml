@@ -26,13 +26,13 @@ spring:
     url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/bespoke
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
-    create-schemas: true
-    locations: classpath:db/migration,classpath:db/seed
-    user: ${MYSQL_USER}
-    password: ${MYSQL_PASSWORD}
+  #  flyway:
+#    enabled: true
+#    baseline-on-migrate: true
+#    create-schemas: true
+#    locations: classpath:db/migration,classpath:db/seed
+#    user: ${MYSQL_USER}
+#    password: ${MYSQL_PASSWORD}
   jpa:
     show-sql: true
     hibernate:
@@ -57,3 +57,6 @@ spring:
     username: ${RABBITMQ_USERNAME}
     password: ${RABBITMQ_PASSWORD}
     host: ${RABBITMQ_HOST}
+  sql:
+    init:
+      mode: always
