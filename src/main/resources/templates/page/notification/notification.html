@@ -40,9 +40,10 @@
             <div class="block is-flex is-flex-direction-column">
                 <!--  페이지네이션이 더 좋을듯?  -->
                 <ul class="notification-list is-flex is-flex-direction-column" th:fragment="notification-list">
-                    <li class="notification-item box"
+                    <li class="notification-item box "
                         th:each="notification: ${notifications}"
                         th:data-notification-id="${notification.id}"
+                        th:classappend="${notification.readed ? '' : 'has-background-primary-light'}"
                     >
                         <script>
                             me().on("click", async ev => {
