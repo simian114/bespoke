@@ -85,7 +85,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_HOST 'sudo pkill -f "java -jar /home/$EC2_USER/$OLD_ENV/bespoke-prod.jar"'
           
           # Delete old enviornment
-          ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_HOST 'rm -rf /home/$EC2_USER/$OLD_ENV'
+          ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_HOST "sudo rm -rf /home/$EC2_USER/$OLD_ENV"
           
           # Clean up private key
           rm ec2-key.pem
