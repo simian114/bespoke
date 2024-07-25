@@ -73,16 +73,19 @@ jobs:
           EOF
           
           # Wait for the new environment to be ready (implement your health check here)
+          # health check 코드 생성하고 1초마다 한번씩 보내고 ok 오면 sleep 종료
           sleep 30
           
           # Update the load balancer target group to point to the new environment
           aws elbv2 register-targets --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} --targets Id=${{ secrets.EC2_INSTANCE_ID }},Port=$NEW_PORT
           
+          # TODO: 새로운 포트가 정상 동작하는지 확인하고, ok 면 그 때 이전 포트를 제거
+          # TODO: health check api 만들고, 체크하면 될듯
           # Deregister the old environment from the load balancer target group
           aws elbv2 deregister-targets --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} --targets Id=${{ secrets.EC2_INSTANCE_ID }},Port=$OLD_PORT
           
           # Stop the old environment
-          ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_HOST 'sudo pkill -f "java -jar /home/$EC2_USER/$OLD_ENV/bespoke-prod.jar"'
+          ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_HOST "sudo kill -9 $(lsof -ti :$OLD_PORT)"
           
           # Delete old enviornment
           ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_HOST "sudo rm -rf /home/$EC2_USER/$OLD_ENV"
