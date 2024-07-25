@@ -61,12 +61,14 @@ jobs:
             OLD_PORT=8081
           fi
           
+          ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_HOST "mkdir -p /home/$EC2_USER/$NEW_ENV"
+          
           # Transfer the JAR file to EC2
           scp -o StrictHostKeyChecking=no -i ec2-key.pem ./bespoke-prod.jar $EC2_USER@$EC2_HOST:/home/$EC2_USER/$NEW_ENV/bespoke-prod.jar
           
           # Start the new version in the 'new' environment
           ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_HOST << EOF
-            nohup java -jar /home/$EC2_USER/$NEW_ENV/bespoke-prod.jar  --server.port=$NEW_PORT > /home/$EC2_USER/$NEW_ENV/app.log 2>&1 &
+            nohup java -jar /home/$EC2_USER/$NEW_ENV/bespoke-prod.jar --spring.config.location=/home/$EC2_USER/application.yml --server.port=$NEW_PORT > /home/$EC2_USER/$NEW_ENV/app.log 2>&1 &
           EOF
           
           # Wait for the new environment to be ready (implement your health check here)
