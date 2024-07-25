@@ -46,7 +46,7 @@ jobs:
           chmod 600 ec2-key.pem
           
           # Determine which environment to deploy to (blue or green)
-          ssh -i ec2-key.pem $EC2_USER@$EC2_HOST 'sudo test -d /home/$EC2_USER/green && echo "green exists" || echo "green does not exist"' > env_status.txt
+          ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_HOST 'sudo test -d /home/$EC2_USER/green && echo "green exists" || echo "green does not exist"' > env_status.txt
           ENV=$(cat env_status.txt)
           
           if [[ "$ENV" == *"green exists"* ]]; then
@@ -62,10 +62,10 @@ jobs:
           fi
           
           # Transfer the JAR file to EC2
-          scp -i ec2-key.pem ./bespoke-prod.jar $EC2_USER@$EC2_HOST:/home/$EC2_USER/$NEW_ENV/bespoke-prod.jar
+          scp -o StrictHostKeyChecking=no -i ec2-key.pem ./bespoke-prod.jar $EC2_USER@$EC2_HOST:/home/$EC2_USER/$NEW_ENV/bespoke-prod.jar
           
           # Start the new version in the 'new' environment
-          ssh -i ec2-key.pem $EC2_USER@$EC2_HOST << EOF
+          ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_HOST << EOF
             nohup java -jar /home/$EC2_USER/$NEW_ENV/bespoke-prod.jar  --server.port=$NEW_PORT > /home/$EC2_USER/$NEW_ENV/app.log 2>&1 &
           EOF
           
@@ -79,7 +79,7 @@ jobs:
           aws elbv2 deregister-targets --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} --targets Id=${{ secrets.EC2_INSTANCE_ID }},Port=$OLD_PORT
           
           # Stop the old environment
-          ssh -i ec2-key.pem $EC2_USER@$EC2_HOST 'sudo pkill -f "java -jar /home/$EC2_USER/$OLD_ENV/bespoke-prod.jar"'
+          ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_HOST 'sudo pkill -f "java -jar /home/$EC2_USER/$OLD_ENV/bespoke-prod.jar"'
           
           # Clean up private key
           rm ec2-key.pem
