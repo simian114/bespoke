@@ -1,0 +1,87 @@
+name: Deploy to EC2 (Blue-Green Deployment)
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: 'Commit SHA to deploy'
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    environment: aws
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
+
+      - name: Configure AWS credentials
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set default.region ap-northeast-2
+
+      - name: Download artifacts from S3
+        run: |
+          aws s3 cp s3://$AWS_S3_BUCKET/${{ github.event.inputs.commit_sha }}/$JAR_NAME ./$JAR_NAME
+
+      - name: Install SSH client
+        run: sudo apt-get install -y openssh-client
+
+      - name: Transfer JAR to EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+          TARGET_PORT: ${{ secrets.TARGET_PORT }}
+        run: |
+          # Save the private key to a file
+          echo "$EC2_PRIVATE_KEY" > ec2-key.pem
+          chmod 600 ec2-key.pem
+          
+          ssh -i "bespoke.pem" ubuntu@ec2-3-36-79-165.ap-northeast-2.compute.amazonaws.com
+          
+          # Determine which environment to deploy to (blue or green)
+          ssh -i ec2-key.pem $EC2_USER@$EC2_HOST 'sudo test -d /home/$EC2_USER/green && echo "green exists" || echo "green does not exist"' > env_status.txt
+          ENV=$(cat env_status.txt)
+          
+          if [[ "$ENV" == *"green exists"* ]]; then
+            NEW_ENV="blue"
+            NEW_PORT=8081
+            OLD_ENV="green"
+            OLD_PORT=8082
+          else
+            NEW_ENV="green"
+            NEW_PORT=8082
+            OLD_ENV="blue"
+            OLD_PORT=8081
+          fi
+          
+          # Transfer the JAR file to EC2
+          scp -i ec2-key.pem ./bespoke-prod.jar $EC2_USER@$EC2_HOST:/home/$EC2_USER/$NEW_ENV/bespoke-prod.jar
+          
+          # Start the new version in the 'new' environment
+          ssh -i ec2-key.pem $EC2_USER@$EC2_HOST << EOF
+            nohup java -jar /home/$EC2_USER/$NEW_ENV/bespoke-prod.jar  --server.port=$NEW_PORT > /home/$EC2_USER/$NEW_ENV/app.log 2>&1 &
+          EOF
+          
+          # Wait for the new environment to be ready (implement your health check here)
+          sleep 30
+          
+          # Update the load balancer target group to point to the new environment
+          aws elbv2 register-targets --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} --targets Id=${{ secrets.EC2_INSTANCE_ID }},Port=$NEW_PORT
+          
+          # Deregister the old environment from the load balancer target group
+          aws elbv2 deregister-targets --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} --targets Id=${{ secrets.EC2_INSTANCE_ID }},Port=$OLD_PORT
+          
+          # Stop the old environment
+          ssh -i ec2-key.pem $EC2_USER@$EC2_HOST 'sudo pkill -f "java -jar /home/$EC2_USER/$OLD_ENV/bespoke-prod.jar"'
+          
+          # Clean up private key
+          rm ec2-key.pem
