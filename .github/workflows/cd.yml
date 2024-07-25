@@ -85,7 +85,7 @@ jobs:
           aws elbv2 deregister-targets --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} --targets Id=${{ secrets.EC2_INSTANCE_ID }},Port=$OLD_PORT
           
           # Stop the old environment
-          ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_HOST "sudo kill -9 $(lsof -ti :$OLD_PORT)"
+          ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_HOST "OLD_PID=\$(lsof -ti :$OLD_PORT) && if [ ! -z \"\$OLD_PID\" ]; then sudo kill -9 \$OLD_PID; else echo 'No process found on port $OLD_PORT'; fi"
           
           # Delete old enviornment
           ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_HOST "sudo rm -rf /home/$EC2_USER/$OLD_ENV"
