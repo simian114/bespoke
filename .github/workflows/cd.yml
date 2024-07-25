@@ -45,8 +45,6 @@ jobs:
           echo "$EC2_PRIVATE_KEY" > ec2-key.pem
           chmod 600 ec2-key.pem
           
-          ssh -i "bespoke.pem" ubuntu@ec2-3-36-79-165.ap-northeast-2.compute.amazonaws.com
-          
           # Determine which environment to deploy to (blue or green)
           ssh -i ec2-key.pem $EC2_USER@$EC2_HOST 'sudo test -d /home/$EC2_USER/green && echo "green exists" || echo "green does not exist"' > env_status.txt
           ENV=$(cat env_status.txt)
