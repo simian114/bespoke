@@ -29,7 +29,7 @@ jobs:
 
       - name: Download artifacts from S3
         run: |
-          aws s3 cp s3://$AWS_S3_BUCKET/${{ github.event.inputs.commit_sha }}/$JAR_NAME ./$JAR_NAME
+          aws s3 cp s3://${{ secrets.AWS_S3_BUCKET }}/${{ github.event.inputs.commit_sha }}/${{ secrets.JAR_NAME }} ./${{ secrets.JAR_NAME }}
 
       - name: Install SSH client
         run: sudo apt-get install -y openssh-client
