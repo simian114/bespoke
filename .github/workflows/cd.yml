@@ -48,6 +48,7 @@ jobs:
           # Determine which environment to deploy to (blue or green)
           ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_HOST 'sudo test -d /home/$EC2_USER/green && echo "green exists" || echo "green does not exist"' > env_status.txt
           ENV=$(cat env_status.txt)
+          cat env_status.txt
           
           if [[ "$ENV" == *"green exists"* ]]; then
             NEW_ENV="blue"
