@@ -35,8 +35,7 @@
 
 </head>
 
-<!--<body hx-boost="true" hx-headers='{"${_csrf.headerName}": "${_csrf.token}"}'>-->
-<body hx-boost="true"  hx:headers="${'&quot;' + _csrf.headerName + '&quot;: &quot;' + _csrf.token + '&quot;'}">
+<body hx-boost="true">
 <header th:replace="~{layout/common/header :: header}"></header>
 <main id="main">
     <th:block layout:fragment="content">
