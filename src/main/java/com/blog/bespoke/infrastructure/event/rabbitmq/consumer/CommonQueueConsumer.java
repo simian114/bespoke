@@ -97,4 +97,24 @@ public class CommonQueueConsumer {
             log.error("receive post cancel like message exception", e);
         }
     }
+
+    @RabbitHandler
+    public void receiveCommentAddMessage(CommentAddMessage message) {
+        try {
+            countUseCase.changeCountWhenCommentAdd(message.getUserId(), message.getPostId());
+        } catch (Exception e) {
+            log.error("receive comment add message exception", e);
+        }
+    }
+
+    @RabbitHandler
+    public void receiveCommentDeleteMessage(CommentDeleteMessage message) {
+        try {
+            countUseCase.changeCountWhenCommentDelete(message.getUserId(), message.getPostId());
+        } catch (Exception e) {
+            log.error("receive comment delete message exception", e);
+        }
+    }
+
+
 }

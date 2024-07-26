@@ -255,7 +255,17 @@ public class UserRepositoryImpl implements UserRepository {
         userJpaRepository.decrementLikePostCount(userId);
     }
 
-//    @Override
+    @Override
+    public void incrementCommentCount(Long userId) {
+        userJpaRepository.incrementCommentCount(userId);
+    }
+
+    @Override
+    public void decrementCommentCount(Long userId) {
+        userJpaRepository.decrementCommentCount(userId);
+    }
+
+    //    @Override
 //    public Optional<User> findUserWithCategories(Long userId) {
 //        return userJpaRepository.findWithCategories(userId);
 //    }

@@ -41,4 +41,17 @@ public class CountUseCase {
         userRepository.decrementFollowerCount(followingId);
         userRepository.decrementFollowingCount(followerId);
     }
+
+    @Transactional
+    public void changeCountWhenCommentAdd(Long userId, Long postId) {
+        userRepository.incrementCommentCount(userId);
+        postRepository.incrementCommentCount(postId);
+    }
+
+    @Transactional
+    public void changeCountWhenCommentDelete(Long userId, Long postId) {
+        userRepository.decrementCommentCount(userId);
+        postRepository.decrementCommentCount(postId);
+
+    }
 }

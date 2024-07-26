@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Builder
 @Data
@@ -27,6 +29,9 @@ public class PostResponseDto {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Category category;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Set<CommentResponseDto> comments;
 
     private boolean likedByUser;
 
@@ -52,6 +57,7 @@ public class PostResponseDto {
                 .category(relation.isCategory() ? post.getCategory() : null)
                 .countInfo(relation.isCount() ? PostCountInfoResponseDto.from(post.getPostCountInfo()) : null)
                 .author(relation.isAuthor() ? UserResponseDto.from(post.getAuthor()) : null)
+                .comments(relation.isComments() ? post.getComments().stream().map(CommentResponseDto::from).collect(Collectors.toSet()) : null)
                 .build();
     }
 
