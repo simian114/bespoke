@@ -1,6 +1,7 @@
 package com.blog.bespoke.presentation.web.view.blog;
 
 import com.blog.bespoke.application.dto.request.CommentCreateRequestDto;
+import com.blog.bespoke.application.dto.request.CommentUpdateRequestDto;
 import com.blog.bespoke.application.dto.response.CommentResponseDto;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
 import com.blog.bespoke.application.dto.response.UserResponseDto;
@@ -84,7 +85,6 @@ public class PostController {
                     .build();
         }
         CommentResponseDto commentResponseDto = postCommentUseCase.addComment(requestDto, postId, currentUser);
-        // TODO; 댓글의 최상단에 올린다..
         model.addAttribute("comment", commentResponseDto);
         return HtmxResponse.builder()
                 .view("page/post/fragments :: comment-item")
@@ -93,10 +93,35 @@ public class PostController {
     }
 
     @HxRequest
+    @DeleteMapping("/blog/posts/{postId}/comments/{commentId}")
+    @ResponseBody
+    public String deleteComment(@PathVariable("commentId") Long commentId,
+                                @LoginUser User currentUser,
+                                Model model) {
+        postCommentUseCase.deleteComment(commentId);
+        return "Comment deleted successfully";
+    }
+
+    @HxRequest
+    @PostMapping("/blog/posts/{postId}/comments/{commentId}/edit")
+    public HtmxResponse updateComment(@PathVariable("commentId") Long commentId,
+                                      @ModelAttribute CommentUpdateRequestDto requestDto,
+                                      @LoginUser User currentUser,
+                                      Model model) {
+        CommentResponseDto comment = postCommentUseCase.updateComment(commentId, requestDto, currentUser);
+        model.addAttribute("comment", comment);
+        return HtmxResponse.builder()
+                .view("page/post/fragments :: comment-item")
+                .build();
+    }
+
+
+    @HxRequest
     @PostMapping("/blog/posts/{postId}/like")
     public String postLike(@PathVariable("postId") Long postId,
                            @LoginUser User currentuser,
                            Model model) {
+
         PostResponseDto post = postLikeUseCase.likePost(postId, currentuser);
 
         model.addAttribute("post", post);

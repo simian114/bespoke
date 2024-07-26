@@ -1,52 +1,110 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 >
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-<li class="comment-item block is-bordered pb-2" style="border-bottom:1px solid lightgray;" th:fragment="comment-item">
-    <div class="comment-author is-flex is-gap-2 is-align-items-center">
-        <div class="comment-author-profile">
-            <figure class="image is-48x48">
-                <img class="is-rounded" src="https://bulma.io/assets/images/placeholders/128x128.png"/>
-            </figure>
+<th:block>
+    <li
+            class="comment-item block is-bordered pb-2"
+            style="border-bottom:1px solid lightgray;"
+            th:fragment="comment-item"
+    >
+        <div class="comment-author is-flex is-gap-2 is-align-items-center">
+            <div class="comment-author-profile">
+                <figure class="image is-48x48">
+                    <img class="is-rounded" src="https://bulma.io/assets/images/placeholders/128x128.png"/>
+                </figure>
+            </div>
+            <div class="is-flex is-flex-direction-column is-gap-0.5">
+                <a class="is-size-5" th:text="${comment.user.nickname}"
+                   th:href="@{/blog/{nickname}(nickname=${comment.user.nickname})}"></a>
+                <span th:text="${#temporals.format(comment.createdAt, 'yyyy.MM.dd') }"></span>
+            </div>
+            <th:block th:if="${me != null && me.id == comment.user.id}">
+                <div class="buttons are-small has-addons ml-auto">
+                    <button
+                            class="button is-link is-light"
+                            hx-target="closest li"
+                            hx-swap="delete"
+                            hx-confirm="Are you sure?"
+                            hx:delete="@{/blog/posts/{postId}/comments/{commentId}(postId=10,commentId=${comment.id})}">
+                        delete
+                    </button>
+                    <button class="button is-primary is-light">
+                        edit
+                        <script>
+                            me().on("click", ev => {
+                                let target = me(ev);
+                                const li = target.closest("li");
+                                const buttons = li.querySelector(".buttons");
+                                buttons.style.display = 'none';
+                                const content = li.querySelector(".comment-content");
+                                content.style.display = 'none';
+                                content.style.height = '0px';
+                                const form = li.querySelector('form');
+                                form.classList.remove("is-display-none")
+                            })
+                        </script>
+                    </button>
+                </div>
+            </th:block>
         </div>
-        <div class="is-flex is-flex-direction-column is-gap-0.5">
-            <a class="is-size-5" th:text="${comment.user.nickname}"
-               th:href="@{/blog/{nickname}(nickname=${comment.user.nickname})}"></a>
-            <span th:text="${#temporals.format(comment.createdAt, 'yyyy.MM.dd') }"></span>
-        </div>
-    </div>
-    <p class="comment-content" style="white-space: pre-wrap" th:text="${comment.content}">
-    </p>
-</li>
 
-<ul class="comment-list" th:fragment="comment-list">
-    <!--    <ul class="comment-list is-flex is-flex-direction-column is-gap-2" th:fragment="comment-list">-->
-    <!--    <li class="comment-item is-flex is-flex-direction-column is-gap-2" th:each="comment: ${comments}">-->
-    <th:block th:each="comment: ${comments}">
-        <li th:replace="page/post/fragments :: comment-item"></li>
-        <!--        <li class="comment-item block">-->
-        <!--            <div class="comment-author is-flex is-gap-2 is-align-items-center">-->
-        <!--                <div class="comment-author-profile">-->
-        <!--                    <figure class="image is-48x48">-->
-        <!--                        <img class="is-rounded" src="https://bulma.io/assets/images/placeholders/128x128.png"/>-->
-        <!--                    </figure>-->
-        <!--                </div>-->
-        <!--                <div class="is-flex is-flex-direction-column is-gap-0.5">-->
-        <!--                    <a class="is-size-5" th:text="${comment.user.nickname}"-->
-        <!--                       th:href="@{/blog/{nickname}(nickname=${comment.user.nickname})}"></a>-->
-        <!--                    <span th:text="${#temporals.format(comment.createdAt, 'yyyy.MM.dd') }"></span>-->
-        <!--                </div>-->
-        <!--            </div>-->
-        <!--            <p class="comment-content" style="white-space: pre-wrap" th:text="${comment.content}">-->
-        <!--            </p>-->
-        <!--        </li>-->
-    </th:block>
-</ul>
+        <form class="is-display-none"
+              th:action="@{/blog/posts/{postId}/comments/{commentId}/edit(postId=10,commentId=${comment.id})}"
+              hx-target="closest li"
+              hx-swap="outerHTML"
+              hx-push-url="false"
+              hx-confirm="Are you sure?"
+              th:method="post"
+              th:object="${comment}"
+        >
+            <div class="field">
+                <textarea name="content" th:text="${comment.content}" class="textarea" th:rows="3" th:required="true"></textarea>
+            </div>
+
+            <div class="field is-grouped">
+                <div class="control ml-auto buttons has-addons are-small">
+                    <button class="button is-link is-light is-small" type="button">
+                        cancel
+                        <script>
+                            me().on("click", ev => {
+                                let target = me(ev);
+                                const li = target.closest("li");
+                                const buttons = li.querySelector(".buttons");
+                                buttons.style.display = '';
+                                const content = li.querySelector(".comment-content");
+                                content.style.display = '';
+                                content.style.height = '';
+                                const form = li.querySelector('form');
+                                form.classList.add("is-display-none")
+                                ev.stopPropagation();
+                            })
+                        </script>
+                    </button>
+                    <button class="button is-primary is-light is-small"
+                    >
+                        edit
+                    </button>
+                </div>
+            </div>
+        </form>
+        <p class="comment-content" style="white-space: pre-wrap" th:text="${comment.content}">
+        </p>
+    </li>
+
+    <ul class="comment-list" th:fragment="comment-list">
+        <th:block th:each="comment: ${comments}">
+            <li th:replace="page/post/fragments :: comment-item"></li>
+        </th:block>
+    </ul>
+</th:block>
+
 
 </body>
 </html>

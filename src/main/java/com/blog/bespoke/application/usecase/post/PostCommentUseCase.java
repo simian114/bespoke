@@ -5,6 +5,8 @@ import com.blog.bespoke.application.dto.request.CommentUpdateRequestDto;
 import com.blog.bespoke.application.dto.response.CommentResponseDto;
 import com.blog.bespoke.application.event.message.CommentAddMessage;
 import com.blog.bespoke.application.event.publisher.EventPublisher;
+import com.blog.bespoke.application.exception.BusinessException;
+import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.comment.Comment;
 import com.blog.bespoke.domain.model.comment.CommentUpdateCmd;
 import com.blog.bespoke.domain.model.post.Post;
@@ -60,12 +62,15 @@ public class PostCommentUseCase {
 
     @Transactional
     public void deleteComment(Long commentId) {
-        postRepository.deleteById(commentId);
+        commentRepository.deleteById(commentId);
     }
 
     @Transactional
-    public CommentResponseDto updateComment(Long commentId, CommentUpdateRequestDto requestDto, Long postId) {
+    public CommentResponseDto updateComment(Long commentId, CommentUpdateRequestDto requestDto, User currentUser) {
         Comment comment = commentRepository.getById(commentId);
+        if (!comment.getUser().getId().equals(currentUser.getId())) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
         CommentUpdateCmd cmd = CommentUpdateCmd.builder().content(requestDto.getContent()).build();
         comment.update(cmd);
         return CommentResponseDto.from(comment);
