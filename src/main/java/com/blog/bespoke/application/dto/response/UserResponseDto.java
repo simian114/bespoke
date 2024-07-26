@@ -105,6 +105,8 @@ public class UserResponseDto {
         private long followingCount;
         private long publishedPostCount;
         private long likePostCount;
+        private long commentCount;
+
 
         static public UserCountInfoResponseDto from(UserCountInfo info) {
             if (info == null) {
@@ -115,6 +117,7 @@ public class UserResponseDto {
                     .followingCount(info.getFollowingCount() == null ? 0 : info.getFollowingCount())
                     .publishedPostCount(info.getPublishedPostCount() == null ? 0 : info.getPublishedPostCount())
                     .likePostCount(info.getLikePostCount() == null ? 0 : info.getLikePostCount())
+                    .commentCount(info.getCommentCount() == null ? 0 : info.getCommentCount())
                     .build();
         }
     }

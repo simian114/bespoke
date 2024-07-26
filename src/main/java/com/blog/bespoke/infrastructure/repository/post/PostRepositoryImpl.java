@@ -3,6 +3,7 @@ package com.blog.bespoke.infrastructure.repository.post;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.category.QCategory;
+import com.blog.bespoke.domain.model.comment.QComment;
 import com.blog.bespoke.domain.model.post.*;
 import com.blog.bespoke.domain.model.user.QUser;
 import com.blog.bespoke.domain.model.user.User;
@@ -124,6 +125,7 @@ public class PostRepositoryImpl implements PostRepository {
         QCategory category = QCategory.category;
         QPostCountInfo postCountInfo = QPostCountInfo.postCountInfo;
         QUser user = QUser.user;
+        QComment comment = QComment.comment;
         if (relation.isAuthor()) {
             query.leftJoin(post.author, user).fetchJoin();
         }
@@ -132,6 +134,10 @@ public class PostRepositoryImpl implements PostRepository {
         }
         if (relation.isCount()) {
             query.leftJoin(post.postCountInfo, postCountInfo).fetchJoin();
+        }
+        if (relation.isComments()) {
+            query.leftJoin(post.comments, comment).fetchJoin()
+                    .leftJoin(comment.user, user).fetchJoin();
         }
         try {
             return Optional.ofNullable(query.fetchOne());

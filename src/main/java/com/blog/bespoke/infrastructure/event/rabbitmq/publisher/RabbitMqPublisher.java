@@ -44,4 +44,14 @@ public class RabbitMqPublisher implements EventPublisher {
     public void publishPostCancelLikeEvent(PostLikeCancelMessage message) {
         rabbitTemplate.convertAndSend(commonQueueKey, message);
     }
+
+    @Override
+    public void publishCommentAddEvent(CommentAddMessage message) {
+        rabbitTemplate.convertAndSend(commonQueueKey, message);
+    }
+
+    @Override
+    public void publishCommentDeleteEvent(CommentDeleteMessage message) {
+        rabbitTemplate.convertAndSend(commonQueueKey, message);
+    }
 }

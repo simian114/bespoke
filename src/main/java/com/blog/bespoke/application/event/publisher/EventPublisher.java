@@ -19,4 +19,10 @@ public interface EventPublisher {
     void publishPostLikeEvent(PostLikeMessage message);
 
     void publishPostCancelLikeEvent(PostLikeCancelMessage message);
+
+    // NOTE: 댓글 추가 시 발생
+    void publishCommentAddEvent(CommentAddMessage message);
+
+    // NOTE: 댓글 삭제 시 발생
+    void publishCommentDeleteEvent(CommentDeleteMessage message);
 }

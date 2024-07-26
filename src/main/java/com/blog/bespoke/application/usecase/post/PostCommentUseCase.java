@@ -3,9 +3,12 @@ package com.blog.bespoke.application.usecase.post;
 import com.blog.bespoke.application.dto.request.CommentCreateRequestDto;
 import com.blog.bespoke.application.dto.request.CommentUpdateRequestDto;
 import com.blog.bespoke.application.dto.response.CommentResponseDto;
+import com.blog.bespoke.application.event.message.CommentAddMessage;
+import com.blog.bespoke.application.event.publisher.EventPublisher;
 import com.blog.bespoke.domain.model.comment.Comment;
 import com.blog.bespoke.domain.model.comment.CommentUpdateCmd;
 import com.blog.bespoke.domain.model.post.Post;
+import com.blog.bespoke.domain.model.post.PostRelation;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.comment.CommentRepository;
 import com.blog.bespoke.domain.repository.post.PostRepository;
@@ -20,6 +23,7 @@ import java.util.List;
 public class PostCommentUseCase {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final EventPublisher eventPublisher;
 
     @Transactional
     public List<CommentResponseDto> getCommentsByPostId(Long postId) {
@@ -30,12 +34,26 @@ public class PostCommentUseCase {
 
     @Transactional
     public CommentResponseDto addComment(CommentCreateRequestDto requestDto, Long postId, User currentUser) {
-        Post post = postRepository.getById(postId);
+        PostRelation postRelation = PostRelation.builder().author(true).build();
+        Post post = postRepository.getById(postId, postRelation);
 
         Comment comment = requestDto.toModel();
         comment.setPost(post);
         comment.setUser(currentUser);
-        return CommentResponseDto.from(commentRepository.save(comment));
+        Comment savedComment = commentRepository.save(comment);
+
+        eventPublisher.publishCommentAddEvent(
+                CommentAddMessage.builder()
+                        .userId(currentUser.getId())
+                        .commentId(savedComment.getId())
+                        .postId(postId)
+                        .postTitle(post.getTitle())
+                        .postAuthorId(post.getAuthor().getId())
+                        .commentContent(savedComment.getContent())
+                        .build()
+        );
+
+        return CommentResponseDto.from(savedComment);
     }
 
     @Transactional

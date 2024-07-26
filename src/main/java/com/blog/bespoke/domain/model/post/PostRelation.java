@@ -9,4 +9,5 @@ public class PostRelation {
     private boolean count;
     private boolean category;
     private boolean author;
+    private boolean comments;
 }
