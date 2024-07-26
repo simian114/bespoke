@@ -32,7 +32,7 @@
                             hx-target="closest li"
                             hx-swap="delete"
                             hx-confirm="Are you sure?"
-                            hx:delete="@{/blog/posts/{postId}/comments/{commentId}(postId=10,commentId=${comment.id})}">
+                            hx:delete="@{/blog/posts/{postId}/comments/{commentId}(postId=${postId},commentId=${comment.id})}">
                         delete
                     </button>
                     <button class="button is-primary is-light">
@@ -56,7 +56,7 @@
         </div>
 
         <form class="is-display-none"
-              th:action="@{/blog/posts/{postId}/comments/{commentId}/edit(postId=10,commentId=${comment.id})}"
+              th:action="@{/blog/posts/{postId}/comments/{commentId}/edit(postId=${postId},commentId=${comment.id})}"
               hx-target="closest li"
               hx-swap="outerHTML"
               hx-push-url="false"
