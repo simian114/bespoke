@@ -6,6 +6,7 @@ import com.blog.bespoke.domain.model.comment.Comment;
 import com.blog.bespoke.domain.repository.comment.CommentRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -26,6 +27,11 @@ public class CommentRepositoryImpl implements CommentRepository {
     public Comment getById(Long id) throws BusinessException {
         return findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND));
+    }
+
+    @Override
+    public List<Comment> getCommentsByPostId(Long postId) {
+        return commentJpaRepository.getCommentsByPostId(postId);
     }
 
     @Override
