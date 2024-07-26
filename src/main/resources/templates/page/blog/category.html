@@ -9,91 +9,91 @@
     <title th:text="|${owner.name}'s blog'.|">Bespoke</title>
 </head>
 <body>
-<main id="main" class="common-page blog-page">
-    <section class="section px-2">
-        <div class="container has-background-primary-100" style="max-width: 640px">
-            <div class="block is-flex is-justify-content-space-between">
-                <h1 class="has-text-weight-bold is-size-4">
-                    <a th:href="@{/blog/{nickname}(nickname=${owner.nickname})}"
-                       th:text="${owner.nickname}"></a>'s&nbsp;<span th:text="${category.name}"></span>
-                </h1>
 
-                <a th:if="${isOwner}" th:href="@{/blog/{nickname}/manage/categories(nickname=${owner.nickname})}"
-                   class="button is-small">edit</a>
-            </div>
-            <p class="block is-underlined" th:text="${category.description}"></p>
+<section class="common-page blog-page section px-2">
+    <div class="container has-background-primary-100" style="max-width: 640px">
+        <div class="block is-flex is-justify-content-space-between">
+            <h1 class="has-text-weight-bold is-size-4">
+                <a th:href="@{/blog/{nickname}(nickname=${owner.nickname})}"
+                   th:text="${owner.nickname}"></a>'s&nbsp;<span th:text="${category.name}"></span>
+            </h1>
 
-            <details>
-                <summary>Introduce</summary>
-                <article class="block content">
-                    <p th:utext="${owner.introduce}"></p>
-                </article>
-            </details>
-            <!--            TODO: sns list-->
-            <div class="block">
-            </div>
+            <a th:if="${isOwner}" th:href="@{/blog/{nickname}/manage/categories(nickname=${owner.nickname})}"
+               class="button is-small">edit</a>
+        </div>
+        <p class="block is-underlined" th:text="${category.description}"></p>
 
-            <div class="block is-flex is-align-items-baseline">
-                <div class="mr-4 is-flex-shrink-0 is-size-5 has-text-weight-semibold">space</div>
-                <ul class="space-list is-flex-grow-5">
-                    <th:block th:if="${owner.categories != null && #lists.size(owner.categories) > 0}">
-                        <li class="is-flex" th:each="category: ${owner.categories}">
-                            <a
-                                    hx-boost="true"
-                                    th:href="@{/blog/{nickname}/category/{url}(nickname=${nickname},url=${category.url})}"
-                                    class="has-text-weight-semibold is-underlined mr-2 is-flex-shrink-0"
-                                    th:text="${category.name}"></a>
-                            <p style="text-align: end" class="is-flex-grow-5" th:text="${category.description}"></p>
-                        </li>
-                    </th:block>
-                    <th:block th:unless="${owner.categories != null && #lists.size(owner.categories) > 0}">
-                        <div class="is-flex is-gap-2">
-                            <p>empty space</p>
-                            <a class="button is-small"
-                               th:href="@{/blog/{nickname}/manage/categories(nickname=${owner.nickname})}">추가</a>
-                        </div>
-                    </th:block>
-                </ul>
-            </div>
+        <details>
+            <summary>Introduce</summary>
+            <article class="block content">
+                <p th:utext="${owner.introduce}"></p>
+            </article>
+        </details>
+        <!--            TODO: sns list-->
+        <div class="block">
+        </div>
 
-            <!--        일단 전체 보기는 그냥 없어도 될듯 -->
-            <div class="mt-3 post-list">
-                <div th:if="${isEmpty}"
-                     class="post-item container is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
+        <div class="block is-flex is-align-items-baseline">
+            <div class="mr-4 is-flex-shrink-0 is-size-5 has-text-weight-semibold">space</div>
+            <ul class="space-list is-flex-grow-5">
+                <th:block th:if="${owner.categories != null && #lists.size(owner.categories) > 0}">
+                    <li class="is-flex" th:each="category: ${owner.categories}">
+                        <a
+                                hx-boost="true"
+                                th:href="@{/blog/{nickname}/category/{url}(nickname=${nickname},url=${category.url})}"
+                                class="has-text-weight-semibold is-underlined mr-2 is-flex-shrink-0"
+                                th:text="${category.name}"></a>
+                        <p style="text-align: end" class="is-flex-grow-5" th:text="${category.description}"></p>
+                    </li>
+                </th:block>
+                <th:block th:unless="${owner.categories != null && #lists.size(owner.categories) > 0}">
+                    <div class="is-flex is-gap-2">
+                        <p>empty space</p>
+                        <a class="button is-small"
+                           th:href="@{/blog/{nickname}/manage/categories(nickname=${owner.nickname})}">추가</a>
+                    </div>
+                </th:block>
+            </ul>
+        </div>
+
+        <!--        일단 전체 보기는 그냥 없어도 될듯 -->
+        <div class="mt-3 post-list">
+            <div th:if="${isEmpty}"
+                 class="post-item container is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
                 <span style="font-size: 48px;">🫠
                 </span>
-                    <span>empty space!</span>
-                </div>
-                <ul>
-                    <li class="post-item" th:each="post: ${posts}">
-                        <a class="is-flex is-align-items-baseline is-gap-2 is-color-black-50 is-position-relative"
-                           hx-boost="true"
-                           th:href="@{/blog/posts/{postId}(postId=${post.id})}">
-                            <h3 class="has-text-weight-semibold is-size-5" th:text="${post.title}"></h3>
-                            <span class="is-size-6"
-                                  th:text="|${#temporals.format(post.createdAt, 'yyyy.MM.dd')}.|"></span>
-                        </a>
-                    </li>
-                    <li class="post-item" th:if="${(hasNextPage ?: true)}"
-                        hx-swap="outerHTML"
-                        hx-select=".post-list .post-item"
-                        hx-target="closest .post-item"
-                        hx-trigger="revealed"
-                        hx:get="@{/blog/posts(category=${category.id},page=${page==null?0:page})}"
-                        hx-indicator="#htmx-skeleton"
-                    ></li>
-                </ul>
-
+                <span>empty space!</span>
             </div>
+            <ul>
+                <li class="post-item" th:each="post: ${posts}">
+                    <a class="is-flex is-align-items-baseline is-gap-2 is-color-black-50 is-position-relative"
+                       hx-boost="true"
+                       th:href="@{/blog/posts/{postId}(postId=${post.id})}">
+                        <h3 class="has-text-weight-semibold is-size-5" th:text="${post.title}"></h3>
+                        <span class="is-size-6"
+                              th:text="|${#temporals.format(post.createdAt, 'yyyy.MM.dd')}.|"></span>
+                    </a>
+                </li>
+                <li class="post-item" th:if="${(hasNextPage ?: true)}"
+                    hx-swap="outerHTML"
+                    hx-select=".post-list .post-item"
+                    hx-target="closest .post-item"
+                    hx-trigger="revealed"
+                    hx:get="@{/blog/posts(category=${category.id},page=${page==null?0:page})}"
+                    hx-indicator="#htmx-skeleton"
+                ></li>
+            </ul>
 
-
-            <!--        <div class="block" hx-swap="outerhtml" hx-trigger="revealed"-->
-            <!--             hx:get="@{/blog/{nickname}/posts(nickname=${nickname},category=${category.id},page=${page})}">-->
-            <!--        </div>-->
-            <!--        TODO: loading -->
         </div>
-    </section>
-</main>
+
+
+        <!--        <div class="block" hx-swap="outerhtml" hx-trigger="revealed"-->
+        <!--             hx:get="@{/blog/{nickname}/posts(nickname=${nickname},category=${category.id},page=${page})}">-->
+        <!--        </div>-->
+        <!--        TODO: loading -->
+    </div>
+</section>
+
 
 </body>
 </html>

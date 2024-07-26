@@ -11,39 +11,39 @@
 </head>
 
 <body>
-<main id="main" class="common-page">
-    <section class="section px-2">
-        <form action="/signup" th:action target="this" hx-boost="true" th:object="${user}" method="post">
-            <div layout:replace="~{fragments/form/layout-input :: input('email', 'Email', 'email', 'email@gmail.com', true)}"></div>
-            <div layout:replace="~{fragments/form/layout-input :: input('nickname', 'Nickname', 'text', 'nickname', true)}"></div>
-            <div layout:replace="~{fragments/form/layout-input :: input('name', 'Name', 'text', 'What is you name', false)}"></div>
-            <div layout:replace="~{fragments/form/layout-input :: input('password', 'Password', 'password', '', true)}"></div>
-            <div layout:replace="~{fragments/form/layout-input :: tinymce('introduce', 'Intrudoce', 'Hello. Please type story', true)}"></div>
-            <div class="field">
-                <div class="control">
-                    <label class="checkbox">
-                        <input type="checkbox">
-                        I agree to the <a href="#">terms and conditions</a>
-                    </label>
-                </div>
-            </div>
-            <div>
-                <th:block th:if="${#fields.hasGlobalErrors()}">
-                    <p class="help is-danger" th:each="err :${#fields.globalErrors()}" th:text="${err}"></p>
-                </th:block>
-            </div>
 
-            <div class="field is-grouped">
-                <div class="control">
-                    <button class="button is-link">Sign up</button>
-                </div>
-                <div class="control">
-                    <a class="button is-link is-light" href="/" hx-boost="true">Cancel</a>
-                </div>
+<section class="common-page section px-2">
+    <form action="/signup" th:action target="this" hx-boost="true" th:object="${user}" method="post">
+        <div layout:replace="~{fragments/form/layout-input :: input('email', 'Email', 'email', 'email@gmail.com', true)}"></div>
+        <div layout:replace="~{fragments/form/layout-input :: input('nickname', 'Nickname', 'text', 'nickname', true)}"></div>
+        <div layout:replace="~{fragments/form/layout-input :: input('name', 'Name', 'text', 'What is you name', false)}"></div>
+        <div layout:replace="~{fragments/form/layout-input :: input('password', 'Password', 'password', '', true)}"></div>
+        <div layout:replace="~{fragments/form/layout-input :: tinymce('introduce', 'Intrudoce', 'Hello. Please type story', true)}"></div>
+        <div class="field">
+            <div class="control">
+                <label class="checkbox">
+                    <input type="checkbox">
+                    I agree to the <a href="#">terms and conditions</a>
+                </label>
             </div>
-        </form>
-    </section>
-</main>
+        </div>
+        <div>
+            <th:block th:if="${#fields.hasGlobalErrors()}">
+                <p class="help is-danger" th:each="err :${#fields.globalErrors()}" th:text="${err}"></p>
+            </th:block>
+        </div>
+
+        <div class="field is-grouped">
+            <div class="control">
+                <button class="button is-link">Sign up</button>
+            </div>
+            <div class="control">
+                <a class="button is-link is-light" href="/" hx-boost="true">Cancel</a>
+            </div>
+        </div>
+    </form>
+</section>
+
 
 </body>
 </html>
