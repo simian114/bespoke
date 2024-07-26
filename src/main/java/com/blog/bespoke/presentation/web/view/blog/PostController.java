@@ -50,6 +50,7 @@ public class PostController {
         boolean b = userFollowUseCase.checkFollow(currentUser, post.getAuthor().getId());
         model.addAttribute("follow", b);
         model.addAttribute("comment", CommentCreateRequestDto.builder().content("").build());
+        model.addAttribute("postId", postId);
 
         // check already follow
 
@@ -78,6 +79,7 @@ public class PostController {
                                     @Valid @ModelAttribute("comment") CommentCreateRequestDto requestDto,
                                     BindingResult bindingResult) {
         // NOTE: 정상적인 경로로 요청을 했다면, 사실 여기로 올 수 없다.
+        model.addAttribute("postId", postId);
         if (bindingResult.hasErrors()) {
             return HtmxResponse.builder()
                     .view("page/post/fragments :: comment-form")
@@ -86,6 +88,7 @@ public class PostController {
         }
         CommentResponseDto commentResponseDto = postCommentUseCase.addComment(requestDto, postId, currentUser);
         model.addAttribute("comment", commentResponseDto);
+        model.addAttribute("postId", postId);
         return HtmxResponse.builder()
                 .view("page/post/fragments :: comment-item")
                 .preventHistoryUpdate()
@@ -96,9 +99,10 @@ public class PostController {
     @DeleteMapping("/blog/posts/{postId}/comments/{commentId}")
     @ResponseBody
     public String deleteComment(@PathVariable("commentId") Long commentId,
+                                @PathVariable("postId") Long postId,
                                 @LoginUser User currentUser,
                                 Model model) {
-        postCommentUseCase.deleteComment(commentId);
+        postCommentUseCase.deleteComment(commentId, postId, currentUser);
         return "Comment deleted successfully";
     }
 

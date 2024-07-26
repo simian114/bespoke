@@ -4,6 +4,7 @@ import com.blog.bespoke.application.dto.request.CommentCreateRequestDto;
 import com.blog.bespoke.application.dto.request.CommentUpdateRequestDto;
 import com.blog.bespoke.application.dto.response.CommentResponseDto;
 import com.blog.bespoke.application.event.message.CommentAddMessage;
+import com.blog.bespoke.application.event.message.CommentDeleteMessage;
 import com.blog.bespoke.application.event.publisher.EventPublisher;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
@@ -61,8 +62,19 @@ public class PostCommentUseCase {
     }
 
     @Transactional
-    public void deleteComment(Long commentId) {
-        commentRepository.deleteById(commentId);
+    public void deleteComment(Long commentId, Long postId, User currentUser) {
+        Comment comment = commentRepository.getById(commentId);
+        if (!comment.getUser().getId().equals(currentUser.getId())) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
+        commentRepository.delete(comment);
+        eventPublisher.publishCommentDeleteEvent(
+                CommentDeleteMessage.builder()
+                        .postId(postId)
+                        .userId(currentUser.getId())
+                        .commentId(commentId)
+                        .build()
+        );
     }
 
     @Transactional
