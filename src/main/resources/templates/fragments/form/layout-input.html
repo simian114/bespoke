@@ -18,12 +18,12 @@
     </div>
 </th:block>
 
-<th:block layout:fragment="textarea(field, label, placeholder, lines, required, disabled)">
+<th:block layout:fragment="textarea(field, label, placeholder, lines, required, disabled, defaultValue)">
     <div class="field" th:with="fieldName=${field}">
         <label class="label" th:text="${label}">label</label>
         <div class="control">
             <!--  TODO: icon  -->
-            <textarea th:disabled="${disabled}" class="textarea" th:rows="${lines}" th:required="${required}" th:field="*{__${fieldName}__}"></textarea>
+            <textarea th:placeholder="${placeholder}" th:value="${defaultValue}" th:disabled="${disabled}" class="textarea" th:rows="${lines}" th:required="${required}" th:field="*{__${fieldName}__}"></textarea>
             <script layout:fragment="script"></script>
         </div>
         <p class="help is-danger" th:errors="*{__${fieldName}__}"></p>
