@@ -45,10 +45,12 @@ public class PostCommentUseCase {
         eventPublisher.publishCommentAddEvent(
                 CommentAddMessage.builder()
                         .userId(currentUser.getId())
+                        .userNickname(currentUser.getNickname())
                         .commentId(savedComment.getId())
                         .postId(postId)
                         .postTitle(post.getTitle())
                         .postAuthorId(post.getAuthor().getId())
+                        .postAuthorNickname(post.getAuthor().getNickname())
                         .commentContent(savedComment.getContent())
                         .build()
         );
