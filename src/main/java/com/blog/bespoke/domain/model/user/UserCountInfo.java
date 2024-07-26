@@ -32,6 +32,9 @@ public class UserCountInfo {
     @Column(nullable = false)
     private Long likePostCount = 0L;
 
+    @Column(nullable = false)
+    private Long commentCount = 0L;
+
     // 관계의 주인
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
