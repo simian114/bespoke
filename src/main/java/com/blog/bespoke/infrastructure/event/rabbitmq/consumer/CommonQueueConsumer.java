@@ -1,5 +1,6 @@
 package com.blog.bespoke.infrastructure.event.rabbitmq.consumer;
 
+import com.blog.bespoke.application.dto.notification.CommentAddNotificationDto;
 import com.blog.bespoke.application.dto.notification.FollowNotificationDto;
 import com.blog.bespoke.application.dto.notification.PostLikeNotificationDto;
 import com.blog.bespoke.application.dto.notification.PublishNotificationDto;
@@ -102,6 +103,17 @@ public class CommonQueueConsumer {
     public void receiveCommentAddMessage(CommentAddMessage message) {
         try {
             countUseCase.changeCountWhenCommentAdd(message.getUserId(), message.getPostId());
+            notificationUseCase.createNotification(CommentAddNotificationDto.builder()
+                    .commentContent(message.getCommentContent())
+                    .commentId(message.getCommentId())
+                    .publisherId(message.getUserId())
+                    .publisherNickname(message.getUserNickname())
+                    .recipientId(message.getPostAuthorId())
+                    .recipientNickname(message.getPostAuthorNickname())
+                    .postTitle(message.getPostTitle())
+                    .postId(message.getPostId())
+                    .build());
+
         } catch (Exception e) {
             log.error("receive comment add message exception", e);
         }

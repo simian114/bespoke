@@ -1,5 +1,6 @@
 package com.blog.bespoke.application.usecase.notification;
 
+import com.blog.bespoke.application.dto.notification.CommentAddNotificationDto;
 import com.blog.bespoke.application.dto.notification.FollowNotificationDto;
 import com.blog.bespoke.application.dto.notification.PostLikeNotificationDto;
 import com.blog.bespoke.application.dto.notification.PublishNotificationDto;
@@ -56,6 +57,23 @@ public class NotificationUseCase {
                 .recipient(User.builder().id(dto.getAuthorId()).build())
                 .publisher(User.builder().id(dto.getUserId()).build())
                 .build());
+    }
+
+    @Transactional
+    public void createNotification(CommentAddNotificationDto dto) {
+        ExtraInfo extraInfo = ExtraInfo.builder()
+                .recipient(dto.getRecipientNickname())
+                .postTitle(dto.getPostTitle())
+                .publisher(dto.getPublisherNickname())
+                .build();
+        notificationRepository.save(Notification.builder()
+                .type(Notification.NotificationType.COMMENT_CREATED)
+                .refId(dto.getPostId())
+                .extraInfo(extraInfo)
+                .recipient(User.builder().id(dto.getRecipientId()).build())
+                .publisher((User.builder().id(dto.getPublisherId()).build()))
+                .build());
+
     }
 
     @Transactional

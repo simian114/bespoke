@@ -12,8 +12,10 @@ import lombok.NoArgsConstructor;
 public class CommentAddMessage {
     private Long postId;
     private Long postAuthorId;
+    private String postAuthorNickname;
     private String postTitle;
     private Long userId;
+    private String userNickname;
     private Long commentId;
     private String commentContent;
 }
