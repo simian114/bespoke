@@ -18,6 +18,7 @@
     <script type="text/javascript" th:src="@{/js/htmx.min.js}"></script>
     <script type="text/javascript" th:src="@{/js/surreal.js}"></script>
     <script type="text/javascript" th:src="@{/js/htmx-sse.js}"></script>
+    <script type="text/javascript" th:src="@{/js/nprogress.js}"></script>
     <!-- toastify -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
@@ -27,7 +28,9 @@
     <link href="/css/fontawesome/fontawesome.min.css" rel="stylesheet"/>
     <link href="/css/fontawesome/solid.min.css" rel="stylesheet"/>
     <link href="/css/fontawesome/regular.min.css" rel="stylesheet"/>
+    <link href="/css/nprogress.css" rel="stylesheet"/>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
 
 
 </head>
@@ -58,6 +61,23 @@
                 style: {background: "linear-gradient(to right, #ff5f6d, #ffc371)"}
             }).showToast();
         })
+
+        NProgress.configure({ showSpinner: false });
+
+        window.addEventListener('htmx:beforeRequest', (event) => {
+            if(event.detail.boosted) {
+                NProgress.start();
+            }
+        });
+        window.addEventListener('htmx:afterRequest', (event) => {
+            if(event.detail.boosted) {
+                NProgress.done();
+            }
+        });
+        window.addEventListener('htmx:historyRestore', (event) => {
+            NProgress.remove();
+        });
+
     })
 </script>
 
