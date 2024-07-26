@@ -35,9 +35,15 @@ public class Comment extends TimeStamp {
         this.post = post;
     }
 
+    public void setUser(User currentUser) {
+        this.user = currentUser;
+    }
+
+
     public void update(CommentUpdateCmd cmd) {
         if (cmd.getContent() != null && !cmd.getContent().isBlank()) {
             this.content = cmd.getContent();
         }
     }
+
 }

@@ -6,6 +6,7 @@ import com.blog.bespoke.application.dto.response.CommentResponseDto;
 import com.blog.bespoke.domain.model.comment.Comment;
 import com.blog.bespoke.domain.model.comment.CommentUpdateCmd;
 import com.blog.bespoke.domain.model.post.Post;
+import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.comment.CommentRepository;
 import com.blog.bespoke.domain.repository.post.PostRepository;
 import jakarta.transaction.Transactional;
@@ -28,12 +29,12 @@ public class PostCommentUseCase {
     }
 
     @Transactional
-    public CommentResponseDto addComment(CommentCreateRequestDto requestDto, Long postId) {
-        // exist 확인
+    public CommentResponseDto addComment(CommentCreateRequestDto requestDto, Long postId, User currentUser) {
         Post post = postRepository.getById(postId);
 
         Comment comment = requestDto.toModel();
         comment.setPost(post);
+        comment.setUser(currentUser);
         return CommentResponseDto.from(commentRepository.save(comment));
     }
 
