@@ -12,7 +12,8 @@ public class Comment extends TimeStamp {
     @Column(name = "comment_id")
     private Long id;
 
-    @ManyToOne
+    // 댓글에서 post 의 정보는 필요없다. 유저의 정보는 필요하다.
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
