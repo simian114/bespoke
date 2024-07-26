@@ -17,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -55,16 +56,16 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // 기본 로그인 방법 무효화
         http.formLogin(AbstractHttpConfigurer::disable);
-        http.csrf(configurer -> configurer.csrfTokenRepository(new CookieCsrfTokenRepository()));
+
+        // NOTE: jwt 를 사용하기 때문에 안해도된다..?
+        http.csrf(AbstractHttpConfigurer::disable);
         http.httpBasic(AbstractHttpConfigurer::disable);
         http.logout(AbstractHttpConfigurer::disable);
 
-        // 세션 사용 안함
-        /* CSRF 때문에 일단은 주석...
-         http.sessionManagement(configurer ->
-         configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-         );
-         */
+        http.sessionManagement(configurer ->
+                configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        );
+
 
         /*
         TODO: 401, 403 exception handling
