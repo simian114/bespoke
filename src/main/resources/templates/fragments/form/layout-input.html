@@ -18,6 +18,19 @@
     </div>
 </th:block>
 
+<th:block layout:fragment="textarea(field, label, placeholder, lines, required, disabled)">
+    <div class="field" th:with="fieldName=${field}">
+        <label class="label" th:text="${label}">label</label>
+        <div class="control">
+            <!--  TODO: icon  -->
+            <textarea th:disabled="${disabled}" class="textarea" th:rows="${lines}" th:required="${required}" th:field="*{__${fieldName}__}"></textarea>
+            <script layout:fragment="script"></script>
+        </div>
+        <p class="help is-danger" th:errors="*{__${fieldName}__}"></p>
+    </div>
+</th:block>
+
+
 <th:block layout:fragment="tinymce(field, label, placeholder, required)">
     <div class="field" th:with="fieldName=${field}" style="min-height: 600px;">
         <label class="label" th:text="${label}">Introduce</label>

@@ -17,11 +17,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import java.util.Set;
 
@@ -55,15 +55,16 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // 기본 로그인 방법 무효화
         http.formLogin(AbstractHttpConfigurer::disable);
-        // TODO: 서버로 전변경하면 csrf 옵션 키기. 현재는 일반 API 때문에 disable
-        http.csrf(AbstractHttpConfigurer::disable);
+        http.csrf(configurer -> configurer.csrfTokenRepository(new CookieCsrfTokenRepository()));
         http.httpBasic(AbstractHttpConfigurer::disable);
         http.logout(AbstractHttpConfigurer::disable);
 
         // 세션 사용 안함
-        http.sessionManagement(configurer ->
-                configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        );
+        /* CSRF 때문에 일단은 주석...
+         http.sessionManagement(configurer ->
+         configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+         );
+         */
 
         /*
         TODO: 401, 403 exception handling
@@ -97,6 +98,8 @@ public class SecurityConfig {
                 .requestMatchers("/webfonts/**").permitAll()
                 .requestMatchers("/noti/{nickname}").permitAll()
                 .requestMatchers("/hx/home/posts").permitAll()
+                .requestMatchers("/blog/posts/{postId}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/blog/posts/{postId}/comments").permitAll()
                 .requestMatchers("/blog/{nickname}/{postId}").permitAll()
                 .requestMatchers("/blog/{nickname}").permitAll()
                 .requestMatchers("/blog/{nickname}/posts/**").permitAll()
@@ -109,6 +112,7 @@ public class SecurityConfig {
 
         http.addFilterAt(new TransactionFilter(), BasicAuthenticationFilter.class);
         http.addFilterAt(jwtAuthenticationFilter(), TransactionFilter.class);
+//        http.addFilterBefore(jwtAuthenticationFilter(), CsrfFilter.class);
 
         return http.build();
     }

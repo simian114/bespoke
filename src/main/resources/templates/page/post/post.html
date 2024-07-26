@@ -65,9 +65,37 @@
                 </a>
             </div>
         </div>
-        <article class="content mt-4" th:utext="${post.getContent()}">
+        <article class="content mt-4" th:utext="${post.getContent()}"></article>
 
-        </article>
+        <!-- comment area -->
+        <div class="comment-container is-flex is-flex-direction-column">
+            <div>
+                <span class="icon-text">
+                    <span class="icon">
+                        <i class="fa-regular fa-comment-dots"></i>
+                    </span>
+                    <span th:text="${post.countInfo.commentCount}">comment count</span>
+                </span>
+            </div>
+            <div>
+                <form th:action="@{/blog/posts/{postId}/comments(postId=${post.id})}"
+                      hx-target=".comment-list"
+                      hx-swap="afterbegin focus-scroll:false"
+                      th:object="${comment}" method="post" hx-boost="true" th:fragment="comment-form">
+                    <div layout:replace="~{fragments/form/layout-input :: textarea('content', '', 'comments..', 3, true, ${me == null ? true : false})}"></div>
+                    <div class="field is-grouped">
+                        <div class="control ml-auto">
+                            <button class="button is-link">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div hx-trigger="revealed once"
+                 hx:get="@{/blog/posts/{postId}/comments(postId=${post.id})}"
+            >
+                <!-- fill with comments -->
+            </div>
+        </div>
     </div>
 </section>
 
