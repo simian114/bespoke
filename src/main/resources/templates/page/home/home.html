@@ -9,17 +9,16 @@
     <title>Bespoke</title>
 </head>
 <body>
-<main id="main" class="home-page">
-    <section class="section">
-        <div class="container">
-            <div th:replace="~{page/home/filter :: orderBy}" ></div>
-            <div class="fixed-grid has-1-cols-mobile has-3-cols-tablet has-3-cols-desktop has-4-cols-widescreen">
-                <div class="grid post-list">
-                    <th:block th:each="post: ${posts}">
-                        <div th:replace="~{fragments/post :: defaultCard(post=${post})}"></div>
-                    </th:block>
-                    <!--                Elvis 연산자-->
-                    <div class="cell" th:if="${(hasNextPage ?: true)}">
+<section class="section">
+    <div class="container">
+        <div th:replace="~{page/home/filter :: orderBy}"></div>
+        <div class="fixed-grid has-1-cols-mobile has-3-cols-tablet has-3-cols-desktop has-4-cols-widescreen">
+            <div class="grid post-list">
+                <th:block th:each="post: ${posts}">
+                    <div th:replace="~{fragments/post :: defaultCard(post=${post})}"></div>
+                </th:block>
+                <!--                Elvis 연산자-->
+                <div class="cell" th:if="${(hasNextPage ?: true)}">
                     <span hx-select=".post-list > .cell"
                           hx-swap="outerHTML"
                           hx-target="closest .cell"
@@ -27,50 +26,49 @@
                           hx:get="@{/hx/home/posts(page=${(page!=null?page:-1)+1},authorId=${param.authorId},orderBy=${param.orderBy})}"
                           hx-indicator="#htmx-skeleton"
                     ></span>
-                    </div>
                 </div>
-                <!--            TODO: 로딩 스켈레톤-->
-                <!--            <div id="htmx-skeleton" class="htmx-indicator grid">-->
-                <!--                <div class="cell" th:each="i : ${#numbers.sequence(1, 10)}">-->
-                <!--                    <div class="card">-->
-                <!--                        <div class="card-image is-skeleton">-->
-                <!--                            <figure class="image is-4by3 is-skeleton">-->
-                <!--                                <img-->
-                <!--                                        src="https://bulma.io/assets/images/placeholders/1280x960.png"-->
-                <!--                                        alt="Placeholder image"-->
-                <!--                                />-->
-                <!--                            </figure>-->
-                <!--                        </div>-->
-                <!--                        <div class="card-content">-->
-                <!--                            <div class="media">-->
-                <!--                                <div class="media-left">-->
-                <!--                                    <figure class="image is-48x48">-->
-                <!--                                        <img-->
-                <!--                                                src="https://bulma.io/assets/images/placeholders/96x96.png"-->
-                <!--                                                alt="Placeholder image"-->
-                <!--                                        />-->
-                <!--                                    </figure>-->
-                <!--                                </div>-->
-                <!--                                <div class="media-content">-->
-                <!--                                    -->
-                <!--                                    -->
-                <!--                                </div>-->
-                <!--                            </div>-->
-
-                <!--                            <div class="content is-skeleton">-->
-                <!--                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec-->
-                <!--                                iaculis mauris. <a>@bulmaio</a>. <a href="#">#css</a>-->
-                <!--                                <a href="#">#responsive</a>-->
-                <!--                                <br/>-->
-                <!--                                <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>-->
-                <!--                            </div>-->
-                <!--                        </div>-->
-                <!--                    </div>-->
-                <!--                </div>-->
-                <!--            </div>-->
             </div>
+            <!--            TODO: 로딩 스켈레톤-->
+            <!--            <div id="htmx-skeleton" class="htmx-indicator grid">-->
+            <!--                <div class="cell" th:each="i : ${#numbers.sequence(1, 10)}">-->
+            <!--                    <div class="card">-->
+            <!--                        <div class="card-image is-skeleton">-->
+            <!--                            <figure class="image is-4by3 is-skeleton">-->
+            <!--                                <img-->
+            <!--                                        src="https://bulma.io/assets/images/placeholders/1280x960.png"-->
+            <!--                                        alt="Placeholder image"-->
+            <!--                                />-->
+            <!--                            </figure>-->
+            <!--                        </div>-->
+            <!--                        <div class="card-content">-->
+            <!--                            <div class="media">-->
+            <!--                                <div class="media-left">-->
+            <!--                                    <figure class="image is-48x48">-->
+            <!--                                        <img-->
+            <!--                                                src="https://bulma.io/assets/images/placeholders/96x96.png"-->
+            <!--                                                alt="Placeholder image"-->
+            <!--                                        />-->
+            <!--                                    </figure>-->
+            <!--                                </div>-->
+            <!--                                <div class="media-content">-->
+            <!--                                    -->
+            <!--                                    -->
+            <!--                                </div>-->
+            <!--                            </div>-->
+
+            <!--                            <div class="content is-skeleton">-->
+            <!--                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec-->
+            <!--                                iaculis mauris. @bulmaio. <a href="#">#css</a>-->
+            <!--                                <a href="#">#responsive</a>-->
+            <!--                                <br/>-->
+            <!--                                <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>-->
+            <!--                            </div>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--            </div>-->
         </div>
-    </section>
-</main>
+    </div>
+</section>
 </body>
 </html>

@@ -37,8 +37,10 @@
 
 <body hx-boost="true">
 <header th:replace="~{layout/common/header :: header}"></header>
-<th:block layout:fragment="content">
-</th:block>
+<main id="main">
+    <th:block layout:fragment="content">
+    </th:block>
+</main>
 <!-- TODO: footer -->
 <footer th:replace="fragments/footer :: mainFooter"></footer>
 <div id="toast"></div>

@@ -10,45 +10,44 @@
     <script type="text/javascript" th:src="@{/js/tinymce/tinymce.min.js}"></script>
 </head>
 <body>
-<main id="main">
-    <section class="section px-2">
-        <nav th:replace="page/myblog/navigator :: navigator"></nav>
-        <form class="container" style="max-width: 640px;" th:object="${user}" method="post" hx-boost="true">
-            <div layout:replace="~{fragments/form/layout-input :: input('name', 'Name', 'text', 'name...', true)}">
-                <script layout:fragment="script">
-                    me().on("input", ev => {
-                        const el = me(ev).querySelector("input");
-                        const value = el?.value;
-                        if (value.length === 0 || value.length > 50) {
-                            el.classList.add("is-danger");
-                            el.classList.remove("is-success");
-                        } else {
-                            el.classList.remove("is-danger");
-                            el.classList.add("is-success");
-                        }
-                    })
-                </script>
-            </div>
-            <div layout:replace="fragments/form/layout-input :: tinymce('introduce','Introduce','자기소개', true)"></div>
-            <div>
-                <th:block th:if="${#fields.hasGlobalErrors()}">
-                    <p class="help is-danger" th:each="err :${#fields.globalErrors()}" th:text="${err}"></p>
-                </th:block>
-            </div>
 
-            <div class="field is-grouped">
-                <div class="control">
-                    <button class="button is-link">Submit</button>
-                </div>
-                <div class="control">
-                    <a class="button is-link is-light" href="/" hx-boost="true">Cancel</a>
-                </div>
-            </div>
-            TODO: 패스워드 변경은 따로 경로 페이지 만들기
-        </form>
-    </section>
+<section class="section px-2">
+    <nav th:replace="page/myblog/navigator :: navigator"></nav>
+    <form class="container" style="max-width: 640px;" th:object="${user}" method="post" hx-boost="true">
+        <div layout:replace="~{fragments/form/layout-input :: input('name', 'Name', 'text', 'name...', true)}">
+            <script layout:fragment="script">
+                me().on("input", ev => {
+                    const el = me(ev).querySelector("input");
+                    const value = el?.value;
+                    if (value.length === 0 || value.length > 50) {
+                        el.classList.add("is-danger");
+                        el.classList.remove("is-success");
+                    } else {
+                        el.classList.remove("is-danger");
+                        el.classList.add("is-success");
+                    }
+                })
+            </script>
+        </div>
+        <div layout:replace="fragments/form/layout-input :: tinymce('introduce','Introduce','자기소개', true)"></div>
+        <div>
+            <th:block th:if="${#fields.hasGlobalErrors()}">
+                <p class="help is-danger" th:each="err :${#fields.globalErrors()}" th:text="${err}"></p>
+            </th:block>
+        </div>
 
-</main>
+        <div class="field is-grouped">
+            <div class="control">
+                <button class="button is-link">Submit</button>
+            </div>
+            <div class="control">
+                <a class="button is-link is-light" href="/" hx-boost="true">Cancel</a>
+            </div>
+        </div>
+        TODO: 패스워드 변경은 따로 경로 페이지 만들기
+    </form>
+</section>
+
 
 </body>
 </html>
