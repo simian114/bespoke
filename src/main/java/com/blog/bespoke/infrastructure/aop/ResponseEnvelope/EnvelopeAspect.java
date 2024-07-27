@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 @Aspect
 @Component
 public class EnvelopeAspect {
-    @Around("execution(* com.blog.bespoke.presentation.web.controller..*(..))")
+    @Around("execution(* com.blog.bespoke.presentation.web.controller..*(..)) || @annotation(com.blog.bespoke.infrastructure.aop.ResponseEnvelope.Envelope)")
     public Object wrapResponse(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().getName();
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
