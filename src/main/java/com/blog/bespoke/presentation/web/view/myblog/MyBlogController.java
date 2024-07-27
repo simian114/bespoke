@@ -2,7 +2,6 @@ package com.blog.bespoke.presentation.web.view.myblog;
 
 import com.blog.bespoke.application.dto.request.CategoryCreateRequestDto;
 import com.blog.bespoke.application.dto.request.PostCreateRequestDto;
-import com.blog.bespoke.application.dto.request.PostUpdateRequestDto;
 import com.blog.bespoke.application.dto.request.UserUpdateRequestDto;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
 import com.blog.bespoke.application.dto.response.UserResponseDto;
@@ -11,7 +10,6 @@ import com.blog.bespoke.application.usecase.user.UserCategoryUseCase;
 import com.blog.bespoke.application.usecase.user.UserUseCase;
 import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.post.PostSearchCond;
-import com.blog.bespoke.domain.model.post.PostStatusCmd;
 import com.blog.bespoke.domain.model.user.CategoryUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
@@ -24,7 +22,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RequiredArgsConstructor
 @Controller
@@ -116,6 +113,21 @@ public class MyBlogController {
         return "page/myblog/postTable";
     }
 
+    /**
+     * 게시글 생성 임시 페이지.
+     * 해당 페이지에서는 게시글 새성
+     */
+    @GetMapping("/blog/manage/posts/new")
+    public String createPostPage(@LoginUser User currentUser) {
+        PostCreateRequestDto dto = PostCreateRequestDto.builder()
+                .title("")
+                .status(Post.Status.DRAFT)
+                .build();
+        PostResponseDto post = postUseCase.write(dto, currentUser);
+        return String.format("redirect:/blog/manage/posts/%d/edit", post.getId());
+    }
+
+
     @GetMapping("/blog/manage/follows")
     public String followManage(@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
                                @LoginUser User currentUser
@@ -192,128 +204,9 @@ public class MyBlogController {
     @DeleteMapping("/blog/manage/categories/{categoryId}")
     public String deleteCategory(@PathVariable("categoryId") Long categoryId,
                                  @LoginUser User currentUser
-        ) {
+    ) {
         userCategoryUseCase.deleteCategory(categoryId, currentUser);
         return "";
     }
 
-    /**
-     * 게시글 생성 페이지
-     */
-    @GetMapping("/blog/manage/posts/new")
-    public String createPostPage(@LoginUser User currentUser,
-                                 Model model) {
-        UserResponseDto me = userUseCase.getUserForPostWrite(currentUser.getId());
-        model.addAttribute("post", PostCreateRequestDto.builder().content("Write your stories").build());
-        model.addAttribute("categories", me.getCategories());
-        model.addAttribute("action", "/blog/manage/posts");
-        return "page/myblog/postEditor";
-    }
-
-    /**
-     * 게시글 생성 api
-     */
-    @HxRequest
-    @PostMapping("/blog/manage/posts")
-    public HtmxResponse createPost(@LoginUser User currentUser,
-                                   Model model,
-                                   RedirectAttributes redirectAttributes,
-                                   @Valid @ModelAttribute(name = "post") PostCreateRequestDto requestDto,
-                                   BindingResult bindingResult) {
-        UserResponseDto me = userUseCase.getUserForPostWrite(currentUser.getId());
-        model.addAttribute("categories", me.getCategories());
-        model.addAttribute("action", "/blog/manage/posts");
-        if (bindingResult.hasErrors()) {
-            return HtmxResponse.builder()
-                    .preventHistoryUpdate()
-                    .view("page/myblog/postEditor")
-                    .build();
-        }
-
-        // category
-        PostResponseDto postDto = postUseCase.write(requestDto, currentUser);
-        redirectAttributes.addFlashAttribute("success", "post created");
-
-        return HtmxResponse.builder()
-                .redirect("/blog/manage/posts")
-                .build();
-    }
-
-    @HxRequest
-    @PatchMapping("/blog/manage/posts/{postId}/status/{status}")
-    public HtmxResponse changeStatus(@PathVariable("postId") Long postId,
-                                     @PathVariable("status") Post.Status status,
-                                     @LoginUser User currentUser,
-                                     Model model) {
-
-        // TODO: 하나 집어서 수정할 수 있게 변경
-        PostStatusCmd cmd = new PostStatusCmd();
-        cmd.setStatus(status);
-        PostResponseDto postResponseDto = postUseCase.changeStatus(postId, cmd, currentUser);
-        model.addAttribute("post", postResponseDto);
-
-        return HtmxResponse.builder()
-                .view("page/myblog/postTable :: post-item-row")
-                .build();
-    }
-
-    /**
-     * 삭제 실패한 경우 처리해야함.
-     * 삭제 된 게시글은 리스트에 보이면 안됨 -> search 에서 삭제 된 게시글은 알아서 걸러져야 한다.
-     */
-    @HxRequest
-    @DeleteMapping("/blog/manage/posts/{postId}")
-    @ResponseBody
-    public String deletePost(@PathVariable("postId") Long postId,
-                             @LoginUser User currentUser) {
-        try {
-            postUseCase.deletePost(postId, currentUser);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        return "";
-    }
-
-
-    /**
-     * 게시글 수정페이지
-     */
-    @GetMapping("/blog/manage/posts/{postId}/edit")
-    public String editPostPage(@PathVariable("postId") Long postId,
-                               @LoginUser User currentUser,
-                               Model model) {
-        // post -> postCreate
-        UserResponseDto me = userUseCase.getUserForPostWrite(currentUser.getId());
-        PostResponseDto post = postUseCase.getPostForEdit(postId);
-        PostCreateRequestDto dto = PostCreateRequestDto.builder()
-                .title(post.getTitle())
-                .description(post.getDescription())
-                .content(post.getContent())
-                .categoryId(post.getCategory() != null ? post.getCategory().getId() : null)
-                .status(post.getStatus())
-                .build();
-        model.addAttribute("post", dto);
-        model.addAttribute("categories", me.getCategories());
-        model.addAttribute("action", String.format("/blog/manage/posts/%d", postId));
-        model.addAttribute("method", "put");
-        return "page/myblog/postEditor";
-    }
-
-    // 수정 api
-    @HxRequest
-    @PostMapping("/blog/manage/posts/{postId}")
-    public HtmxResponse updatePost(
-            @PathVariable("postId") Long postId,
-            @LoginUser User currentUser,
-            @Valid @ModelAttribute("post") PostUpdateRequestDto requestDto,
-            BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return HtmxResponse.builder().view("page/myblog/postEditor").preventHistoryUpdate().build();
-        }
-        postUseCase.updatePost(postId, requestDto, currentUser);
-        return HtmxResponse.builder()
-                .redirect("/blog/manage/posts")
-                .build();
-    }
 }

@@ -4,6 +4,7 @@ import com.blog.bespoke.application.dto.mapper.PostRequestMapper;
 import com.blog.bespoke.application.dto.request.PostCreateRequestDto;
 import com.blog.bespoke.application.dto.request.PostUpdateRequestDto;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
+import com.blog.bespoke.application.dto.response.S3PostImageResponseDto;
 import com.blog.bespoke.application.event.message.PublishPostEvent;
 import com.blog.bespoke.application.event.publisher.EventPublisher;
 import com.blog.bespoke.application.exception.BusinessException;
@@ -15,21 +16,32 @@ import com.blog.bespoke.domain.model.user.UserRelation;
 import com.blog.bespoke.domain.repository.post.PostRepository;
 import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.blog.bespoke.domain.service.PostService;
+import com.blog.bespoke.domain.service.post.PostS3ImageService;
 import com.blog.bespoke.domain.service.post.PostSearchService;
+import com.blog.bespoke.infrastructure.aws.s3.service.S3Service;
+import com.blog.bespoke.infrastructure.repository.post.S3PostImageRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostUseCase {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final S3PostImageRepository imageRepository;
     private final PostService postService;
+    private final PostS3ImageService postS3ImageService;
     private final PostSearchService postSearchService;
     private final EventPublisher publisher;
     private final PostRequestMapper mapper = PostRequestMapper.INSTANCE;
+    private final S3Service s3Service;
 
     /**
      * 게시글 디테일 페이지
@@ -161,5 +173,29 @@ public class PostUseCase {
         }
         post.delete();
         postRepository.save(post);
+    }
+
+    @Transactional
+    public S3PostImageResponseDto uploadImage(MultipartFile file, Long postId, User currentUser) {
+        // NOTE: 이 과정을 없애고 싶은데 방법이 없을까?
+        Post post = postRepository.getById(postId, PostRelation.builder().author(true).build());
+        if (!post.getAuthor().getId().equals(currentUser.getId())) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
+
+        postS3ImageService.checkCanUpload(file);
+
+        S3PostImage unSavedImage;
+        try {
+            // s3 에 업로드 됨
+            unSavedImage = s3Service.uploadFile(file);
+
+        } catch (IOException e) {
+            log.error("error..", e);
+            throw new RuntimeException(e);
+        }
+        unSavedImage.setPost(Post.builder().id(postId).build());
+        S3PostImage savedImage = imageRepository.save(unSavedImage);
+        return S3PostImageResponseDto.from(savedImage);
     }
 }

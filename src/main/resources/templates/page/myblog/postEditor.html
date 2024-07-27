@@ -51,6 +51,7 @@
                 </script>
             </div>
 
+            <!--  TODO: 커버 이미지 업로드  -->
             <th:block th:if="${categories != null}">
                 <div class="field">
                     <label class="label">Category</label>
@@ -67,7 +68,7 @@
             </th:block>
         </div>
 
-        <div layout:replace="fragments/form/layout-input :: tinymce('content', 'Content','hello world!', true)"></div>
+        <div layout:replace="fragments/form/layout-input :: tinymce('content', 'Content','hello world!', true, ${imageUploadUrl})"></div>
 
         <div class="field is-grouped">
             <div class="control">
