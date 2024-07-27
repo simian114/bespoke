@@ -1,12 +1,10 @@
 package com.blog.bespoke.infrastructure.aws.s3.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.S3ObjectResource;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
 import com.blog.bespoke.domain.model.post.S3PostImage;
-import com.blog.bespoke.infrastructure.repository.post.S3PostImageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +19,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class S3Service {
     private final AmazonS3 s3Client;
-    private final S3PostImageRepository postImageRepository;
 
     @Value("${aws.s3.bucket}")
     private String bucketName;
@@ -49,7 +46,7 @@ public class S3Service {
                 .size(file.getSize())
                 .originalFilename(originalFilename)
                 .build();
-        return postImageRepository.save(postImage);
+        return postImage;
     }
 
     public S3Object getFile(String keyName) {
