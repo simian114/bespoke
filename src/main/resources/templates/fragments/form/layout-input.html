@@ -67,12 +67,12 @@
 
                             const json = JSON.parse(xhr.responseText);
 
-                            if (!json || !json.data || typeof json.data.location != 'string') {
+                            if (!json || !json.data || typeof json.data.url != 'string') {
                                 reject('Invalid JSON: ' + xhr.responseText);
                                 return;
                             }
 
-                            resolve(json.data.location);
+                            resolve(json.data.url);
                         };
 
                         xhr.onerror = () => {
