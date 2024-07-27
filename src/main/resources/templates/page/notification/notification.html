@@ -39,25 +39,26 @@
         <div class="block is-flex is-flex-direction-column">
             <!--  페이지네이션이 더 좋을듯?  -->
             <ul class="notification-list is-flex is-flex-direction-column" th:fragment="notification-list">
-                <li class="notification-item box "
+                <li class="notification-item block"
                     th:each="notification: ${notifications}"
                     th:data-notification-id="${notification.id}"
-                    th:classappend="${notification.readed ? '' : 'has-background-primary-light'}"
                 >
                     <script>
                         me().on("click", ev => {
                             let target = me(ev);
                             const id = target.dataset.notificationId;
                             target.classList.remove("has-background-primary-light")
-                            // me(ev).classRemove('has-background-primary-light')
-
+                            const a = target.querySelector('a');
+                            a.classList.remove('has-background-primary-light');
                             fetch("/notification/" + id, {method: "PATCH"})
                         })
                     </script>
                     <th:block th:switch="${#strings.toString(notification.type)}">
                         <th:block th:case="POST_PUBLISHED">
                             <a th:href="@{/blog/posts/{postId}(postId=${notification.refId})}"
-                               class="is-flex is-justify-content-space-between is-gap-2 is-color-black">
+                               class="is-flex is-justify-content-space-between is-gap-2 is-color-black box"
+                               th:classappend="${notification.readed ? '' : 'has-background-primary-light'}"
+                            >
                                     <span class="tag is-flex-shrink-0" th:text="${notification.type}"
                                           th:classappend="is-primary"></span>
                                 <p th:text="${notification.content}"></p>
@@ -67,7 +68,10 @@
                         </th:block>
                         <th:block th:case="COMMENT_CREATED">
                             <a th:href="@{/blog/posts/{postId}(postId=${notification.refId})}"
-                               class="is-flex is-justify-content-space-between is-gap-2 is-color-black">
+                               class="is-flex is-justify-content-space-between is-gap-2 is-color-black box"
+                               th:classappend="${notification.readed ? '' : 'has-background-primary-light'}"
+
+                            >
                                     <span class="tag is-flex-shrink-0" th:text="${notification.type}"
                                           th:classappend="is-link"></span>
                                 <p th:text="${notification.content}"></p>
@@ -77,7 +81,9 @@
                         </th:block>
                         <th:block th:case="POST_LIKE">
                             <a th:href="@{/blog/posts/{postId}(postId=${notification.refId})}"
-                               class="is-flex is-justify-content-space-between is-gap-2 is-color-black">
+                               class="is-flex is-justify-content-space-between is-gap-2 is-color-black box"
+                               th:classappend="${notification.readed ? '' : 'has-background-primary-light'}"
+                            >
                                     <span class="tag is-flex-shrink-0" th:text="${notification.type}"
                                           th:classappend="is-info">like</span>
                                 <p th:text="${notification.content}"></p>
@@ -87,7 +93,9 @@
                         </th:block>
                         <th:block th:case="COMMENT_LIKE">
                             <a th:href="@{/blog/posts/{postId}(postId=${notification.refId})}"
-                               class="is-flex is-justify-content-space-between is-gap-2 is-color-black">
+                               class="is-flex is-justify-content-space-between is-gap-2 is-color-black box"
+                               th:classappend="${notification.readed ? '' : 'has-background-primary-light'}"
+                            >
                                     <span class="tag is-flex-shrink-0" th:text="${notification.type}"
                                           th:classappend="is-success"></span>
                                 <p th:text="${notification.content}"></p>
@@ -97,7 +105,9 @@
                         </th:block>
                         <th:block th:case="FOLLOW">
                             <a th:href="@{/blog/{nickname}(nickname=${notification.publisher})}"
-                               class="is-flex is-justify-content-space-between is-gap-2 is-color-black">
+                               class="is-flex is-justify-content-space-between is-gap-2 is-color-black box"
+                               th:classappend="${notification.readed ? '' : 'has-background-primary-light'}"
+                            >
                                     <span class="tag is-flex-shrink-0" th:text="${notification.type}"
                                           th:classappend="is-danger"></span>
                                 <p th:text="${notification.content}"></p>
