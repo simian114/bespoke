@@ -139,6 +139,12 @@ public class PostRepositoryImpl implements PostRepository {
             query.leftJoin(post.comments, comment).fetchJoin()
                     .leftJoin(comment.user, user).fetchJoin();
         }
+        if (relation.isCover()) {
+            query.leftJoin(post.cover, QS3PostImage.s3PostImage).fetchJoin();
+        }
+        if (relation.isImages()) {
+            query.leftJoin(post.images, QS3PostImage.s3PostImage).fetchJoin();
+        }
         try {
             return Optional.ofNullable(query.fetchOne());
         } catch (NonUniqueResultException e) {
@@ -181,6 +187,7 @@ public class PostRepositoryImpl implements PostRepository {
                 )
                 .from(post)
                 .leftJoin(post.author)
+                .leftJoin(post.cover)
                 .leftJoin(post.postCountInfo);
         applyLike(query, cond);
         applyFollow(query, cond);
@@ -217,7 +224,18 @@ public class PostRepositoryImpl implements PostRepository {
                         post.author.nickname,
                         post.author.name,
                         post.author.createdAt
-                ).as("author")
+                ).as("author"),
+                // TODO: 이게 들어가면 list 에서 불러올 때 cover 가 없는건 불러오질 않음.
+                Projections.fields(
+                        S3PostImage.class,
+                        post.cover.id,
+                        post.cover.type,
+                        post.cover.url,
+                        post.cover.originalFilename,
+                        post.cover.filename,
+                        post.cover.size,
+                        post.cover.mimeType
+                ).as("cover")
         ));
         if (cond.getUserId() > 0) {
             selectedFields.add(

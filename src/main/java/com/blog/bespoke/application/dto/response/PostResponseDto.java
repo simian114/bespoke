@@ -4,6 +4,7 @@ import com.blog.bespoke.domain.model.category.Category;
 import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.post.PostCountInfo;
 import com.blog.bespoke.domain.model.post.PostRelation;
+import com.blog.bespoke.domain.model.post.S3PostImage;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
@@ -26,6 +27,12 @@ public class PostResponseDto {
     private LocalDateTime updatedAt;
     private PostCountInfoResponseDto countInfo;
     private UserResponseDto author;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private S3PostImageResponseDto cover;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Set<S3PostImageResponseDto> images;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Category category;
@@ -58,6 +65,8 @@ public class PostResponseDto {
                 .countInfo(relation.isCount() ? PostCountInfoResponseDto.from(post.getPostCountInfo()) : null)
                 .author(relation.isAuthor() ? UserResponseDto.from(post.getAuthor()) : null)
                 .comments(relation.isComments() ? post.getComments().stream().map(CommentResponseDto::from).collect(Collectors.toSet()) : null)
+                .images(relation.isImages() ? post.getImages().stream().map(S3PostImageResponseDto::from).collect(Collectors.toSet())  : null)
+                .cover(relation.isCover() && post.getCover() != null ? S3PostImageResponseDto.from(post.getCover()) : null)
                 .build();
     }
 

@@ -14,8 +14,15 @@
 
 <section class="section px-2">
     <nav th:replace="page/myblog/navigator :: navigator"></nav>
-    <form class="container" th:action="${action}" hx-boost="true" th:object="${post}" method="post"
-          style="max-width: 640px;">
+    <form class="container"
+          enctype="multipart/form-data"
+          hx-target="this" hx-swap="outerHTML"
+          th:object="${post}"
+          th:action
+          hx-boost="true"
+          method="post"
+          style="max-width: 640px;"
+    >
         <div class="container normal-field" th:fragment="normal-field">
             <!--  TODO: category 선택  -->
             <!-- NOTE: 마음에 들지 않음 -->
@@ -52,6 +59,45 @@
             </div>
 
             <!--  TODO: 커버 이미지 업로드  -->
+            <div id="cover-input-container" class="file has-name field block is-flex-direction-column is-flex">
+                <label class="label">Cover</label>
+                <div class="control">
+                    <label class="file-label">
+                        <input class="file-input" type="file" name="cover"/>
+                        <script>
+                            me('prev').on("change", (ev) => {
+                                const target = me(ev);
+                                if (target?.files?.length > 0) {
+                                    const fileName = document.querySelector("#cover-input-container .file-name");
+                                    const img = document.querySelector("#cover-preview");
+                                    fileName.textContent = target.files[0].name;
+                                    img.src = URL.createObjectURL(target.files[0])
+                                }
+                            })
+                        </script>
+                        <span class="file-cta">
+                        <span class="file-icon">
+                          <i class="fas fa-upload"></i>
+                        </span>
+                        <span class="file-label"> Choose a file… </span>
+                  </span>
+                        <span class="file-name"> No file uploaded </span>
+                    </label>
+                </div>
+                <details>
+                    <summary>Cover preview</summary>
+                    <article class="block content">
+                            <figure class="image">
+                            <img id="cover-preview" th:src="${post.prevCover != null ? post.prevCover.url : ''}"  src="https://bulma.io/assets/images/placeholders/128x128.png" />
+                        </figure>
+                    </article>
+                </details>
+
+
+
+            </div>
+
+            <!--  TODO: 커버 이미지 끝  -->
             <th:block th:if="${categories != null}">
                 <div class="field">
                     <label class="label">Category</label>
