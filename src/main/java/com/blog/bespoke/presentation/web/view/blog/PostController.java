@@ -33,8 +33,10 @@ public class PostController {
 
     @ModelAttribute
     public void handleCommonAttribute(Model model,
-                                      @LoginUser User currentUser) {
+                                      @LoginUser User currentUser,
+                                      @PathVariable(value = "postId", required = false) Long postId) {
         model.addAttribute("me", currentUser);
+        model.addAttribute("postId", postId);
     }
 
     @GetMapping("/blog/posts/{postId}")
