@@ -24,8 +24,6 @@ create table post
 
     author_id   bigint       not null,
 
-    cover_image_id bigint,
-
     category_id bigint null,
 
     # tags varchar(255), # ,로 구분되는 문자열.
