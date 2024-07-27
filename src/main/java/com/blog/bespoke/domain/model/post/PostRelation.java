@@ -10,4 +10,7 @@ public class PostRelation {
     private boolean category;
     private boolean author;
     private boolean comments;
+    @Builder.Default
+    private boolean cover = true;
+    private boolean images; // cover image 포함
 }

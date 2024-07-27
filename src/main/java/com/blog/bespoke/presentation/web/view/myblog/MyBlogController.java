@@ -121,7 +121,6 @@ public class MyBlogController {
     public String createPostPage(@LoginUser User currentUser) {
         PostCreateRequestDto dto = PostCreateRequestDto.builder()
                 .title("")
-                .status(Post.Status.DRAFT)
                 .build();
         PostResponseDto post = postUseCase.write(dto, currentUser);
         return String.format("redirect:/blog/manage/posts/%d/edit", post.getId());

@@ -1,6 +1,5 @@
 package com.blog.bespoke.application.usecase.post;
 
-import com.blog.bespoke.application.dto.mapper.PostRequestMapper;
 import com.blog.bespoke.application.dto.request.PostCreateRequestDto;
 import com.blog.bespoke.application.dto.request.PostUpdateRequestDto;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
@@ -40,7 +39,6 @@ public class PostUseCase {
     private final PostS3ImageService postS3ImageService;
     private final PostSearchService postSearchService;
     private final EventPublisher publisher;
-    private final PostRequestMapper mapper = PostRequestMapper.INSTANCE;
     private final S3Service s3Service;
 
     /**
@@ -66,9 +64,11 @@ public class PostUseCase {
      * 게시글 수정
      * - category join
      */
+    @Transactional
     public PostResponseDto getPostForEdit(Long postId) {
-        PostRelation relation = PostRelation.builder().category(true).build();
-        return PostResponseDto.from(postRepository.getById(postId, relation), relation);
+        PostRelation relation = PostRelation.builder().category(true).cover(true).build();
+        Post post = postRepository.getById(postId, relation);
+        return PostResponseDto.from(post, relation);
     }
 
     @Transactional
@@ -78,7 +78,7 @@ public class PostUseCase {
         }
 
         return postRepository.search(cond)
-                .map(PostResponseDto::from);
+                .map(post -> PostResponseDto.from(post, PostRelation.builder().cover(true).build()));
     }
 
     @Transactional
@@ -86,30 +86,8 @@ public class PostUseCase {
         // user 의 상태를 검사해야하나?
         UserRelation relation = UserRelation.builder().categories(true).build();
         User author = userRepository.getById(currentUser.getId(), relation);
-        Post post = mapper.toDomain(requestDto);
-        Category category = author.getCategories().stream().filter(c -> c.getId().equals(requestDto.getCategoryId()))
-                .findFirst().orElse(null);
+        Post post = requestDto.toModel();
         post.init(author);
-        post.setCategory(category);
-
-        if (requestDto.getStatus() != null) {
-            post.changeStatus(requestDto.getStatus());
-        }
-
-        Post savedPost = postRepository.save(post);
-
-        // post 의 상태가 published 인 경우에만!
-        if (post.isPublished()) {
-            publisher.publishPostPublishEvent(
-                    PublishPostEvent.builder()
-                            .postId(savedPost.getId())
-                            .authorId(author.getId())
-                            .title(savedPost.getTitle())
-                            .description(savedPost.getDescription())
-                            .build()
-            );
-        }
-
         return PostResponseDto.from(postRepository.save(post));
     }
 
@@ -153,16 +131,29 @@ public class PostUseCase {
     @Transactional
     public PostResponseDto updatePost(Long postId, PostUpdateRequestDto requestDto, User currentUser) {
         User author = userRepository.getById(currentUser.getId(), UserRelation.builder().categories(true).build());
-        //User author = userRepository.getUserWithCategories(currentUser.getId());
-        Post post = postRepository.getById(postId);
+        PostRelation relation = PostRelation.builder().cover(true).build();
+        Post post = postRepository.getById(postId, relation);
         if (!post.canUpdateBy(currentUser)) {
             throw new BusinessException(ErrorCode.POST_FORBIDDEN);
         }
+
+        // NOTE: 이미지 제거 이벤트를 날리고, 수신한 쪽에서 제거할까? 아니면 여기서 바로 제거할까? 뭐가됐던간에 비동기로 해야함.
+        if (requestDto.getCover() != null) {
+            S3PostImage cover = checkAndCreateS3PostImage(requestDto.getCover());
+            cover.setPost(post);
+            cover.setType(S3PostImage.Type.CONTENT);
+            if (post.getCover() != null) {
+                imageRepository.delete(post.getCover());
+            }
+            post.setCover(cover);
+            imageRepository.save(cover);
+        }
+
         Category category = author.getCategories().stream().filter(c -> c.getId().equals(requestDto.getCategoryId()))
                 .findFirst().orElse(null);
         PostUpdateCmd cmd = new PostUpdateCmd(requestDto.getTitle(), requestDto.getDescription(), requestDto.getContent(), category);
         post.update(cmd);
-        return PostResponseDto.from(postRepository.save(post));
+        return PostResponseDto.from(postRepository.save(post), relation);
     }
 
     @Transactional
@@ -176,9 +167,10 @@ public class PostUseCase {
     }
 
     @Transactional
-    public S3PostImageResponseDto uploadImage(MultipartFile file, Long postId, User currentUser) {
+    public S3PostImageResponseDto uploadImage(MultipartFile file, S3PostImage.Type type, Long postId, User currentUser) {
         // NOTE: 이 과정을 없애고 싶은데 방법이 없을까?
         Post post = postRepository.getById(postId, PostRelation.builder().author(true).build());
+
         if (!post.getAuthor().getId().equals(currentUser.getId())) {
             throw new BusinessException(ErrorCode.FORBIDDEN);
         }
@@ -195,7 +187,24 @@ public class PostUseCase {
             throw new RuntimeException(e);
         }
         unSavedImage.setPost(Post.builder().id(postId).build());
+        unSavedImage.setType(type);
         S3PostImage savedImage = imageRepository.save(unSavedImage);
         return S3PostImageResponseDto.from(savedImage);
+    }
+
+    private S3PostImage checkAndCreateS3PostImage(MultipartFile file) {
+
+        postS3ImageService.checkCanUpload(file);
+
+        S3PostImage unSavedImage;
+        try {
+            // s3 에 업로드 됨
+            unSavedImage = s3Service.uploadFile(file);
+
+        } catch (IOException e) {
+            log.error("error..", e);
+            throw new RuntimeException(e);
+        }
+        return unSavedImage;
     }
 }

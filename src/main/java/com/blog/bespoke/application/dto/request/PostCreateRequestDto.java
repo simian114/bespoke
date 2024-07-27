@@ -15,8 +15,12 @@ public class PostCreateRequestDto {
 
     private String description;
     private String content;
-    private Long categoryId;
 
-    private Post.Status status;
-    // todo: category, tags
+    public Post toModel() {
+        return Post.builder()
+                .title(title)
+                .description(description)
+                .status(Post.Status.DRAFT)
+                .build();
+    }
 }
