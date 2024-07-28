@@ -59,6 +59,7 @@ public class MyblogPostController {
                 .prevCoverId(post.getCover() != null ? post.getCover().getId() : null)
                 .prevCoverUrl(post.getCover() != null ? post.getCover().getUrl() : null)
                 .prevCoverOriginalFilename(post.getCover() != null ? post.getCover().getOriginalFilename() : null)
+                .categories(me.getCategories() != null ? me.getCategories().stream().map(c -> UserResponseDto.CategoryResponseDto.builder().id(c.getId()).name(c.getName()).build()).toList() : null)
                 .status(post.getStatus())
                 .build();
 

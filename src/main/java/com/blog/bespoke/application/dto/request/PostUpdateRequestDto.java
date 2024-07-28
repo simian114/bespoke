@@ -1,15 +1,14 @@
 package com.blog.bespoke.application.dto.request;
 
-import com.blog.bespoke.application.dto.response.S3PostImageResponseDto;
+import com.blog.bespoke.application.dto.response.UserResponseDto;
 import com.blog.bespoke.domain.model.post.Post;
-import com.blog.bespoke.domain.model.post.S3PostImage;
-import com.fasterxml.jackson.databind.cfg.ConfigOverride;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Builder
 @Data
@@ -31,4 +30,8 @@ public class PostUpdateRequestDto {
     private Long prevCoverId;
     private String prevCoverUrl;
     private String prevCoverOriginalFilename;
+
+    // NOTE: category
+    private List<UserResponseDto.CategoryResponseDto> categories;
+
 }
