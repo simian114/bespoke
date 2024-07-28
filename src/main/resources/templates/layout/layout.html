@@ -3,6 +3,12 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 >
+<script>
+    const theme = localStorage.getItem('theme');
+    if (theme) {
+        document.documentElement.classList.add(theme);
+    }
+</script>
 <head>
     <!--Common Head-->
     <meta charset="UTF-8">

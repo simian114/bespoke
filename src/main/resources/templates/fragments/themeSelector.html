@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<body>
+
+<div class="dropdown" th:fragment="theme-toggler">
+    <script>
+        me().on("click", (ev) => {
+            me(ev).toggleClass("is-active");
+        })
+    </script>
+    <div class="dropdown-trigger">
+        <button class="button" aria-haspopup="true" aria-controls="dropdown-menu3">
+            <span class="icon is-small">
+                <i class="fa-solid fa-circle-half-stroke"></i>
+            </span>
+        </button>
+    </div>
+    <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+        <div class="dropdown-content">
+            <button class="dropdown-item" aria-haspopup="true" aria-controls="dropdown-menu3">
+                <span>Light</span>
+                <span class="icon is-small">
+                    <i class="fa-solid fa-sun"></i>
+                </span>
+                <script>
+                    me().on("click", () => {
+                        localStorage.setItem("theme", "theme-light");
+                        document.documentElement.classList.add("theme-light");
+                        document.documentElement.classList.remove("theme-dark");
+                    })
+                </script>
+            </button>
+            <button class="dropdown-item" aria-haspopup="true" aria-controls="dropdown-menu3">
+                <span>Dark</span>
+                <span class="icon is-small">
+                    <i class="fa-solid fa-moon"></i>
+                </span>
+                <script>
+                    me().on("click", () => {
+                        localStorage.setItem("theme", "theme-dark");
+                        document.documentElement.classList.remove("theme-light");
+                        document.documentElement.classList.add("theme-dark");
+                    })
+                </script>
+            </button>
+            <button class="dropdown-item" aria-haspopup="true" aria-controls="dropdown-menu3">
+                <span>System</span>
+                <span class="icon is-small">
+                    <i class="fa-solid fa-laptop"></i>
+                </span>
+                <script>
+                    me().on("click", () => {
+                        localStorage.removeItem("theme")
+                        document.documentElement.classList.remove("theme-light");
+                        document.documentElement.classList.remove("theme-dark");
+                    })
+                </script>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
