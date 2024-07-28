@@ -12,7 +12,7 @@
 <section class="section">
     <div class="container">
         <div th:replace="~{page/home/filter :: orderBy}"></div>
-        <div class="fixed-grid has-1-cols-mobile has-3-cols-tablet has-3-cols-desktop has-4-cols-widescreen">
+        <div class="fixed-grid has-1-cols-mobile has-2-cols-tablet has-3-cols-desktop has-4-cols-widescreen">
             <div class="grid post-list">
                 <th:block th:each="post: ${posts}">
                     <div th:replace="~{fragments/post :: defaultCard(post=${post})}"></div>
