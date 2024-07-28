@@ -11,50 +11,28 @@
 <body>
 
 <section class="common-page section px-2">
-    <div class="container has-background-primary-100">
-        <div class="post-header is-flex is-flex-direction-column">
-            <h1 class="is-size-3 has-text-weight-semibold" style="text-align: center;word-break: keep-all;"
+    <div class="container">
+
+        <div th:if="${post.cover != null}">
+            <figure class="image is-16by9 has-radius-normal">
+                <img th:src="${post.cover.url}" class="has-radius-large">
+            </figure>
+        </div>
+
+        <div class="post-header is-flex is-flex-direction-column mt-5 pb-5"
+        >
+<!--            style="border-bottom: 1px solid"-->
+            <h1 class="is-size-3 has-text-weight-semibold mt-2" style="text-align: center;word-break: keep-all;"
                 th:text="${post.title}">
                 title
             </h1>
-            <!--  NOTE: 해당 영역은 api call로 변경하기  -->
-            <div class="buttons are-small has-addons is-right">
-                <button th:fragment="like" class="button" hx-target="this" hx-swap="outerHTML"
-                        hx:delete="@{/blog/posts/{postId}/like(postId=${post.id})}"
-                        th:if="${post.likedByUser}">
-                    <span class="icon is-small is-color-danger">
-                        <i class="fa-solid fa-heart"></i>
-                    </span>
-                    <span th:text="${post.countInfo.getLikeCount()}"></span>
-                </button>
-                <button th:fragment="cancel-like" class="button" hx-target="this" hx-swap="outerHTML"
-                        hx:post="@{/blog/posts/{postId}/like(postId=${post.id})}"
-                        th:unless="${post.likedByUser}">
-                    <span class="icon is-small">
-                        <i class="fa-regular fa-heart"></i>
-                    </span>
-                    <span th:text="${post.countInfo.getLikeCount()}"></span>
-                </button>
-
-                <!--  팔로우   -->
-                <button hx-swap="outerHTML" th:fragment="follow" th:unless="${follow}" class="button"
-                        hx:post="@{/blog/user/{userId}/follow(userId=${post.author.id})}"
-                >
-                        <span class="icon is-small">
-                            <i th:if="${follow}" class="fa-solid fa-user-minus"></i>
-                            <i th:unless="${follow}" class="fa-solid fa-user-plus"></i>
-                        </span>
-                </button>
-                <!--  언팔로우   -->
-                <button hx-swap="outerHTML" th:fragment="unfollow" th:if="${follow}" class="button"
-                        hx:delete="@{/blog/user/{userId}/follow(userId=${post.author.id})}"
-                >
-                        <span class="icon is-small">
-                            <i th:if="${follow}" class="fa-solid fa-user-minus"></i>
-                            <i th:unless="${follow}" class="fa-solid fa-user-plus"></i>
-                        </span>
-                </button>
+            <div th:if="${post.category != null}">
+                <a class="is-pulled-right tag" th:text="${post.category.name}" th:href="@{/blog/{ownerNickname}/category/{categoryUrl}(ownerNickname=${owner.nickname},categoryUrl=${post.category.url})}">
+                </a>
             </div>
+
+            <!--  NOTE: 해당 영역은 api call로 변경하기  -->
+
             <div class="is-flex is-align-items-baseline is-justify-content-flex-end">
                 <span style="text-align: end;"
                       th:text="|${#temporals.format(post.createdAt, 'yyyy.MM.dd')}. by |"></span>
@@ -64,8 +42,49 @@
                     닉네임
                 </a>
             </div>
+<!--            TODO: 액션들은 어떻게 할지 더 생각해보기... -->
+            <!--            <div class="buttons are-small has-addons is-right">-->
+<!--                <button th:fragment="like" class="button" hx-target="this" hx-swap="outerHTML"-->
+<!--                        hx:delete="@{/blog/posts/{postId}/like(postId=${post.id})}"-->
+<!--                        th:if="${post.likedByUser}">-->
+<!--                    <span class="icon is-small is-color-danger">-->
+<!--                        <i class="fa-solid fa-heart"></i>-->
+<!--                    </span>-->
+<!--                    <span th:text="${post.countInfo.getLikeCount()}"></span>-->
+<!--                </button>-->
+<!--                <button th:fragment="cancel-like" class="button" hx-target="this" hx-swap="outerHTML"-->
+<!--                        hx:post="@{/blog/posts/{postId}/like(postId=${post.id})}"-->
+<!--                        th:unless="${post.likedByUser}">-->
+<!--                    <span class="icon is-small">-->
+<!--                        <i class="fa-regular fa-heart"></i>-->
+<!--                    </span>-->
+<!--                    <span th:text="${post.countInfo.getLikeCount()}"></span>-->
+<!--                </button>-->
+
+<!--                &lt;!&ndash;  팔로우   &ndash;&gt;-->
+<!--                <button hx-swap="outerHTML" th:fragment="follow" th:unless="${follow}" class="button"-->
+<!--                        hx:post="@{/blog/user/{userId}/follow(userId=${post.author.id})}"-->
+<!--                >-->
+<!--                        <span class="icon is-small">-->
+<!--                            <i th:if="${follow}" class="fa-solid fa-user-minus"></i>-->
+<!--                            <i th:unless="${follow}" class="fa-solid fa-user-plus"></i>-->
+<!--                        </span>-->
+<!--                </button>-->
+<!--                &lt;!&ndash;  언팔로우   &ndash;&gt;-->
+<!--                <button hx-swap="outerHTML" th:fragment="unfollow" th:if="${follow}" class="button"-->
+<!--                        hx:delete="@{/blog/user/{userId}/follow(userId=${post.author.id})}"-->
+<!--                >-->
+<!--                        <span class="icon is-small">-->
+<!--                            <i th:if="${follow}" class="fa-solid fa-user-minus"></i>-->
+<!--                            <i th:unless="${follow}" class="fa-solid fa-user-plus"></i>-->
+<!--                        </span>-->
+<!--                </button>-->
+<!--            </div>-->
         </div>
-        <article class="content mt-4" th:utext="${post.getContent()}"></article>
+        <div style="width:100%;height: 1px;background-color: #bfc6d2;" class="mt-4 mb-4"></div>
+
+        <article class="content mt-6" th:utext="${post.getContent()}"></article>
+
 
         <!-- comment area -->
         <div class="comment-container is-flex is-flex-direction-column">
