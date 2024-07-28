@@ -38,6 +38,8 @@ public enum ErrorCode {
     POST_FORBIDDEN(HttpStatus.BAD_REQUEST, "접근 권한이 없는 게시글입니다."),
     POST_BAD_STATUS(HttpStatus.BAD_REQUEST, "수정 할 수 없습니다."),
 
+    PUBLISHED_POST_MUST_HAVE_CATEGORY(HttpStatus.BAD_REQUEST, "게시되기 위해서는 반드시 카테고리가 있어야합니다."),
+
     // post like
     ALREADY_LIKE_POST(HttpStatus.BAD_REQUEST, "이미 좋아요한 게시글입니다."),
     POST_LIKE_NOT_FOUND(HttpStatus.BAD_REQUEST, "좋아요되지 않은 게시글입니다."),
