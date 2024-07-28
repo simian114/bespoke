@@ -22442,6 +22442,22 @@ has-background-danger.is-hoverable:active {
   pointer-events: all !important;
 }
 
+details > summary {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color ease 0.25s;
+}
+details > summary:hover {
+  background-color: var(--bulma-primary-95);
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
 .blog-page {
   background-color: var(--bulma-danger-05-l);
   padding-top: 0px;

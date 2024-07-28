@@ -9,11 +9,11 @@
     <title>프로필</title>
     <script type="text/javascript" th:src="@{/js/tinymce/tinymce.min.js}"></script>
 </head>
-<body>
-
+<body hx-boost="false">
 <section class="section px-2">
     <nav th:replace="page/myblog/navigator :: navigator"></nav>
-    <form class="container" style="max-width: 640px;" th:object="${user}" method="post" hx-boost="true">
+    <form class="container" style="max-width: 640px;" th:object="${user}" method="post"
+          hx-boost="true">
         <div layout:replace="~{fragments/form/layout-input :: input('name', 'Name', 'text', 'name...', true)}">
             <script layout:fragment="script">
                 me().on("input", ev => {

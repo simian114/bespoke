@@ -28,7 +28,9 @@
         <label class="label" th:text="${label}">label</label>
         <div class="control">
             <!--  TODO: icon  -->
-            <textarea th:placeholder="${placeholder}" th:value="${defaultValue}" th:disabled="${disabled}" class="textarea" th:rows="${lines}" th:required="${required}" th:field="*{__${fieldName}__}"></textarea>
+            <textarea th:placeholder="${placeholder}" th:value="${defaultValue}" th:disabled="${disabled}"
+                      class="textarea" th:rows="${lines}" th:required="${required}"
+                      th:field="*{__${fieldName}__}"></textarea>
             <script layout:fragment="script"></script>
         </div>
         <p class="help is-danger" th:errors="*{__${fieldName}__}"></p>
@@ -46,6 +48,21 @@
                     </textarea>
         </div>
         <script>
+            let isFormDirty = false;
+            document.addEventListener("DOMContentLoaded", () => {
+                document.querySelector('form').addEventListener('input', function () {
+                    isFormDirty = true;
+                });
+                document.querySelector('form').addEventListener('submit', function () {
+                    isFormDirty = false; // 폼이 제출되면 경고창 표시 안함
+                });
+                window.addEventListener('beforeunload', function (event) {
+                    if (isFormDirty) {
+                        event.preventDefault();
+                        event.returnValue = ''; // Chrome에서는 설정해야 경고창이 표시됨
+                    }
+                });
+            })
             me().run(e => {
                 const textarea = e.querySelector("textarea");
                 const uploadUrl = '[[${uploadUrl}]]';
@@ -104,6 +121,7 @@
                             height: 600,
                             resize: true,
                             promotion: false,
+                            id: "editor",
                             images_upload_handler: imagesUploadHandler,
                             setup: function (editor) {
                                 editor.on('change', function () {

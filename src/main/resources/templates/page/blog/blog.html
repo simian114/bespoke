@@ -17,7 +17,7 @@
                         class="hax-text-weight-bold"
                         th:text="${owner.name}"></span>
                 </h1>
-                <a th:if="${isOwner}" hx-boost="false" th:href="@{/blog/manage}"
+                <a th:if="${isOwner}" hx-boost="false" th:href="@{/blog/manage/posts}"
                    class="button is-small">edit</a>
             </div>
 
