@@ -30,7 +30,6 @@
                     <input class="input" th:required="true" th:field="*{title}" th:type="text"
                            th:placeholder="title..."
                            th:errorclass="is-danger"
-                           minlength="5"
                            maxlength="50"
                     >
                     <span th:if="${#fields.hasErrors('title')}" class="icon is-right has-text-danger">
@@ -81,13 +80,6 @@
                     </script>
                 </div>
                 <p class="help is-danger" th:errors="*{description}"></p>
-            </div>
-
-            <!--  TODO: 커버 이미지 업로드  -->
-            <div th:if="${post.prevCoverId != null}">
-                <input type="hidden" th:field="*{prevCoverId}"/>
-                <input type="hidden" th:field="*{prevCoverOriginalFilename}"/>
-                <input type="hidden" th:field="*{prevCoverUrl}"/>
             </div>
 
             <div id="cover-input-container" class="file has-name field block is-flex-direction-column is-flex">
@@ -166,20 +158,16 @@
                         </div>
                     </div>
                 </details>
-
-
             </div>
 
-
-            <!--  TODO: 커버 이미지 끝  -->
-            <th:block th:if="${categories != null}">
+            <th:block th:if="${post.categories != null}">
                 <div class="field">
                     <label class="label">Category</label>
                     <div class="control">
                         <div class="select">
                             <select th:field="*{categoryId}">
                                 <option value="">Choose Category</option>
-                                <option th:value="${category.id}" th:each="category: ${categories}"
+                                <option th:value="${category.id}" th:each="category: ${post.categories}"
                                         th:text="${category.name}"></option>
                             </select>
                         </div>
@@ -190,6 +178,20 @@
 
         <div th:classappend="mt-2"></div>
         <div layout:replace="fragments/form/layout-input :: tinymce('content', 'Content','hello world!', true, ${imageUploadUrl})"></div>
+
+        <!--  NOTE: hidden 데이터 전송. -->
+        <th:block th:if="${post.categories != null}">
+            <div class="field" th:each="category, iterStat : *{categories}">
+                <input type="hidden" th:field="*{categories[__${iterStat.index}__].id}" />
+                <input type="hidden" th:field="*{categories[__${iterStat.index}__].name}" />
+            </div>
+        </th:block>
+        <div th:if="${post.prevCoverId != null}">
+            <input type="hidden" th:field="*{prevCoverId}"/>
+            <input type="hidden" th:field="*{prevCoverOriginalFilename}"/>
+            <input type="hidden" th:field="*{prevCoverUrl}"/>
+        </div>
+
 
         <div class="field is-grouped">
             <div class="control">

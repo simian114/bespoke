@@ -72,6 +72,7 @@ public class UserResponseDto {
         }
     }
 
+    @NoArgsConstructor
     @AllArgsConstructor
     @Data
     @Builder
