@@ -10,7 +10,7 @@
 </head>
 <body>
     <section class="common-page blog-page section px-2">
-        <div class="container has-background-primary-100">
+        <div class="container">
             <div class="block is-flex is-justify-content-space-between">
                 <h1 class="has-text-weight-bold is-size-4">
                     <a class="hax-text-weight-bold" th:text="${owner.nickname}"></a> ﹒ <span
@@ -21,7 +21,7 @@
                    class="button is-small">edit</a>
             </div>
 
-            <div class="block is-flex is-align-items-baseline">
+            <div class="block box is-flex is-align-items-baseline">
                 <div class="mr-4 is-flex-shrink-0 is-size-5 has-text-weight-semibold">space</div>
                 <ul class="space-list is-flex-grow-5">
                     <th:block th:if="${owner.categories != null && #lists.size(owner.categories) > 0}">

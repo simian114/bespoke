@@ -6,8 +6,9 @@
     <a class="cell" hx-boost="true" th:href="@{/blog/posts/{postId}(postId=${post.id})}">
         <div class="card">
             <div class="card-image">
-                <figure class="image is-4by3">
+                <figure class="image is-16by9">
                     <img
+                            th:src="${post.cover.url}"
                             src="https://bulma.io/assets/images/placeholders/1280x960.png"
                             alt="Placeholder image"
                     />
@@ -20,6 +21,7 @@
                             <img
                                     src="https://bulma.io/assets/images/placeholders/96x96.png"
                                     alt="Placeholder image"
+                                    loading="lazy"
                             />
                         </figure>
                     </div>
@@ -29,7 +31,7 @@
                     </div>
                 </div>
 
-                <div class="content" th:text="${post.content}">
+                <div class="content" th:text="${post.description}">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec
                     iaculis mauris. <a>@bulmaio</a>. <a href="#">#css</a>
                     <a href="#">#responsive</a>

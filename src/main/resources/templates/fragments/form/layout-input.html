@@ -8,10 +8,15 @@
 <th:block layout:fragment="input(field, label, type, placeholder, required)">
     <div class="field" th:with="fieldName=${field}">
         <label class="label" th:text="${label}">label</label>
-        <div class="control">
+        <div class="control has-icons-right">
             <!--  TODO: icon  -->
             <input class="input" th:required="${required}" th:field="*{__${fieldName}__}" th:type="${type}"
-                   th:placeholder="${placeholder}">
+                   th:placeholder="${placeholder}"
+                   th:errorclass="is-danger"
+            >
+            <span th:if="${#fields.hasErrors(fieldName)}" class="icon is-right has-text-danger">
+                <i class="fas fa-xmark fa-sm"></i>
+            </span>
             <script layout:fragment="script"></script>
         </div>
         <p class="help is-danger" th:errors="*{__${fieldName}__}"></p>
@@ -90,13 +95,15 @@
                     setTimeout(() => {
                         tinymce.init({
                             selector: 'textarea',
-                            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-                            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+                            plugins: 'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons accordion',
+                            toolbar: "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | align numlist bullist | link image | table media | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons |  pagebreak anchor codesample",
                             content_css: ['/css/application.css'],
                             body_class: 'content',
                             content_style: 'body { margin: 16px; }',
+                            image_caption: true,
                             height: 600,
                             resize: true,
+                            promotion: false,
                             images_upload_handler: imagesUploadHandler,
                             setup: function (editor) {
                                 editor.on('change', function () {

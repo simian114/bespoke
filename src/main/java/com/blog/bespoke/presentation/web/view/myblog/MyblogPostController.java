@@ -56,10 +56,13 @@ public class MyblogPostController {
                 .description(post.getDescription())
                 .content(post.getContent())
                 .categoryId(post.getCategory() != null ? post.getCategory().getId() : null)
-                .prevCover(post.getCover())
+                .prevCoverId(post.getCover() != null ? post.getCover().getId() : null)
+                .prevCoverUrl(post.getCover() != null ? post.getCover().getUrl() : null)
+                .prevCoverOriginalFilename(post.getCover() != null ? post.getCover().getOriginalFilename() : null)
                 .status(post.getStatus())
                 .build();
 
+        // category list 또한 list 형태로 제공해야할듯?
         model.addAttribute("post", dto);
         model.addAttribute("categories", me.getCategories());
         model.addAttribute("imageUploadUrl", String.format("/blog/manage/posts/%d/image", postId));
@@ -78,6 +81,8 @@ public class MyblogPostController {
             @Valid @ModelAttribute("post") PostUpdateRequestDto requestDto,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
+            // postUpdateRequestDto 를 다시 set?
+            // category list..!
             return HtmxResponse.builder()
                     .view("page/myblog/postEditor :: form")
                     .preventHistoryUpdate()

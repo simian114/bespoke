@@ -13,7 +13,6 @@
 <body>
 
 <section class="section px-2">
-    <nav th:replace="page/myblog/navigator :: navigator"></nav>
     <form class="container"
           enctype="multipart/form-data"
           hx-target="this" hx-swap="outerHTML"
@@ -23,45 +22,78 @@
           method="post"
           style="max-width: 640px;"
     >
-        <div class="container normal-field" th:fragment="normal-field">
-            <!--  TODO: category 선택  -->
-            <!-- NOTE: 마음에 들지 않음 -->
-            <div layout:replace="~{fragments/form/layout-input :: input('title', 'Title', 'text', 'Title...', true)}">
-                <script layout:fragment="script">
-                    me().on("input", ev => {
-                        const el = me(ev).querySelector("input");
-                        const value = el?.value;
-                        if (value.length === 0 || value.length > 50) {
-                            el.classList.add("is-danger");
-                            el.classList.remove("is-success");
-                        } else {
-                            el.classList.remove("is-danger");
-                            el.classList.add("is-success");
-                        }
-                    })
-                </script>
+        <div class="container" th:fragment="normal-field">
+            <div class="field">
+                <label class="label" th:text="Title">label</label>
+                <div class="control has-icons-right">
+                    <!--  TODO: icon  -->
+                    <input class="input" th:required="true" th:field="*{title}" th:type="text"
+                           th:placeholder="title..."
+                           th:errorclass="is-danger"
+                           minlength="5"
+                           maxlength="50"
+                    >
+                    <span th:if="${#fields.hasErrors('title')}" class="icon is-right has-text-danger">
+                        <i class="fas fa-xmark fa-sm"></i>
+                    </span>
+                    <script layout:fragment="script">
+                        me().on("input", ev => {
+                            const el = me(ev).querySelector("input");
+                            const value = el?.value;
+                            if (value.length < 5 || value.length > 50) {
+                                el.classList.add("is-danger");
+                                el.classList.remove("is-success");
+                            } else {
+                                el.classList.remove("is-danger");
+                                el.classList.add("is-success");
+                            }
+                        })
+                    </script>
+                </div>
+                <p class="help is-danger" th:errors="*{title}"></p>
             </div>
 
-            <div layout:replace="~{fragments/form/layout-input :: input('description', 'Description', 'text', 'Description.. this will be used for seo and preview', false)}">
-                <script layout:fragment="script">
-                    me().on("input", ev => {
-                        const el = me(ev).querySelector("input");
-                        const value = el?.value;
-                        if (value.length === 0 || value.length > 200) {
-                            el.classList.add("is-danger");
-                            el.classList.remove("is-success");
-                        } else {
-                            el.classList.remove("is-danger");
-                            el.classList.add("is-success");
-                        }
-                    })
-                </script>
+            <div class="field">
+                <label class="label" th:text="Description">label</label>
+                <div class="control has-icons-right">
+                    <!--  TODO: icon  -->
+                    <input class="input" th:required="true" th:field="*{description}" th:type="text"
+                           th:placeholder="Description..."
+                           th:errorclass="is-danger"
+                           minlength="10"
+                           maxlength="100"
+                    >
+                    <span th:if="${#fields.hasErrors('description')}" class="icon is-right has-text-danger">
+                        <i class="fas fa-xmark fa-sm"></i>
+                    </span>
+                    <script layout:fragment="script">
+                        me().on("input", ev => {
+                            const el = me(ev).querySelector("input");
+                            const value = el?.value;
+                            if (value.length < 10 || value.length > 100) {
+                                el.classList.add("is-danger");
+                                el.classList.remove("is-success");
+                            } else {
+                                el.classList.remove("is-danger");
+                                el.classList.add("is-success");
+                            }
+                        })
+                    </script>
+                </div>
+                <p class="help is-danger" th:errors="*{description}"></p>
             </div>
 
             <!--  TODO: 커버 이미지 업로드  -->
+            <div th:if="${post.prevCoverId != null}">
+                <input type="hidden" th:field="*{prevCoverId}"/>
+                <input type="hidden" th:field="*{prevCoverOriginalFilename}"/>
+                <input type="hidden" th:field="*{prevCoverUrl}"/>
+            </div>
+
             <div id="cover-input-container" class="file has-name field block is-flex-direction-column is-flex">
                 <label class="label">Cover</label>
-                <div class="control">
+
+                <div class="control" th:classappend="${post.prevCoverId != null ? 'is-display-none' : ''}">
                     <label class="file-label">
                         <input class="file-input" type="file" name="cover"/>
                         <script>
@@ -69,33 +101,75 @@
                                 const target = me(ev);
                                 if (target?.files?.length > 0) {
                                     const fileName = document.querySelector("#cover-input-container .file-name");
+                                    const details = document.querySelector("#cover-preview-details");
                                     const img = document.querySelector("#cover-preview");
                                     fileName.textContent = target.files[0].name;
                                     img.src = URL.createObjectURL(target.files[0])
+                                    details.classList.remove("is-display-none");
                                 }
                             })
                         </script>
                         <span class="file-cta">
-                        <span class="file-icon">
-                          <i class="fas fa-upload"></i>
+                          <span class="file-icon">
+                            <i class="fas fa-upload"></i>
+                          </span>
+                          <span class="file-label"> Choose a file… </span>
                         </span>
-                        <span class="file-label"> Choose a file… </span>
-                  </span>
-                        <span class="file-name"> No file uploaded </span>
+                        <span class="file-name" th:if="${post.prevCoverId != null}"
+                              th:text="${post.prevCoverOriginalFilename}">filename</span>
+                        <span class="file-name" th:unless="${post.prevCoverId != null}"> No file uploaded </span>
                     </label>
                 </div>
-                <details>
-                    <summary>Cover preview</summary>
-                    <article class="block content">
-                            <figure class="image">
-                            <img id="cover-preview" th:src="${post.prevCover != null ? post.prevCover.url : ''}"  src="https://bulma.io/assets/images/placeholders/128x128.png" />
-                        </figure>
-                    </article>
+                <div class="mt-2" th:if="${post.prevCoverId != null}">
+                    <button class="button" type="button" data-cover-change="false">
+                        Change cover image
+                        <script>
+                            me().on("click", (ev) => {
+                                const prev = me(ev).attribute('data-cover-change');
+                                const next = prev === 'false' ? 'true' : 'false';
+                                const coverInputContainer = document.querySelector('#cover-input-container .control');
+                                const input = coverInputContainer.querySelector('input');
+                                const filename = coverInputContainer.querySelector('.file-name');
+                                const preview = document.querySelector("#cover-preview");
+                                preview.src = `[[${post.prevCoverUrl}]]`;
+                                const target = me(ev);
+                                if (next === 'true') {
+                                    coverInputContainer.classList.toggle('is-display-none')
+                                    target.innerText = 'Restore'
+                                    input.value = '';
+                                    filename.innerText = `[[${post.prevCoverOriginalFilename}]]`
+
+                                } else {
+                                    coverInputContainer.classList.toggle('is-display-none')
+                                    target.innerText = 'Change cover image'
+                                }
+                                me(ev).attribute('data-cover-change', next);
+                            })
+                        </script>
+                    </button>
+                </div>
+
+                <details id="cover-preview-details" open class="is-display-none mt-2"
+                         th:classappend="${post.prevCoverId != null ? 'is-display-block' : ''}">
+                    <summary>
+                        Cover preview
+                    </summary>
+                    <div class="card">
+                        <div class="card-image">
+                            <figure class="image is-16by9">
+                                <img id="cover-preview"
+                                     class="is-max"
+                                     style="max-width: 100%;object-fit:cover;"
+                                     th:src="${post.prevCoverId != null ? post.prevCoverUrl : ''}"
+                                     src="https://bulma.io/assets/images/placeholders/128x128.png"/>
+                            </figure>
+                        </div>
+                    </div>
                 </details>
 
 
-
             </div>
+
 
             <!--  TODO: 커버 이미지 끝  -->
             <th:block th:if="${categories != null}">
@@ -114,6 +188,7 @@
             </th:block>
         </div>
 
+        <div th:classappend="mt-2"></div>
         <div layout:replace="fragments/form/layout-input :: tinymce('content', 'Content','hello world!', true, ${imageUploadUrl})"></div>
 
         <div class="field is-grouped">
