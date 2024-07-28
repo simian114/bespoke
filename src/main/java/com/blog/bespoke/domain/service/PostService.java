@@ -71,6 +71,9 @@ public class PostService {
         if (toBe == Post.Status.DRAFT) {
             return false;
         }
+        if (toBe == Post.Status.PUBLISHED && post.getCategory() == null) {
+            throw new BusinessException(ErrorCode.PUBLISHED_POST_MUST_HAVE_CATEGORY);
+        }
         return (toBe != Post.Status.BLOCKED || user.isAdmin())
                 && (!post.isBlocked() || user.isAdmin());
     }
