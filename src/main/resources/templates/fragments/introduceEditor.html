@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/html">
+<head
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<th:block layout:fragment="editor(field)">
+    <div th:with="fieldName=${field}" class="field" style="min-height: 600px;">
+        <label class="label">Introduce</label>
+        <div class="control has-icons-left has-icons-right">
+                    <textarea
+                            th:field="*{__${fieldName}__}"
+                            placeholder="Introduce your self..!"
+                            style="height: 0px !important;position: absolute;visibility: hidden;"
+                            class="textarea is-success"
+                            type="text"
+                            id="introduce-editor"
+                    >
+                    </textarea>
+        </div>
+        <script>
+            var isFormDirty = false;
+            document.addEventListener("DOMContentLoaded", () => {
+                document.querySelector('form').addEventListener('input', function () {
+                    isFormDirty = true;
+                });
+                document.querySelector('form').addEventListener('submit', function () {
+                    isFormDirty = false;
+                });
+                document.addEventListener('reload:tinymce', () => {
+                    const textarea = document.querySelector("#introduce-editor");
+                    if (textarea) {
+                        tinymce.remove();
+                        setTimeout(() => {
+                            tinymce.init({
+                                selector: 'textarea',
+                                plugins: 'searchreplace autolink autosave code visualblocks visualchars fullscreen image link media codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons accordion',
+                                toolbar: "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | align numlist bullist | link image | table media | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons |  pagebreak anchor codesample",
+                                content_css: ['/css/application.css'],
+                                body_class: 'content',
+                                content_style: 'body { margin: 16px; }',
+                                image_caption: true,
+                                height: 600,
+                                resize: true,
+                                promotion: false,
+                                setup: function (editor) {
+                                    editor.on('change', function () {
+                                        tinymce.triggerSave();
+                                    })
+                                }
+                            });
+                        }, 0);
+                    }
+                })
+                window.addEventListener('beforeunload', function (event) {
+                    if (isFormDirty) {
+                        event.preventDefault();
+                        event.returnValue = '';
+                    }
+                });
+            })
+            me().run(e => {
+                const textarea = e.querySelector("#introduce-editor");
+                if (textarea) {
+                    tinymce.remove();
+                    setTimeout(() => {
+                        tinymce.init({
+                            selector: 'textarea',
+                            plugins: 'searchreplace autolink autosave code visualblocks visualchars fullscreen image link media codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons accordion',
+                            toolbar: "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | align numlist bullist | link image | table media | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons |  pagebreak anchor codesample",
+                            content_css: ['/css/application.css'],
+                            body_class: 'content',
+                            content_style: 'body { margin: 16px; }',
+                            image_caption: true,
+                            height: 600,
+                            resize: true,
+                            promotion: false,
+                            setup: function (editor) {
+                                editor.on('change', function () {
+                                    tinymce.triggerSave();
+                                })
+                            }
+                        });
+                    }, 0);
+                }
+            })
+        </script>
+    </div>
+</th:block>
+
+
+</body>
+</html>

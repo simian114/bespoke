@@ -51,6 +51,7 @@ public class AuthUseCase {
             throw new BusinessException(ErrorCode.USER_FAIL_AUTHENTICATION);
         }
         UserPrincipal userPrincipal = (UserPrincipal) authenticate.getPrincipal();
+        // NOTE: dto 로 변환해야할거같은데?
         User user = userPrincipal.getUser();
         Token refreshToken = createRefreshToken(user);
 

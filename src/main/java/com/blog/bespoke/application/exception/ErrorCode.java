@@ -43,6 +43,10 @@ public enum ErrorCode {
     // post like
     ALREADY_LIKE_POST(HttpStatus.BAD_REQUEST, "이미 좋아요한 게시글입니다."),
     POST_LIKE_NOT_FOUND(HttpStatus.BAD_REQUEST, "좋아요되지 않은 게시글입니다."),
+
+    // image
+    UNSUPPORTED_IMAGE(HttpStatus.BAD_REQUEST, "jpeg, jpg, png, gif, webp 만 올릴 수 있습니다." ),
+    OVER_AVATAR_LIMIT_SIZE(HttpStatus.BAD_REQUEST, "아바타 이미지 최대 크기는 1MB입니다.")
     ;
 
     private final HttpStatus statusCode;

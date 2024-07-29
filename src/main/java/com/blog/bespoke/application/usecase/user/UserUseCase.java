@@ -9,14 +9,13 @@ import com.blog.bespoke.application.event.publisher.EventPublisher;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.token.Token;
-import com.blog.bespoke.domain.model.user.User;
-import com.blog.bespoke.domain.model.user.UserProfile;
-import com.blog.bespoke.domain.model.user.UserRelation;
-import com.blog.bespoke.domain.model.user.UserUpdateCmd;
+import com.blog.bespoke.domain.model.user.*;
 import com.blog.bespoke.domain.model.user.role.Role;
 import com.blog.bespoke.domain.repository.TokenRepository;
 import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.blog.bespoke.domain.service.UserService;
+import com.blog.bespoke.domain.service.user.UserS3ImageService;
+import com.blog.bespoke.infrastructure.aws.s3.service.S3Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,6 +30,8 @@ public class UserUseCase {
     private final TokenRepository tokenRepository;
     private final UserService userService;
     private final EventPublisher eventPublisher;
+    private final UserS3ImageService userS3ImageService;
+    private final S3Service s3Service;
 
     /**
      * 기본 회원가입. role 은 자동으로 USER 가 등록이됨. 어드민 유저는 DB 에서 직접 생성할것
@@ -40,14 +41,25 @@ public class UserUseCase {
      */
     @Transactional
     public UserResponseDto signup(UserSignupRequestDto requestDto) {
+        /*
+         * 아바타 업로드
+         */
+        if (requestDto.getAvatar() != null) {
+            userS3ImageService.checkAvatarCanUpload(requestDto.getAvatar());
+        }
+
         User user = UserRequestMapper.INSTANCE.toDomain(requestDto);
         Role role = userRepository.getRoleByCode(Role.Code.USER);
         UserProfile profile = UserProfile.builder()
                 .introduce(requestDto.getIntroduce())
                 .build();
-        user.setProfile(profile);
-        userService.initUser(user, role);
+        userService.initUser(user, role, profile);
         User savedUser = userRepository.save(user);
+
+        if (requestDto.getAvatar() != null) {
+            S3UserAvatar s3UserAvatar = s3Service.uploadAvatar(requestDto.getAvatar());
+            savedUser.setAvatar(s3UserAvatar);
+        }
 
         Token token = tokenRepository.save(
                 Token.builder()
@@ -58,6 +70,7 @@ public class UserUseCase {
                         .expiredAt(LocalDateTime.now().plusMinutes(3))
                         .build()
         );
+
         eventPublisher.publishMailEvent(
                 UserRegistrationMessage.builder()
                         .email(user.getEmail())

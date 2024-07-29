@@ -1,10 +1,7 @@
 package com.blog.bespoke.application.dto.response;
 
 import com.blog.bespoke.domain.model.category.Category;
-import com.blog.bespoke.domain.model.user.User;
-import com.blog.bespoke.domain.model.user.UserCountInfo;
-import com.blog.bespoke.domain.model.user.UserProfile;
-import com.blog.bespoke.domain.model.user.UserRelation;
+import com.blog.bespoke.domain.model.user.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -20,6 +17,8 @@ public class UserResponseDto {
     private String email;
     private String nickname;
     private String name;
+    private String avatarUrl;
+
     private UserProfileResponseDto userProfile;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -30,6 +29,9 @@ public class UserResponseDto {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UserCountInfoResponseDto countInfo;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private S3UserAvatarResponseDto avatar;
 
     static private UserResponseDtoBuilder base(User user) {
         return UserResponseDto.builder()
@@ -56,6 +58,8 @@ public class UserResponseDto {
                 .countInfo(relation.isCount() ? UserCountInfoResponseDto.from(user.getUserCountInfo()) : null)
                 .userProfile(relation.isProfile()&& user.getUserProfile() != null ? UserProfileResponseDto.from(user.getUserProfile()) : null)
                 .introduce(relation.isProfile() && user.getUserProfile() != null ? user.getUserProfile().getIntroduce() : null)
+                .avatar(relation.isAvatar() && user.getAvatar() != null ? S3UserAvatarResponseDto.from(user.getAvatar()) : null)
+                .avatarUrl(relation.isAvatar() && user.getAvatar() != null ? user.getAvatar().getUrl() : null)
                 .build();
     }
 

@@ -10,4 +10,5 @@ public class UserRelation {
     private boolean profile;
     private boolean count;
     private boolean roles;
+    private boolean avatar;
 }

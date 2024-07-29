@@ -101,6 +101,9 @@ public class UserRepositoryImpl implements UserRepository {
         if (relation.isRoles()) {
             query.leftJoin(user.roles, userRole).fetchJoin();
         }
+        if (relation.isAvatar()) {
+            query.leftJoin(user.avatar, QS3UserAvatar.s3UserAvatar).fetchJoin();
+        }
         return query;
     }
 

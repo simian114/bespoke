@@ -25,6 +25,7 @@ public class JwtService {
     public static final String CLAIM_NICKNAME = "nickname";
     public static final String CLAIM_ROLES = "roles";
     public static final String CLAIM_STATUS = "status";
+    public static final String CLAIM_AVATAR = "avatar";
     public static final String AUTH_HEADER = "Authorization";
     public static final String AUTH_SCHEME = "Bearer";
 
@@ -53,7 +54,7 @@ public class JwtService {
                 .claim(CLAIM_NICKNAME, user.getNickname())
                 .claim(CLAIM_STATUS, user.getStatus())
                 .claim(CLAIM_ROLES, user.getRolesAsString())
-                // .claim(CLAIM_ROLES, user.getRoleAuthorities())
+                .claim(CLAIM_AVATAR, user.getAvatarUrl())
                 .signWith(key, signatureAlgorithm)
                 .compact();
     }
@@ -73,6 +74,7 @@ public class JwtService {
                 .email(claims.get(JwtService.CLAIM_EMAIL, String.class))
                 .name(claims.get(JwtService.CLAIM_NAME, String.class))
                 .nickname(claims.get(JwtService.CLAIM_NICKNAME, String.class))
+                .avatarUrl(claims.get(JwtService.CLAIM_AVATAR, String.class))
                 .status(User.Status.valueOf(claims.get(JwtService.CLAIM_STATUS, String.class)))
                 .roles(userRoles)
                 .build();

@@ -2,15 +2,18 @@ package com.blog.bespoke.presentation.web.view.auth;
 
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
 import com.blog.bespoke.application.exception.BusinessException;
+import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.application.usecase.user.UserUseCase;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxResponse;
+import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -40,6 +43,7 @@ public class SignupController {
     }
 
     // 성공하면, signup/success 로 이동
+    @HxRequest
     @PostMapping("/signup")
     public HtmxResponse signup(@Valid @ModelAttribute("user") UserSignupRequestDto requestDto,
                                BindingResult bindingResult,
@@ -48,6 +52,7 @@ public class SignupController {
         if (bindingResult.hasErrors()) {
             return HtmxResponse.builder()
                     .view("/page/signup/signup")
+                    .trigger("reload:tinymce")
                     .preventHistoryUpdate()
                     .build();
         }
@@ -60,9 +65,23 @@ public class SignupController {
              */
             // NOTE: global error - 이메일 중복됨 / nickname 중복됨
             // bindingResult.addError(new FieldError("user", "email", "이메일 중복됨"));
-            bindingResult.addError(new ObjectError("user", e.getMessage()));
+            if (e.getStatusCode() == ErrorCode.OVER_AVATAR_LIMIT_SIZE.getStatusCode() ||
+                    e.getStatusCode() == ErrorCode.UNSUPPORTED_IMAGE.getStatusCode()
+            ) {
+                bindingResult.addError(new FieldError("user", "avatar", e.getMessage()));
+            } else {
+                bindingResult.addError(new ObjectError("user", e.getMessage()));
+            }
+
             return HtmxResponse.builder()
                     .view("/page/signup/signup")
+                    .preventHistoryUpdate()
+                    .trigger("reload:tinymce")
+                    .build();
+        } catch (Exception e) {
+            return HtmxResponse.builder()
+                    .view("/page/signup/signup")
+                    .trigger("reload:tinymce")
                     .preventHistoryUpdate()
                     .build();
         }
