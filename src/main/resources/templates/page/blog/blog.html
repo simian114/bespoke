@@ -7,6 +7,25 @@
 >
 <head>
     <title th:text="|${owner.name}'s blog'.|">Bespoke</title>
+
+    <meta name="title" th:content="|Bespoke - ${owner.nickname}|">
+    <meta name="description" th:content="|Bespoke - ${owner.nickname}'s blog'|">
+    <meta name="image" content="https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png">
+    <meta name="keywords" content="blog platform, simple, comfortable, diverse, fast, write stories, share stories, discover stories, velog, inblog, medium, wix, wordpress, tistory, naver blog, 벨로그, 블로그, 인블로그, 워드프레스, 티스토리, 네이버블로그">
+
+    <meta property="og:site_name" content="Bespoke">
+    <meta property="og:type" content="website">
+
+    <meta property="og:title" th:content="|Bespoke - ${owner.nickname}|">
+    <meta property="og:description" th:content="|Bespoke - ${owner.nickname}'s blog'|">
+    <meta property="og:image" content="https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png">
+
+    <meta property="twitter:card" content="https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png">
+    <meta property="twitter:url" content="https://www.bespoke.com">
+    <meta property="twitter:title" th:content="|Bespoke - ${owner.nickname}|">
+    <meta property="twitter:description" th:content="|Bespoke - ${owner.nickname}'s blog'|">
+    <meta property="twitter:image" content="https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png">
+
 </head>
 <body>
     <section class="common-page blog-page section px-2">

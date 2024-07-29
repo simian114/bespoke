@@ -7,6 +7,24 @@
 >
 <head>
     <title th:text="|${post.title}|">Bespoke</title>
+
+    <meta name="title" th:content="${post.title}">
+    <meta name="description" th:content="${post.description}">
+    <meta name="image" th:content="${post.cover != null ? post.cover.url : 'https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png'}">
+    <meta name="keywords" content="blog platform, simple, comfortable, diverse, fast, write stories, share stories, discover stories, velog, inblog, medium, wix, wordpress, tistory, naver blog, 벨로그, 블로그, 인블로그, 워드프레스, 티스토리, 네이버블로그">
+
+    <meta property="og:type" content="article">
+
+    <meta property="og:url" content="아직url 없음">
+    <meta property="og:title" th:content="${post.title}">
+    <meta property="og:description" th:content="${post.description}">
+    <meta property="og:image" th:content="${post.cover != null ? post.cover.url : 'https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png'}">
+
+    <meta property="twitter:card" content="${post.cover != null ? post.cover.url : 'https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png'}">
+    <meta property="twitter:url" content="아직url 없음">
+    <meta property="twitter:title" th:content="${post.title}">
+    <meta property="twitter:description" th:content="${post.description}">
+    <meta property="twitter:image" th:content="${post.cover != null ? post.cover.url : 'https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png'}">
 </head>
 <body>
 
@@ -21,7 +39,6 @@
 
         <div class="post-header is-flex is-flex-direction-column mt-5 pb-5"
         >
-<!--            style="border-bottom: 1px solid"-->
             <h1 class="is-size-3 has-text-weight-semibold mt-2" style="text-align: center;word-break: keep-all;"
                 th:text="${post.title}">
                 title
