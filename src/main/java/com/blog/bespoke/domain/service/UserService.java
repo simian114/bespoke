@@ -1,9 +1,9 @@
 package com.blog.bespoke.domain.service;
 
 import com.blog.bespoke.domain.model.user.User;
+import com.blog.bespoke.domain.model.user.UserProfile;
 import com.blog.bespoke.domain.model.user.role.Role;
 import com.blog.bespoke.domain.model.user.role.UserRole;
-import com.blog.bespoke.domain.repository.user.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,8 +15,10 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void initUser(User user, Role role) {
-        user.init();
+    public void initUser(User user, Role role, UserProfile profile) {
+        user.deActivate();
+        user.setUserCountInfo();
+        user.setProfile(profile);
         user.changePassword(encodePassword(user.getPassword()));
         // create
         UserRole userRole = UserRole.builder()

@@ -29,7 +29,12 @@
                 })
             </script>
         </div>
-        <div layout:replace="fragments/form/layout-input :: tinymce('introduce','Introduce','자기소개', true)"></div>
+<!--  cover start     -->
+
+<!--  cover end      -->
+        <!--  tinymce 시작    -->
+        <div layout:replace="~{fragments/introduceEditor :: editor('introduce')}"></div>
+        <!--  tinymce 끝     -->
         <div>
             <th:block th:if="${#fields.hasGlobalErrors()}">
                 <p class="help is-danger" th:each="err :${#fields.globalErrors()}" th:text="${err}"></p>

@@ -27,6 +27,15 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends TimeStamp {
+    // --- relation
+    @OneToMany(mappedBy = "followingId", cascade = CascadeType.ALL, orphanRemoval = true)
+    public Set<Follow> followers = new HashSet<>();
+    @OneToMany(mappedBy = "followerId", cascade = CascadeType.ALL, orphanRemoval = true)
+    public Set<Follow> followings = new HashSet<>();
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    public Set<Post> posts;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    public Set<Category> categories = new LinkedHashSet<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -37,25 +46,14 @@ public class User extends TimeStamp {
     @Column(unique = true)
     private String nickname;
     private String name;
-
-    // --- relation
-    @OneToMany(mappedBy = "followingId", cascade = CascadeType.ALL, orphanRemoval = true)
-    public Set<Follow> followers = new HashSet<>();
-
-    @OneToMany(mappedBy = "followerId", cascade = CascadeType.ALL, orphanRemoval = true)
-    public Set<Follow> followings = new HashSet<>();
-
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-    public Set<Post> posts;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    public Set<Category> categories = new LinkedHashSet<>();
-
     @OneToOne(mappedBy = "user", optional = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private UserProfile userProfile;
 
     @OneToOne(mappedBy = "user", optional = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private UserCountInfo userCountInfo;
+
+    @OneToOne(mappedBy = "user", optional = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private S3UserAvatar avatar;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserRole> roles;
@@ -63,6 +61,11 @@ public class User extends TimeStamp {
     @Enumerated(EnumType.STRING)
     private Status status = Status.INACTIVE;
     private LocalDateTime bannedUntil;
+    // --- transient value
+    @Transient
+    private String avatarUrl;
+
+    // --- 연관관계 편의 메서드
 
     @JsonIgnore
     public List<String> getRolesAsString() {
@@ -74,19 +77,21 @@ public class User extends TimeStamp {
                 .toList();
     }
 
-    // --- 연관관계 편의 메서드
-
-    // --- transient value
-
-    // --- domain logic
-    public void init() {
-        this.deActivate();
-        this.userCountInfo = UserCountInfo.builder().user(this).build();
+    @PostLoad
+    public void loadAvatarUrl() {
+        this.avatarUrl = this.avatar != null
+                ? this.avatar.getUrl()
+                : "https://bespoke-blog-dev.s3.ap-northeast-2.amazonaws.com/avatar.png";
     }
 
+    // --- domain logic
     public void setProfile(UserProfile profile) {
         this.userProfile = profile;
         profile.setUser(this);
+    }
+
+    public void setUserCountInfo() {
+        this.userCountInfo = UserCountInfo.builder().user(this).build();
     }
 
     public void follow(Long followingId) {
@@ -201,6 +206,11 @@ public class User extends TimeStamp {
         if (cmd.getIntroduce() != null && !cmd.getIntroduce().isBlank() && this.userProfile != null) {
             this.userProfile.setIntroduce(cmd.getIntroduce());
         }
+    }
+
+    public void setAvatar(S3UserAvatar s3UserAvatar) {
+        this.avatar = s3UserAvatar;
+        s3UserAvatar.setUser(this);
     }
 
 
