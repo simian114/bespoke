@@ -5,10 +5,11 @@ import com.blog.bespoke.application.dto.request.PostCreateRequestDto;
 import com.blog.bespoke.application.dto.request.UserUpdateRequestDto;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
 import com.blog.bespoke.application.dto.response.UserResponseDto;
+import com.blog.bespoke.application.exception.BusinessException;
+import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.application.usecase.post.PostUseCase;
 import com.blog.bespoke.application.usecase.user.UserCategoryUseCase;
 import com.blog.bespoke.application.usecase.user.UserUseCase;
-import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.post.PostSearchCond;
 import com.blog.bespoke.domain.model.user.CategoryUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
@@ -21,6 +22,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -55,6 +58,8 @@ public class MyBlogController {
         UserUpdateRequestDto user = UserUpdateRequestDto.builder()
                 .name(me.getName())
                 .introduce(me.getUserProfile().getIntroduce())
+                .prevAvatarId(me.getAvatar() != null ? me.getAvatar().getId() : null)
+                .prevAvatarUrl(me.getAvatarUrl())
                 .build();
         model.addAttribute("user", user);
         return "page/myblog/profile";
@@ -74,7 +79,28 @@ public class MyBlogController {
                     .view("page/myblog/profile")
                     .build();
         }
-        userUseCase.updateUser(requestDto, currentUser.getId());
+
+        try {
+            userUseCase.updateUser(requestDto, currentUser.getId());
+        } catch (BusinessException e) {
+            if (e.getStatusCode() == ErrorCode.UNSUPPORTED_IMAGE.getStatusCode() ||
+                    e.getStatusCode() == ErrorCode.OVER_AVATAR_LIMIT_SIZE.getStatusCode()
+            ) {
+                bindingResult.addError(new FieldError("user", "avatar", e.getMessage()));
+            } else {
+                bindingResult.addError(new ObjectError("user", e.getMessage()));
+            }
+            return HtmxResponse.builder()
+                    .preventHistoryUpdate()
+                    .view("page/myblog/profile")
+                    .build();
+        } catch (Exception e) {
+            return HtmxResponse.builder()
+                    .preventHistoryUpdate()
+                    .view("page/myblog/profile")
+                    .build();
+        }
+
         return HtmxResponse.builder()
                 .redirect(String.format("/blog/%s", currentUser.getNickname()))
                 .build();

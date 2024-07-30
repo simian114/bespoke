@@ -12,7 +12,11 @@
 <body hx-boost="false">
 <section class="section px-2">
     <nav th:replace="page/myblog/navigator :: navigator"></nav>
-    <form class="container" style="max-width: 640px;" th:object="${user}" method="post"
+    <form class="container"
+          style="max-width: 640px;"
+          enctype="multipart/form-data"
+          method="post"
+          th:object="${user}"
           hx-boost="true">
         <div layout:replace="~{fragments/form/layout-input :: input('name', 'Name', 'text', 'name...', true)}">
             <script layout:fragment="script">
@@ -29,9 +33,54 @@
                 })
             </script>
         </div>
-<!--  cover start     -->
+        <!--  cover start     -->
+        <div id="avatar-input-container" class="file has-name field block is-flex-direction-column is-flex">
+            <label class="label">Avatar</label>
+            <div class="is-flex is-gap-3 is-align-items-center">
+                <figure class="image is-48x48 is-position-relative" style="width: 48px;height: 48px;">
+                    <img
+                            id="avatar-preview"
+                            alt="avatar-preview"
+                            class="is-rounded is-bordered"
+                            th:src="${user.prevAvatarUrl}"
+                            style="height: 100%;"
+                    />
+                </figure>
+                <div class="control">
+                    <label class="file-label">
+                        <input class="file-input"
+                               type="file"
+                               accept="image/jpg, image/jpeg, image/bmp, image/png, image/svg, image/webp"
+                               th:field="*{avatar}"
+                        />
+                        <script>
+                            me('prev').on("change", (ev) => {
+                                const target = me(ev);
+                                if (target?.files?.length > 0) {
+                                    const img = document.querySelector("#avatar-preview");
+                                    img.src = URL.createObjectURL(target.files[0])
+                                }
+                            })
+                        </script>
 
-<!--  cover end      -->
+                        <span class="file-cta">
+                            <span class="file-icon">
+                                <i class="fas fa-upload"></i>
+                            </span>
+                            <span class="file-label">change avatar</span>
+                        </span>
+                    </label>
+                    <p class="help is-danger" th:errors="*{avatar}"></p>
+                </div>
+            </div>
+        </div>
+        <!--  cover end      -->
+        <!--   prev cover hidden start     -->
+        <th:block th:if="${user.prevAvatarId}">
+            <input type="hidden" th:field="*{prevAvatarId}"/>
+            <input type="hidden" th:field="*{prevAvatarUrl}"/>
+        </th:block>
+        <!--   prev cover hidden end     -->
         <!--  tinymce 시작    -->
         <div layout:replace="~{fragments/introduceEditor :: editor('introduce')}"></div>
         <!--  tinymce 끝     -->

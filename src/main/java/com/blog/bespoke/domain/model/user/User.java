@@ -206,6 +206,10 @@ public class User extends TimeStamp {
         if (cmd.getIntroduce() != null && !cmd.getIntroduce().isBlank() && this.userProfile != null) {
             this.userProfile.setIntroduce(cmd.getIntroduce());
         }
+        if (cmd.getAvatar() != null) {
+            this.avatar = cmd.getAvatar();
+            cmd.getAvatar().setUser(this);
+        }
     }
 
     public void setAvatar(S3UserAvatar s3UserAvatar) {
