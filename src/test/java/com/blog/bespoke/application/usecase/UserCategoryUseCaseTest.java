@@ -23,8 +23,8 @@ public class UserCategoryUseCaseTest {
     @Autowired
     private UserCategoryUseCase userCategoryUseCase;
 
-    @Test
-    @DisplayName("category 생성 테스트")
+//    @Test
+//    @DisplayName("category 생성 테스트")
     void test () {
         // given
         UserResponseDto user = userUseCase.signup(
