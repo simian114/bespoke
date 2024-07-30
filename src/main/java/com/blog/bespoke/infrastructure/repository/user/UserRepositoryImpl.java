@@ -44,7 +44,8 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> findById(Long userId, UserRelation relation) {
         JPQLQuery<User> query = findWithRelation(relation);
         try {
-            return Optional.ofNullable(query.where(user.id.eq(userId)).fetchOne());
+            User foundUser = query.where(user.id.eq(userId)).fetchOne();
+            return Optional.ofNullable(foundUser);
         } catch (NonUniqueResultException e) {
             return Optional.empty();
         }

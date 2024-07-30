@@ -8,4 +8,5 @@ import lombok.Data;
 public class UserUpdateCmd {
     private String name;
     private String introduce;
+    private S3UserAvatar avatar;
 }

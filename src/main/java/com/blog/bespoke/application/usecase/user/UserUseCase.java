@@ -116,7 +116,7 @@ public class UserUseCase {
      * user 의 정보 변경
      */
     public UserResponseDto getUserForProfileEdit(Long userId) {
-        UserRelation relation = UserRelation.builder().profile(true).build();
+        UserRelation relation = UserRelation.builder().profile(true).avatar(true).build();
         return UserResponseDto.from(userRepository.getById(userId, relation), relation);
     }
 
@@ -132,10 +132,18 @@ public class UserUseCase {
 
     @Transactional
     public UserResponseDto updateUser(UserUpdateRequestDto requestDto, Long userId) {
+        // check file
+        S3UserAvatar s3UserAvatar = null;
+        if (requestDto.getAvatar() != null) {
+            userS3ImageService.checkAvatarCanUpload(requestDto.getAvatar());
+            s3UserAvatar = s3Service.uploadAvatar(requestDto.getAvatar());
+        }
         // requestDto to userUpdateCmd
-        UserUpdateCmd cmd = requestDto.toCmd();
+        UserUpdateCmd cmd = requestDto.toCmd(s3UserAvatar);
         User user = userRepository.getById(userId);
         user.update(cmd);
         return UserResponseDto.from(user);
     }
+
 }
+
