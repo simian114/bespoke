@@ -18,7 +18,7 @@ public class PostUpdateRequestDto {
     private String title;
 
     @NotBlank
-    @Size(min = 10, max = 100)
+    @Size(min = 10, max = 150)
     private String description;
     private String content;
     private Long categoryId;

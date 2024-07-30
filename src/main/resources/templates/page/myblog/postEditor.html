@@ -69,7 +69,7 @@
                         me().on("input", ev => {
                             const el = me(ev).querySelector("input");
                             const value = el?.value;
-                            if (value.length < 10 || value.length > 100) {
+                            if (value.length < 10 || value.length > 150) {
                                 el.classList.add("is-danger");
                                 el.classList.remove("is-success");
                             } else {
@@ -79,6 +79,9 @@
                         })
                     </script>
                 </div>
+                <p class="help">This text will appear in the preview of the post.</p>
+                <p class="help">It will be used as the SEO description. For English, a length of 105 characters is
+                    appropriate, while for Korean, around 50 characters is ideal.</p>
                 <p class="help is-danger" th:errors="*{description}"></p>
             </div>
 
@@ -182,8 +185,8 @@
         <!--  NOTE: hidden 데이터 전송. -->
         <th:block th:if="${post.categories != null}">
             <div class="field" th:each="category, iterStat : *{categories}">
-                <input type="hidden" th:field="*{categories[__${iterStat.index}__].id}" />
-                <input type="hidden" th:field="*{categories[__${iterStat.index}__].name}" />
+                <input type="hidden" th:field="*{categories[__${iterStat.index}__].id}"/>
+                <input type="hidden" th:field="*{categories[__${iterStat.index}__].name}"/>
             </div>
         </th:block>
         <div th:if="${post.prevCoverId != null}">
