@@ -20,7 +20,7 @@ create table post
     description varchar(200),
     content     longtext,
 
-    status      varchar(20) default 'DRAFT', # DRAFT, PUBLISHED, BLOCKED
+    status      varchar(20) default 'TEMP_SAVE', # DRAFT, PUBLISHED, BLOCKED
 
     author_id   bigint       not null,
 

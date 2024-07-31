@@ -82,7 +82,7 @@ public class PostUseCase {
     }
 
     @Transactional
-    public PostResponseDto write(PostCreateRequestDto requestDto, User currentUser) {
+    public PostResponseDto writePostAsTempSave(PostCreateRequestDto requestDto, User currentUser) {
         // user 의 상태를 검사해야하나?
         UserRelation relation = UserRelation.builder().categories(true).build();
         User author = userRepository.getById(currentUser.getId(), relation);
