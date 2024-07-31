@@ -12,7 +12,23 @@
 <body hx-boost="false">
 <section class="section px-2">
     <nav th:replace="page/myblog/navigator :: navigator"></nav>
+    <input form="profile-form" type="file"
+           name="avatar" id="avatar"
+           accept="image/jpg, image/jpeg, image/bmp, image/png, image/svg, image/webp"
+           class="is-display-none"
+    />
+    <script>
+        me('prev').on("change", (ev) => {
+            const target = me(ev);
+            if (target?.files?.length > 0) {
+                const img = document.querySelector("#avatar-preview");
+                img.src = URL.createObjectURL(target.files[0])
+            }
+        })
+    </script>
+
     <form class="container"
+          id="profile-form"
           style="max-width: 640px;"
           enctype="multipart/form-data"
           method="post"
@@ -45,24 +61,18 @@
                             th:src="${user.prevAvatarUrl}"
                             style="height: 100%;"
                     />
+                    <script>
+                        me().run(() => {
+                            const input = document.querySelector("#avatar");
+                            if (!input?.files?.length > 0) {
+                                const img = document.querySelector("#avatar-preview");
+                                img.src = URL.createObjectURL(input.files[0])
+                            }
+                        })
+                    </script>
                 </figure>
                 <div class="control">
-                    <label class="file-label">
-                        <input class="file-input"
-                               type="file"
-                               accept="image/jpg, image/jpeg, image/bmp, image/png, image/svg, image/webp"
-                               th:field="*{avatar}"
-                        />
-                        <script>
-                            me('prev').on("change", (ev) => {
-                                const target = me(ev);
-                                if (target?.files?.length > 0) {
-                                    const img = document.querySelector("#avatar-preview");
-                                    img.src = URL.createObjectURL(target.files[0])
-                                }
-                            })
-                        </script>
-
+                    <label class="file-label" for="avatar">
                         <span class="file-cta">
                             <span class="file-icon">
                                 <i class="fas fa-upload"></i>
