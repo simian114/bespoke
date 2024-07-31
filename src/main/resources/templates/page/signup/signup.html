@@ -43,7 +43,7 @@
         <!--        email end-->
         <!--        nickname start-->
         <div layout:replace="~{fragments/form/layout-input :: input('nickname', 'Nickname', 'text', 'nickname', true, 4, 30)}">
-            <p  class="help">
+            <p layout:fragment="info" class="help">
                 Nickname must be between 4 and 30 characters
                 <br />
                 Nickname can only contain letters, digits, and at most one hyphen
