@@ -26,11 +26,11 @@
     <title>Bespoke</title>
 </head>
 <body layout:fragment="content">
-<section class="section">
+<section class="section home-page">
     <div class="container">
         <div th:replace="~{page/home/filter :: orderBy}"></div>
         <div class="fixed-grid has-1-cols-mobile has-2-cols-tablet has-4-cols-desktop has-4-cols-widescreen">
-            <div class="grid post-list">
+            <div class="grid home-page__post-list post-list">
                 <th:block th:each="post: ${posts}">
                     <div th:replace="~{fragments/post :: defaultCard(post=${post})}"></div>
                 </th:block>
