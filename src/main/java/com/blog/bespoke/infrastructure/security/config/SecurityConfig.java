@@ -86,6 +86,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
                 // error
                 .requestMatchers("/error/**").permitAll()
+                .requestMatchers("/errors").permitAll()
                 // 실제 서비스
                 .requestMatchers("/login").permitAll()
                 .requestMatchers("/signup").permitAll()
