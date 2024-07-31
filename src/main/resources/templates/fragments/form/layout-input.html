@@ -40,11 +40,13 @@
     </div>
 </th:block>
 
-<th:block layout:fragment="tinymce(field, label, placeholder, required, uploadUrl)">
+<th:block layout:fragment="tinymce(field, label, placeholder, required, uploadUrl, id)">
     <div class="field" th:with="fieldName=${field}" style="min-height: 600px;">
         <label class="label" th:text="${label}">Introduce</label>
         <div class="control has-icons-left has-icons-right">
-                    <textarea th:placeholder="${placeholder}"
+                    <textarea
+                            th:id="${id}"
+                            th:placeholder="${placeholder}"
                               style="height: 0px !important;position: absolute;visibility: hidden;"
                               th:field="*{__${fieldName}__}" id="editor"
                               class="textarea is-success" type="text">
@@ -66,7 +68,8 @@
                     }
                 });
                 window.addEventListener("reload:tinymce", function() {
-                    const textarea = e.querySelector("textarea");
+                    const id = `[[${id}]]`;
+                    const textarea = document.getElementById(id);
                     const uploadUrl = '[[${uploadUrl}]]';
                     if (textarea) {
                         const imagesUploadHandler = (blobInfo, progress) => new Promise((resolve, reject) => {
@@ -136,7 +139,9 @@
                 })
             })
             me().run(e => {
-                const textarea = e.querySelector("textarea");
+                const id = '[[${id}]]';
+                const textarea = document.getElementById(id);
+                console.log(textarea)
                 const uploadUrl = '[[${uploadUrl}]]';
                 if (textarea) {
                     const imagesUploadHandler = (blobInfo, progress) => new Promise((resolve, reject) => {

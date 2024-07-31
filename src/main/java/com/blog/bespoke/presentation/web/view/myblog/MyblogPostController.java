@@ -86,6 +86,7 @@ public class MyblogPostController {
             // category list..!
             return HtmxResponse.builder()
                     .view("page/myblog/postEditor :: form")
+                    .trigger("reload:tinymce")
                     .preventHistoryUpdate()
                     .build();
         }
