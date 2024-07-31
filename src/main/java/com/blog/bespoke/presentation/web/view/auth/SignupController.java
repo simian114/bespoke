@@ -1,6 +1,7 @@
 package com.blog.bespoke.presentation.web.view.auth;
 
 import com.blog.bespoke.application.dto.request.UserSignupRequestDto;
+import com.blog.bespoke.application.dto.response.UserResponseDto;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.application.usecase.user.UserUseCase;
@@ -18,6 +19,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -88,20 +90,18 @@ public class SignupController {
                     .build();
         }
 
-        redirectAttributes.addFlashAttribute("signupSuccess", true);
         return HtmxResponse.builder()
-                .redirect("/signup/success")
+                .view("/page/signup/success :: section")
                 .build();
 
     }
 
-    @GetMapping("/signup/success")
-    public String signupSuccess(Model model) {
-        boolean fromSignup = Boolean.TRUE.equals(model.asMap().get("signupSuccess"));
-        if (!fromSignup) {
-            return "redirect:/";
-        }
-        return "/page/signup/success";
+    // NOTE: 이메일 인증
+    @GetMapping("/email-validation")
+    public String emailValidation(@RequestParam(name = "code") String code) {
+        UserResponseDto userResponseDto = userUseCase.emailValidation(code);
+        return "/page/signup/emailValidation";
     }
+
 }
 
