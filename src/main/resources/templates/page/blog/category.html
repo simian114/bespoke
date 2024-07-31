@@ -43,7 +43,7 @@
         <p class="block is-underlined has-text-weight-semibold is-size-6" th:text="${category.description}"></p>
 
         <div class="block box is-flex is-align-items-baseline">
-            <div class="mr-4 is-flex-shrink-0 is-size-5 has-text-weight-semibold">space</div>
+            <div class="mr-4 is-flex-shrink-0 is-size-5 has-text-weight-semibold">category</div>
             <ul class="space-list is-flex-grow-5">
                 <th:block th:if="${owner.categories != null && #lists.size(owner.categories) > 0}">
                     <li class="is-flex" th:each="category: ${owner.categories}">
