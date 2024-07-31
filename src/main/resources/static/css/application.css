@@ -22483,6 +22483,10 @@ a:hover {
   margin-left: 0.5rem;
 }
 
+.post-detail-page__cover-img {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 @media screen and (min-width: 769px), print {
   .common-page {
     margin: auto;
