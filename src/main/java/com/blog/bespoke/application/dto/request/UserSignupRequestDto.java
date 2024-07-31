@@ -1,8 +1,6 @@
 package com.blog.bespoke.application.dto.request;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,16 +10,23 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 @Builder
 public class UserSignupRequestDto {
-    @NotEmpty
     @Email
+    @NotEmpty
     private String email;
 
-    @Size(min = 4, max = 30)
+    @Size(min = 4, max = 30, message = "Password must be between 4 and 30 characters")
     private String password;
 
-    @Size(min = 4, max = 30)
+    // TODO: 특수문자금지
+    @Size(min = 4, max = 30, message = "Nickname must be between 4 and 30 characters")
+    @NotBlank(message = "Nickname cannot be blank")
+    @Pattern(
+            regexp = "^(?!.*\\s)(?!.*--)[a-zA-Z0-9]+-?[a-zA-Z0-9]+$",
+            message = "Nickname can only contain letters, digits, and at most one hyphen"
+    )
     private String nickname;
 
+    @NotBlank
     private String name;
 
     private String introduce;
