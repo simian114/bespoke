@@ -23,7 +23,7 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<?> write(@Valid @RequestBody PostCreateRequestDto requestDto, @LoginUser User currentUser) {
-        return ResponseEntity.ok(postUseCase.write(requestDto, currentUser));
+        return ResponseEntity.ok(postUseCase.writePostAsTempSave(requestDto, currentUser));
     }
 
     @PatchMapping("/{postId}/status")

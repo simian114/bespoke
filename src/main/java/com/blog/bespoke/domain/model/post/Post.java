@@ -75,7 +75,7 @@ public class Post extends TimeStamp {
 
     public void init(User author) {
         this.author = author;
-        this.status = Status.DRAFT;
+        this.status = Status.TEMP_SAVE;
         this.postCountInfo = PostCountInfo.builder().post(this).build();
     }
 
@@ -148,6 +148,7 @@ public class Post extends TimeStamp {
 
 
     public enum Status {
+        TEMP_SAVE,
         DRAFT,
         PUBLISHED,
         HIDDEN, // 숨김처리
