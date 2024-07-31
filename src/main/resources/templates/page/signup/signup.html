@@ -13,20 +13,65 @@
 <body>
 
 <section class="common-page section px-2">
-    <form action="/signup"
+    <input form="signup-form" type="file"
+           name="avatar" id="avatar"
+           accept="image/jpg, image/jpeg, image/bmp, image/png, image/svg, image/webp"
+           class="is-display-none"
+    />
+    <script>
+        me('prev').on("change", (ev) => {
+            const target = me(ev);
+            if (target?.files?.length > 0) {
+                const img = document.querySelector("#avatar-preview");
+                img.src = URL.createObjectURL(target.files[0])
+                img.classList.remove("is-display-none");
+            }
+        })
+    </script>
+    <form id="signup-form"
+          action="/signup"
           enctype="multipart/form-data"
-          method="post"
-          th:action target="this"
-          hx-boost="true"
+          th:action
           th:object="${user}"
+          method="post"
+          hx-target="this"
+          hx-boost="true"
+          hx-swap="outerHTML"
     >
-        <div layout:replace="~{fragments/form/layout-input :: input('email', 'Email', 'email', 'email@gmail.com', true)}"></div>
-        <div layout:replace="~{fragments/form/layout-input :: input('nickname', 'Nickname', 'text', 'nickname', true)}"></div>
-        <div layout:replace="~{fragments/form/layout-input :: input('name', 'Name', 'text', 'What is you name', false)}"></div>
-        <div layout:replace="~{fragments/form/layout-input :: input('password', 'Password', 'password', '', true)}"></div>
+        <!--        email start-->
+        <div layout:replace="~{fragments/form/layout-input :: input('email', 'Email', 'email', 'email@gmail.com', true)}">
+        </div>
+        <!--        email end-->
+        <!--        nickname start-->
+        <div layout:replace="~{fragments/form/layout-input :: input('nickname', 'Nickname', 'text', 'nickname', true, 4, 30)}">
+            <p  class="help">
+                Nickname must be between 4 and 30 characters
+                <br />
+                Nickname can only contain letters, digits, and at most one hyphen
+            </p>
+<!--            <th:block layout:fragment="info" th:unless="${#fields.hasErrors('nickname')}">-->
+<!--                <p  class="help">-->
+<!--                    Nickname must be between 4 and 30 characters-->
+<!--                    <br />-->
+<!--                    Nickname can only contain letters, digits, and at most one hyphen-->
+<!--                </p>-->
+<!--            </th:block>-->
+
+        </div>
+        <!--        nickname end-->
+        <!--        name start-->
+        <div layout:replace="~{fragments/form/layout-input :: input('name', 'Name', 'text', 'What is you name', false, 3, 30)}"></div>
+        <!--        name end-->
+        <!--        password start-->
+        <div layout:replace="~{fragments/form/layout-input :: input('password', 'Password', 'password', '', true, 4, 30)}">
+            <p layout:fragment="info" class="help">
+                Password must be between 4 and 30 characters
+            </p>
+        </div>
+        <!--        password end-->
         <!--  cover start     -->
         <div id="avatar-input-container" class="file has-name field block is-flex-direction-column is-flex">
-            <label class="label">Avatar</label>
+            <div class="label">Avatar</div>
             <div class="is-flex is-gap-3 is-align-items-center">
                 <figure class="image is-48x48 is-position-relative" style="width: 48px;height: 48px;">
                     <img
@@ -36,25 +81,19 @@
                             src="https://bespoke-blog-dev.s3.ap-northeast-2.amazonaws.com/avatar.png"
                             style="height: 100%;"
                     />
+                    <script>
+                        me().run(() => {
+                            const fileInput = document.querySelector("#avatar");
+                            if (fileInput?.files?.length > 0) {
+                                const img = document.querySelector("#avatar-preview");
+                                img.src = URL.createObjectURL(fileInput.files[0])
+                                img.classList.remove("is-display-none");
+                            }
+                        })
+                    </script>
                 </figure>
                 <div class="control">
-                    <label class="file-label">
-                        <input class="file-input"
-                               type="file"
-                               accept="image/jpg, image/jpeg, image/bmp, image/png, image/svg, image/webp"
-                               th:field="*{avatar}"
-                        />
-                        <script>
-                            me('prev').on("change", (ev) => {
-                                const target = me(ev);
-                                if (target?.files?.length > 0) {
-                                    const img = document.querySelector("#avatar-preview");
-                                    img.src = URL.createObjectURL(target.files[0])
-                                    img.classList.remove("is-display-none");
-                                }
-                            })
-                        </script>
-
+                    <label class="file-label" for="avatar">
                         <span class="file-cta">
                             <span class="file-icon">
                                 <i class="fas fa-upload"></i>
@@ -66,18 +105,8 @@
                 </div>
             </div>
         </div>
-
         <!--  cover end     -->
         <div layout:replace="~{fragments/introduceEditor :: editor('introduce')}"></div>
-
-        <div class="field">
-            <div class="control">
-                <label class="checkbox">
-                    <input type="checkbox">
-                    I agree to the <a href="#">terms and conditions</a>
-                </label>
-            </div>
-        </div>
         <div>
             <th:block th:if="${#fields.hasGlobalErrors()}">
                 <p class="help is-danger" th:each="err :${#fields.globalErrors()}" th:text="${err}"></p>

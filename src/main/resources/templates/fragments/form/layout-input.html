@@ -5,7 +5,7 @@
 >
 <body>
 <!-- NOTE: layout fragment 를 사용하면 내부에 태그 넣는게 그래도 더 편한 -->
-<th:block layout:fragment="input(field, label, type, placeholder, required)">
+<th:block layout:fragment="input(field, label, type, placeholder, required, minlength, maxlength)">
     <div class="field" th:with="fieldName=${field}">
         <label class="label" th:text="${label}">label</label>
         <div class="control has-icons-right">
@@ -13,12 +13,15 @@
             <input class="input" th:required="${required}" th:field="*{__${fieldName}__}" th:type="${type}"
                    th:placeholder="${placeholder}"
                    th:errorclass="is-danger"
+                   th:minlength="${minlength}"
+                   th:maxlength="${maxlength}"
             >
             <span th:if="${#fields.hasErrors(fieldName)}" class="icon is-right has-text-danger">
                 <i class="fas fa-xmark fa-sm"></i>
             </span>
             <script layout:fragment="script"></script>
         </div>
+        <p layout:fragment="info"></p>
         <p class="help is-danger" th:errors="*{__${fieldName}__}"></p>
     </div>
 </th:block>

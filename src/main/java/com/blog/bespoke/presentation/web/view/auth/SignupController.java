@@ -51,7 +51,7 @@ public class SignupController {
     ) {
         if (bindingResult.hasErrors()) {
             return HtmxResponse.builder()
-                    .view("/page/signup/signup")
+                    .view("/page/signup/signup :: form")
                     .trigger("reload:tinymce")
                     .preventHistoryUpdate()
                     .build();
@@ -63,24 +63,26 @@ public class SignupController {
              * form 전체에 적용되는 에러는 ObjectError 를 사용하고
              * 필드 하나에 적용되는 에러는 FieldError 를 사용한다.
              */
-            // NOTE: global error - 이메일 중복됨 / nickname 중복됨
-            // bindingResult.addError(new FieldError("user", "email", "이메일 중복됨"));
-            if (e.getStatusCode() == ErrorCode.OVER_AVATAR_LIMIT_SIZE.getStatusCode() ||
-                    e.getStatusCode() == ErrorCode.UNSUPPORTED_IMAGE.getStatusCode()
+            if (e.getMessage().equals(ErrorCode.OVER_AVATAR_LIMIT_SIZE.getMessage()) ||
+                    e.getMessage().equals(ErrorCode.UNSUPPORTED_IMAGE.getMessage())
             ) {
                 bindingResult.addError(new FieldError("user", "avatar", e.getMessage()));
+            } else if (e.getMessage().equals(ErrorCode.EXISTS_EMAIL.getMessage())) {
+                bindingResult.addError(new FieldError("user", "email", e.getMessage()));
+            } else if (e.getMessage().equals(ErrorCode.EXISTS_NICKNAME.getMessage())) {
+                bindingResult.addError(new FieldError("user", "nickname", e.getMessage()));
             } else {
                 bindingResult.addError(new ObjectError("user", e.getMessage()));
             }
 
             return HtmxResponse.builder()
-                    .view("/page/signup/signup")
+                    .view("/page/signup/signup :: form")
                     .preventHistoryUpdate()
                     .trigger("reload:tinymce")
                     .build();
         } catch (Exception e) {
             return HtmxResponse.builder()
-                    .view("/page/signup/signup")
+                    .view("/page/signup/signup :: form")
                     .trigger("reload:tinymce")
                     .preventHistoryUpdate()
                     .build();
