@@ -184,19 +184,19 @@
                 </details>
             </div>
 
-            <th:block th:if="${post.categories != null}">
-                <div class="field">
-                    <label class="label">Category</label>
-                    <div class="control">
-                        <div class="select">
-                            <select th:field="*{categoryId}">
-                                <option value="">Choose Category</option>
-                                <option th:value="${category.id}" th:each="category: ${post.categories}"
-                                        th:text="${category.name}"></option>
-                            </select>
-                        </div>
+            <div class="field">
+                <label class="label">Category</label>
+                <div class="control">
+                    <div class="select">
+                        <select th:field="*{categoryId}">
+                            <option value="">Choose Category</option>
+                            <option th:value="${category.id}" th:each="category: ${post.categories}"
+                                    th:text="${category.name}"></option>
+                        </select>
                     </div>
                 </div>
+            </div>
+            <th:block th:if="${post.categories != null}">
             </th:block>
         </div>
 
@@ -216,10 +216,22 @@
             <input type="hidden" th:field="*{prevCoverUrl}"/>
         </div>
 
+        <input type="hidden" th:field="*{status}" value="DRAFT"/>
 
         <div class="field is-grouped">
             <div class="control">
-                <button class="button is-link">Submit As Draft</button>
+                <!--                <button class="button is-link">Submit As Draft</button>-->
+                <!--NOTE: status == TEMP_SAVE, DRAFT 면 아래, 그게 아니면 Submit-->
+                <button class="button is-link"
+                        th:if="${post.status.name() == 'DRAFT'}"
+                >
+                    Submit As DRAFT
+                </button>
+                <button class="button is-link"
+                        th:if="${post.status.name() != 'DRAFT'}"
+                >
+                    Submit
+                </button>
             </div>
             <div class="control">
                 <!--  TODO:  -->

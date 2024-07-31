@@ -148,7 +148,7 @@ public class MyBlogController {
         PostCreateRequestDto dto = PostCreateRequestDto.builder()
                 .title("")
                 .build();
-        PostResponseDto post = postUseCase.write(dto, currentUser);
+        PostResponseDto post = postUseCase.writePostAsTempSave(dto, currentUser);
         return String.format("redirect:/blog/manage/posts/%d/edit", post.getId());
     }
 

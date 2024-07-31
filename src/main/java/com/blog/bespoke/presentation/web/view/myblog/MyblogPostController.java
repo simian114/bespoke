@@ -60,7 +60,11 @@ public class MyblogPostController {
                 .prevCoverUrl(post.getCover() != null ? post.getCover().getUrl() : null)
                 .prevCoverOriginalFilename(post.getCover() != null ? post.getCover().getOriginalFilename() : null)
                 .categories(me.getCategories() != null ? me.getCategories().stream().map(c -> UserResponseDto.CategoryResponseDto.builder().id(c.getId()).name(c.getName()).build()).toList() : null)
-                .status(post.getStatus())
+                .status(
+                        post.getStatus() == Post.Status.TEMP_SAVE
+                                ? Post.Status.DRAFT
+                                : post.getStatus()
+                )
                 .build();
 
         // category list 또한 list 형태로 제공해야할듯?

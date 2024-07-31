@@ -21,7 +21,7 @@ public class PostCreateRequestDto {
         return Post.builder()
                 .title(title)
                 .description(description)
-                .status(Post.Status.DRAFT)
+                .status(Post.Status.TEMP_SAVE)
                 .build();
     }
 }
