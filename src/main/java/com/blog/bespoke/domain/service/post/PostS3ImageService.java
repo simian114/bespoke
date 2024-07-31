@@ -16,14 +16,12 @@ public class PostS3ImageService {
 
     public boolean checkCanUpload(MultipartFile file) {
         if (!isSupportedContentType(file.getContentType())) {
-//            return ResponseEntity.badRequest().body("Unsupported file type. Please upload a JPG, JPEG, PNG, GIF, or WebP image.");
-            throw new BusinessException(ErrorCode.BAD_REQUEST);
+            throw new BusinessException(ErrorCode.UNSUPPORTED_IMAGE);
         }
 
         // 2. 파일 용량 확인. 최대 사이즈: 5mb. 만약 5mb 넘을 시 ResponseEntity.badRequest
         if (file.getSize() > MAX_FILE_SIZE) {
-//            return ResponseEntity.badRequest().body("File size exceeds the limit of 5MB.");
-            throw new BusinessException(ErrorCode.BAD_REQUEST);
+            throw new BusinessException(ErrorCode.COVER_IMAGE_LIMIT_SIZE);
         }
         return true;
     }

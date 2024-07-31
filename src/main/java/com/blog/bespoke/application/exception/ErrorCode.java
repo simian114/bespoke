@@ -46,7 +46,8 @@ public enum ErrorCode {
 
     // image
     UNSUPPORTED_IMAGE(HttpStatus.BAD_REQUEST, "jpeg, jpg, png, gif, webp 만 올릴 수 있습니다." ),
-    OVER_AVATAR_LIMIT_SIZE(HttpStatus.BAD_REQUEST, "아바타 이미지 최대 크기는 1MB입니다.")
+    OVER_AVATAR_LIMIT_SIZE(HttpStatus.BAD_REQUEST, "아바타 이미지 최대 크기는 1MB입니다."),
+    COVER_IMAGE_LIMIT_SIZE(HttpStatus.BAD_REQUEST, "커버 이미지 최대 크기는 5MB입니다.")
     ;
 
     private final HttpStatus statusCode;
