@@ -1,6 +1,8 @@
 @use "bulma/sass/utilities/mixins";
 @use "bulma/sass/utilities/extends";
 
-@include mixins.tablet {
-
+.post-detail-page {
+  &__cover-img {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
 }

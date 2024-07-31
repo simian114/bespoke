@@ -27,12 +27,11 @@
 </head>
 <body layout:fragment="content">
 
-<section class="common-page section px-2">
+<section class="common-page section px-2 post-detail-page">
     <div class="container">
-
         <div th:if="${post.cover != null}">
             <figure class="image is-16by9 has-radius-normal">
-                <img th:src="${post.cover.url}" class="has-radius-large">
+                <img th:src="${post.cover.url}" class="post-detail-page__cover-img has-radius-large">
             </figure>
         </div>
 
