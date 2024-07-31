@@ -3,13 +3,12 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}"
-      layout:fragment="content"
 >
 <head>
     <title>프로필</title>
     <script type="text/javascript" th:src="@{/js/tinymce/tinymce.min.js}"></script>
 </head>
-<body hx-boost="false">
+<body hx-boost="false" layout:fragment="content">
 <section class="section px-2">
     <nav th:replace="page/myblog/navigator :: navigator"></nav>
     <input form="profile-form" type="file"
