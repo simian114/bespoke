@@ -11,13 +11,13 @@
     <p class="panel-tabs">
         <!--  현재의 url 과 비교해서 is-active class 추가  -->
         <a hx-boost="false" hx-swap="outerHTML transition: true"
-           th:href="@{/blog/manage/profile}">프로필</a>
+           th:href="@{/blog/manage/profile}">profile</a>
         <a hx-swap="outerHTML transition: true"
-           th:href="@{/blog/manage/posts}">게시글</a>
+           th:href="@{/blog/manage/posts}">post</a>
+<!--        <a hx-swap="outerHTML transition: true"-->
+<!--           th:href="@{/blog/manage/follows}">follow</a>-->
         <a hx-swap="outerHTML transition: true"
-           th:href="@{/blog/manage/follows}">팔로우</a>
-        <a hx-swap="outerHTML transition: true"
-           th:href="@{/blog/manage/categories}">카테고리</a>
+           th:href="@{/blog/manage/categories}">category</a>
         <script>
             any(".panel-tabs a")?.forEach(el => {
                 const currentUrl = window.location.pathname;
