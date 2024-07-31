@@ -13,14 +13,37 @@
 <body hx-boost="false">
 
 <section class="section px-2">
-    <form class="container"
-          enctype="multipart/form-data"
-          hx-target="this" hx-swap="outerHTML"
-          th:object="${post}"
-          th:action
-          hx-boost="true"
-          method="post"
-          style="max-width: 640px;"
+    <input
+            form="post-form"
+            type="file"
+            name="cover"
+            id="cover"
+            accept="image/jpg, image/jpeg, image/bmp, image/png, image/svg, image/webp"
+            class="is-display-none"
+    />
+    <script>
+        me('prev').on("change", (ev) => {
+            const target = me(ev);
+            if (target?.files?.length > 0) {
+                const fileName = document.querySelector("#cover-input-container .file-name");
+                const details = document.querySelector("#cover-preview-details");
+                const img = document.querySelector("#cover-preview");
+                fileName.textContent = target.files[0].name;
+                img.src = URL.createObjectURL(target.files[0])
+                details.classList.remove("is-display-none");
+            }
+        })
+    </script>
+    <form
+            id="post-form"
+            class="container"
+            enctype="multipart/form-data"
+            hx-target="this" hx-swap="outerHTML"
+            th:object="${post}"
+            th:action
+            hx-boost="true"
+            method="post"
+            style="max-width: 640px;"
     >
         <div class="container" th:fragment="normal-field">
             <div class="field">
@@ -89,21 +112,7 @@
                 <label class="label">Cover</label>
 
                 <div class="control" th:classappend="${post.prevCoverId != null ? 'is-display-none' : ''}">
-                    <label class="file-label">
-                        <input class="file-input" type="file" name="cover"/>
-                        <script>
-                            me('prev').on("change", (ev) => {
-                                const target = me(ev);
-                                if (target?.files?.length > 0) {
-                                    const fileName = document.querySelector("#cover-input-container .file-name");
-                                    const details = document.querySelector("#cover-preview-details");
-                                    const img = document.querySelector("#cover-preview");
-                                    fileName.textContent = target.files[0].name;
-                                    img.src = URL.createObjectURL(target.files[0])
-                                    details.classList.remove("is-display-none");
-                                }
-                            })
-                        </script>
+                    <label class="file-label" for="cover">
                         <span class="file-cta">
                           <span class="file-icon">
                             <i class="fas fa-upload"></i>
@@ -144,7 +153,7 @@
                     </button>
                 </div>
 
-                <details id="cover-preview-details" open class="is-display-none mt-2"
+                <details id="cover-preview-details" open class="mt-2"
                          th:classappend="${post.prevCoverId != null ? 'is-display-block' : ''}">
                     <summary>
                         Cover preview
@@ -155,9 +164,22 @@
                                 <img id="cover-preview"
                                      class="is-max"
                                      style="max-width: 100%;object-fit:cover;"
-                                     th:src="${post.prevCoverId != null ? post.prevCoverUrl : ''}"
-                                     src="https://bulma.io/assets/images/placeholders/128x128.png"/>
+                                     th:src="${post.prevCoverId != null ? post.prevCoverUrl : 'https://bulma.io/assets/images/placeholders/1280x960.png'}"
+                                     src="https://bulma.io/assets/images/placeholders/1280x960.png"/>
                             </figure>
+                            <script>
+                                me().run(() => {
+                                    const fileInput = document.querySelector("#cover");
+                                    if (fileInput?.files?.length > 0) {
+                                        const details = document.querySelector("#cover-preview-details");
+                                        const img = document.querySelector("#cover-preview");
+                                        img.src = URL.createObjectURL(fileInput.files[0])
+                                        details.classList.add("is-display-block");
+                                        details.classList.remove("is-display-none");
+                                    }
+                                })
+                            </script>
+
                         </div>
                     </div>
                 </details>
@@ -180,7 +202,7 @@
         </div>
 
         <div th:classappend="mt-2"></div>
-        <div layout:replace="fragments/form/layout-input :: tinymce('content', 'Content','hello world!', true, ${imageUploadUrl})"></div>
+        <div layout:replace="fragments/form/layout-input :: tinymce('content', 'Content','hello world!', true, ${imageUploadUrl}, 'post-editor')"></div>
 
         <!--  NOTE: hidden 데이터 전송. -->
         <th:block th:if="${post.categories != null}">
