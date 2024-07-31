@@ -3,14 +3,13 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}"
-      layout:fragment="content"
 >
 <head>
     <title>회원가입</title>
     <script type="text/javascript" th:src="@{/js/tinymce/tinymce.min.js}"></script>
 </head>
 
-<body>
+<body layout:fragment="content">
 
 <section class="common-page section px-2">
     <input form="signup-form" type="file"

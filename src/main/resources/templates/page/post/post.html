@@ -3,7 +3,6 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}"
-      layout:fragment="content"
 >
 <head>
     <title th:text="|${post.title}|">Bespoke</title>
@@ -26,7 +25,7 @@
     <meta property="twitter:description" th:content="${post.description}">
     <meta property="twitter:image" th:content="${post.cover != null ? post.cover.url : 'https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png'}">
 </head>
-<body>
+<body layout:fragment="content">
 
 <section class="common-page section px-2">
     <div class="container">

@@ -3,12 +3,11 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}"
-      layout:fragment="content"
 >
 <head>
     <title th:text="notifications">title</title>
 </head>
-<body>
+<body layout:fragment="content">
 <section class="common-page section px-2">
     <div class="container">
         <div>
