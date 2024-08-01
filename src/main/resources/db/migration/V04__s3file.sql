@@ -18,13 +18,13 @@ ALTER TABLE post
 # user avatar
 create table s3_user_image
 (
-    s3_user_image_id bigint primary key auto_increment,
+    s3_user_image_id  bigint primary key auto_increment,
     url               varchar(255),
     original_filename varchar(255),
     filename          varchar(50),
     size              bigint,
     mime_type         varchar(255),
     type              varchar(20) default 'AVATAR',
-    user_id           bigint,
+    user_id           bigint not null,
     foreign key (user_id) references users (user_id) on delete cascade
 );

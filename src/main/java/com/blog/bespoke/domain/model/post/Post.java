@@ -102,6 +102,9 @@ public class Post extends TimeStamp {
         if (postUpdateCmd.getCategory() != null) {
             category = postUpdateCmd.getCategory();
         }
+        if (postUpdateCmd.getStatus() != null) {
+            status = postUpdateCmd.getStatus();
+        }
     }
 
     public boolean canUpdateBy(User currentUser) {

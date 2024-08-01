@@ -16,4 +16,5 @@ public class PostUpdateCmd {
     private String description;
     private String content;
     private Category category;
+    private Post.Status status;
 }
