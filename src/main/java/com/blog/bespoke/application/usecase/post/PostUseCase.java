@@ -53,10 +53,9 @@ public class PostUseCase {
 
         Post post = postRepository.findById(postId, relation)
                 .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
+//        boolean likedByUser = currentUser != null && postRepository.existsPostLikeByPostIdAndUserId(post.getId(), currentUser.getId());
 
-        boolean likedByUser = currentUser != null && postRepository.existsPostLikeByPostIdAndUserId(post.getId(), currentUser.getId());
-
-        postService.getPostAndUpdateViewCountWhenNeeded(post, likedByUser, currentUser);
+        postService.getPostAndUpdateViewCountWhenNeeded(post, currentUser);
         return PostResponseDto.from(post, relation);
     }
 
@@ -151,7 +150,7 @@ public class PostUseCase {
 
         Category category = author.getCategories().stream().filter(c -> c.getId().equals(requestDto.getCategoryId()))
                 .findFirst().orElse(null);
-        PostUpdateCmd cmd = new PostUpdateCmd(requestDto.getTitle(), requestDto.getDescription(), requestDto.getContent(), category);
+        PostUpdateCmd cmd = new PostUpdateCmd(requestDto.getTitle(), requestDto.getDescription(), requestDto.getContent(), category, requestDto.getStatus());
         post.update(cmd);
         return PostResponseDto.from(postRepository.save(post), relation);
     }

@@ -121,7 +121,12 @@ public class PostRepositoryImpl implements PostRepository {
     // --- search
     @Override
     public Optional<Post> findById(Long postId, PostRelation relation) {
-        JPAQuery<Post> query = queryFactory.selectFrom(post).where(post.id.eq(postId));
+
+        JPAQuery<Post> query = queryFactory
+                .selectFrom(post)
+                .distinct()
+                .where(post.id.eq(postId));
+
         QCategory category = QCategory.category;
         QPostCountInfo postCountInfo = QPostCountInfo.postCountInfo;
         QUser user = QUser.user;
