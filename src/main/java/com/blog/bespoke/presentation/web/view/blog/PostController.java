@@ -39,6 +39,24 @@ public class PostController {
         model.addAttribute("postId", postId);
     }
 
+    /**
+     * 게시글 디테일 페이지에 접속했을 때 수행됨
+
+     * 한 번의 요청에는 최대 3개의 쿼리만 허용됨.
+
+     // NOTE: redis template?
+     * 캐싱
+     * 캐싱은 한 시간
+     * - (좋아요 & 댓글) 생성 / 취소 시 캐싱 새로고침
+     * - 주인장이 상태 변경하면 또는 삭제했을 시 캐싱 새로고침
+
+     * TODO: 좋아요, 팔로우
+     * - 클라이언트에서 revealed 되면 ajax로 요청
+
+     * TODO: TOC 구현.
+     * - 서버에서 만드는 것보다는 클라이언트에서 post.content 정보를 활용해서 만드는게 좋을듯
+     * - 모바일은 최상단에 details-summary 형태로 TOC 를 구현하자. pc 는 옆에 floating
+     */
     @GetMapping("/blog/posts/{postId}")
     public String postDetailPage(@PathVariable("postId") Long postId,
                                  @LoginUser User currentUser,
@@ -46,18 +64,22 @@ public class PostController {
         PostResponseDto post = postUseCase.showPostById(postId, currentUser);
 
         model.addAttribute("me", currentUser);
+        model.addAttribute("owner", post.getAuthor());
+
         model.addAttribute("isOwner", currentUser != null && currentUser.getNickname().equals(post.getAuthor().getNickname()));
         model.addAttribute("post", post);
-        model.addAttribute("owner", post.getAuthor());
-        boolean b = userFollowUseCase.checkFollow(currentUser, post.getAuthor().getId());
-        model.addAttribute("follow", b);
-        model.addAttribute("comment", CommentCreateRequestDto.builder().content("").build());
         model.addAttribute("postId", postId);
+
+//        TODO: ajax 로 옮기기
+//        boolean b = userFollowUseCase.checkFollow(currentUser, post.getAuthor().getId());
+//        model.addAttribute("follow", b);
+
+        // NOTE: 코멘트 영역
+        model.addAttribute("comment", CommentCreateRequestDto.builder().content("").build());
 
         // check already follow
 
         // TODO: 댓글...
-        // TODO: floating TOC 만들기. 모바일 환경에서는 최상단에 details / summary 형태로 구현
         return "page/post/post";
     }
 

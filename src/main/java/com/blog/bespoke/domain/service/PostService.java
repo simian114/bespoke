@@ -15,13 +15,9 @@ public class PostService {
      * 2. currentUser 가 없으면 likedByUser 는 없음
      * 3. 조건에 따라 viewcount 를 실행함
      */
-    public void getPostAndUpdateViewCountWhenNeeded(Post post, boolean likedByUser, User currentUser) {
+    public void getPostAndUpdateViewCountWhenNeeded(Post post, User currentUser) {
         if (!canShow(post, currentUser)) {
             throw new BusinessException(ErrorCode.POST_FORBIDDEN);
-        }
-
-        if (likedByUser) {
-            post.setLikedByUser(true);
         }
 
         if (shouldIncreaseViewCount(post, currentUser)) {
