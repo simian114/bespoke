@@ -28,7 +28,7 @@ public class RedisUtil {
         }
     }
 
-    public void delete(String key) {
+    public void invalidate(String key) {
         redisTemplate.delete(key);
     }
 
