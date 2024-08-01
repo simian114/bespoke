@@ -49,8 +49,11 @@
             <!--  NOTE: 해당 영역은 api call로 변경하기  -->
 
             <div class="is-flex is-align-items-baseline is-justify-content-flex-end">
+<!--                <span style="text-align: end;"-->
+<!--                      th:text="|${#temporals.format(post.createdAt, 'yyyy.MM.dd')}. by |"></span>-->
                 <span style="text-align: end;"
-                      th:text="|${#temporals.format(post.createdAt, 'yyyy.MM.dd')}. by |"></span>
+                      th:text="|${post.createdAt}. by |"></span>
+
                 &nbsp;
                 <a hx-boost="true" class="is-size-5 has-text-weight-semibold" th:text="${owner.nickname}"
                    th:href="@{/blog/{nickname}(nickname=${owner.nickname})}">
