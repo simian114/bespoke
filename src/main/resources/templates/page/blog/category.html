@@ -92,7 +92,7 @@
                        th:href="@{/blog/posts/{postId}(postId=${post.id})}">
                         <h3 class="has-text-weight-semibold is-size-5" th:text="${post.title}"></h3>
                         <span class="is-size-6"
-                              th:text="|${#temporals.format(post.createdAt, 'yyyy.MM.dd')}.|"></span>
+                              th:text="${post.createdAt}"></span>
                     </a>
                 </li>
                 <li class="post-item" th:if="${(hasNextPage ?: true)}"

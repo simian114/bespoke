@@ -28,6 +28,10 @@ public class RedisUtil {
         }
     }
 
+    public void delete(String key) {
+        redisTemplate.delete(key);
+    }
+
     public void set(String key, Object value) {
         templateSet(key, value, TtlAsMilliSeconds, TimeUnit.MILLISECONDS);
     }
@@ -43,4 +47,5 @@ public class RedisUtil {
             log.error(key, " redis 직렬화 실패", e);
         }
     }
+
 }
