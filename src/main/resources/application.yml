@@ -18,9 +18,9 @@ aws:
 spring:
   application:
     name: bespoke
-  #  data:
-  #    redis:
-  #      port: ${REDIS_PORT}
+  data:
+    redis:
+      port: ${REDIS_PORT}
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/bespoke

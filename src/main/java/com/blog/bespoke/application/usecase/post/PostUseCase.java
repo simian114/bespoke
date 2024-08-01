@@ -19,6 +19,7 @@ import com.blog.bespoke.domain.service.post.PostS3ImageService;
 import com.blog.bespoke.domain.service.post.PostSearchService;
 import com.blog.bespoke.infrastructure.aws.s3.service.S3Service;
 import com.blog.bespoke.infrastructure.repository.post.S3PostImageRepository;
+import com.blog.bespoke.infrastructure.repository.redis.RedisUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,23 +41,39 @@ public class PostUseCase {
     private final PostSearchService postSearchService;
     private final EventPublisher publisher;
     private final S3Service s3Service;
+    private final RedisUtil redisUtil;
 
     /**
      * 게시글 디테일 페이지
+     * 누군가 좋아요 를 하면 캐싱 무효화
      * 1. 내가 좋아요 했는지 여부
      * 2. 좋아요수
      * 3. 조회수
      */
     @Transactional
     public PostResponseDto showPostById(Long postId, User currentUser) {
-        PostRelation relation = PostRelation.builder().count(true).author(true).category(true).build();
+        String CACHE_KEY = "showPostById:" + postId;
 
-        Post post = postRepository.findById(postId, relation)
-                .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
-//        boolean likedByUser = currentUser != null && postRepository.existsPostLikeByPostIdAndUserId(post.getId(), currentUser.getId());
+        PostResponseDto dto = redisUtil.get(CACHE_KEY, PostResponseDto.class);
 
-        postService.getPostAndUpdateViewCountWhenNeeded(post, currentUser);
-        return PostResponseDto.from(post, relation);
+        if (dto == null) {
+            PostRelation relation = PostRelation.builder().count(true).author(true).category(true).build();
+            dto = postRepository.findById(postId, relation)
+                    .map(p -> PostResponseDto.from(p, relation))
+                    .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
+            // NOTE: 캐싱은 기본 한 시간
+            redisUtil.set(CACHE_KEY, dto);
+        }
+
+        /*
+         * TODO
+         * 조건에 따른 조회수 증가 로직을 구현해야함. 그런에 redis 를 이용해 entity 가 아닌 dto 를 가져와서
+         * post 의 비즈니스 메서드를 호출할 수 없음.
+         * 아직 마땅한 해결방법을 찾지 못함. 해결 방법 찾은 이후 바로 수정할것.
+         */
+        // postService.getPostAndUpdateViewCountWhenNeeded(post, currentUser);
+
+        return dto;
     }
 
     /**
