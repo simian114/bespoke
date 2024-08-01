@@ -43,6 +43,11 @@ public class PostUseCase {
     private final S3Service s3Service;
     private final RedisUtil redisUtil;
 
+    private String getPostDetailCacheKey(Long postId) {
+        String POST_DETAIL_CACHE_KEY = "showPostById:";
+        return POST_DETAIL_CACHE_KEY + postId;
+    }
+
     /**
      * 게시글 디테일 페이지
      * 누군가 좋아요 를 하면 캐싱 무효화
@@ -52,9 +57,7 @@ public class PostUseCase {
      */
     @Transactional
     public PostResponseDto showPostById(Long postId, User currentUser) {
-        String CACHE_KEY = "showPostById:" + postId;
-
-        PostResponseDto dto = redisUtil.get(CACHE_KEY, PostResponseDto.class);
+        PostResponseDto dto = redisUtil.get(getPostDetailCacheKey(postId), PostResponseDto.class);
 
         if (dto == null) {
             PostRelation relation = PostRelation.builder().count(true).author(true).category(true).build();
@@ -62,7 +65,11 @@ public class PostUseCase {
                     .map(p -> PostResponseDto.from(p, relation))
                     .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
             // NOTE: 캐싱은 기본 한 시간
-            redisUtil.set(CACHE_KEY, dto);
+            redisUtil.set(getPostDetailCacheKey(postId), dto);
+        }
+
+        if (!dto.getStatus().equals(Post.Status.PUBLISHED)) {
+            throw new BusinessException(ErrorCode.POST_FORBIDDEN);
         }
 
         /*
@@ -71,7 +78,7 @@ public class PostUseCase {
          * post 의 비즈니스 메서드를 호출할 수 없음.
          * 아직 마땅한 해결방법을 찾지 못함. 해결 방법 찾은 이후 바로 수정할것.
          */
-        // postService.getPostAndUpdateViewCountWhenNeeded(post, currentUser);
+//         postService.getPostAndUpdateViewCountWhenNeeded(post, currentUser);
 
         return dto;
     }
@@ -139,11 +146,15 @@ public class PostUseCase {
         if (asIs == Post.Status.PUBLISHED && cmd.getStatus() != Post.Status.PUBLISHED) {
             userRepository.decrementPublishedPostCount(post.getAuthor().getId());
         }
+        redisUtil.delete(getPostDetailCacheKey(postId));
 
         return PostResponseDto.from(postRepository.save(post));
     }
 
 
+    /**
+     * 업데이트 성공 후에는 캐싱 무효화 해야함.
+     */
     @Transactional
     public PostResponseDto updatePost(Long postId, PostUpdateRequestDto requestDto, User currentUser) {
         User author = userRepository.getById(currentUser.getId(), UserRelation.builder().categories(true).build());
@@ -169,6 +180,8 @@ public class PostUseCase {
                 .findFirst().orElse(null);
         PostUpdateCmd cmd = new PostUpdateCmd(requestDto.getTitle(), requestDto.getDescription(), requestDto.getContent(), category, requestDto.getStatus());
         post.update(cmd);
+        redisUtil.delete(getPostDetailCacheKey(postId));
+        // NOTE: 캐싱 제거
         return PostResponseDto.from(postRepository.save(post), relation);
     }
 
@@ -179,6 +192,7 @@ public class PostUseCase {
             throw new BusinessException(ErrorCode.POST_FORBIDDEN);
         }
         post.delete();
+        redisUtil.delete(getPostDetailCacheKey(postId));
         postRepository.save(post);
     }
 
@@ -197,7 +211,6 @@ public class PostUseCase {
         try {
             // s3 에 업로드 됨
             unSavedImage = s3Service.uploadFile(file);
-
         } catch (IOException e) {
             log.error("error..", e);
             throw new RuntimeException(e);
