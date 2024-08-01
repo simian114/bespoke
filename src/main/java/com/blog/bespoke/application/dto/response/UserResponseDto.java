@@ -1,17 +1,22 @@
 package com.blog.bespoke.application.dto.response;
 
 import com.blog.bespoke.domain.model.category.Category;
-import com.blog.bespoke.domain.model.user.*;
+import com.blog.bespoke.domain.model.user.User;
+import com.blog.bespoke.domain.model.user.UserCountInfo;
+import com.blog.bespoke.domain.model.user.UserProfile;
+import com.blog.bespoke.domain.model.user.UserRelation;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 
 @Builder
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserResponseDto {
     private Long id;
     private String email;
@@ -56,7 +61,7 @@ public class UserResponseDto {
                         : null
                 )
                 .countInfo(relation.isCount() ? UserCountInfoResponseDto.from(user.getUserCountInfo()) : null)
-                .userProfile(relation.isProfile()&& user.getUserProfile() != null ? UserProfileResponseDto.from(user.getUserProfile()) : null)
+                .userProfile(relation.isProfile() && user.getUserProfile() != null ? UserProfileResponseDto.from(user.getUserProfile()) : null)
                 .introduce(relation.isProfile() && user.getUserProfile() != null ? user.getUserProfile().getIntroduce() : null)
                 .avatar(relation.isAvatar() && user.getAvatar() != null ? S3UserAvatarResponseDto.from(user.getAvatar()) : null)
                 .avatarUrl(relation.isAvatar() && user.getAvatar() != null ? user.getAvatar().getUrl() : null)
@@ -87,9 +92,11 @@ public class UserResponseDto {
         private boolean visible;
         private String url;
         private Integer priority;
-        private LocalDateTime createdAt;
+        private String createdAt;
 
-        static private CategoryResponseDto from(Category category) {
+        static public CategoryResponseDto from(Category category) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+
             return CategoryResponseDto.builder()
                     .id(category.getId())
                     .name(category.getName())
@@ -97,11 +104,12 @@ public class UserResponseDto {
                     .url(category.getUrl())
                     .visible(category.isVisible())
                     .priority(category.getPriority())
-                    .createdAt(category.getCreatedAt())
+                    .createdAt(category.getCreatedAt().format(formatter))
                     .build();
         }
     }
 
+    @NoArgsConstructor
     @AllArgsConstructor
     @Data
     @Builder
@@ -111,7 +119,6 @@ public class UserResponseDto {
         private long publishedPostCount;
         private long likePostCount;
         private long commentCount;
-
 
         static public UserCountInfoResponseDto from(UserCountInfo info) {
             if (info == null) {
