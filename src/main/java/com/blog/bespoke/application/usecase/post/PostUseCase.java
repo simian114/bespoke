@@ -146,7 +146,7 @@ public class PostUseCase {
         if (asIs == Post.Status.PUBLISHED && cmd.getStatus() != Post.Status.PUBLISHED) {
             userRepository.decrementPublishedPostCount(post.getAuthor().getId());
         }
-        redisUtil.delete(getPostDetailCacheKey(postId));
+        redisUtil.invalidate(getPostDetailCacheKey(postId));
 
         return PostResponseDto.from(postRepository.save(post));
     }
@@ -180,7 +180,7 @@ public class PostUseCase {
                 .findFirst().orElse(null);
         PostUpdateCmd cmd = new PostUpdateCmd(requestDto.getTitle(), requestDto.getDescription(), requestDto.getContent(), category, requestDto.getStatus());
         post.update(cmd);
-        redisUtil.delete(getPostDetailCacheKey(postId));
+        redisUtil.invalidate(getPostDetailCacheKey(postId));
         // NOTE: 캐싱 제거
         return PostResponseDto.from(postRepository.save(post), relation);
     }
@@ -192,7 +192,7 @@ public class PostUseCase {
             throw new BusinessException(ErrorCode.POST_FORBIDDEN);
         }
         post.delete();
-        redisUtil.delete(getPostDetailCacheKey(postId));
+        redisUtil.invalidate(getPostDetailCacheKey(postId));
         postRepository.save(post);
     }
 
