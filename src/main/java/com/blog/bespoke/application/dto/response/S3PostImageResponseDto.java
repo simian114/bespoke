@@ -1,11 +1,15 @@
 package com.blog.bespoke.application.dto.response;
 
 import com.blog.bespoke.domain.model.post.S3PostImage;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class S3PostImageResponseDto {
     private Long id;
     private S3PostImage.Type type;

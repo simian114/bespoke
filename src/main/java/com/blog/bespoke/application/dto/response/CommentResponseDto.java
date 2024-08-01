@@ -1,13 +1,17 @@
 package com.blog.bespoke.application.dto.response;
 
 import com.blog.bespoke.domain.model.comment.Comment;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Builder
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CommentResponseDto {
     private Long id;
     private String content;
