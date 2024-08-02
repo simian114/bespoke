@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j(topic = "redis")
@@ -25,6 +26,13 @@ public class RedisUtil {
             return objectMapper.convertValue(object, clazz);
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public void invalidateByPattern(String patternKey) {
+        Set<String> keys = redisTemplate.keys(patternKey);
+        if (keys != null && !keys.isEmpty()) {
+            redisTemplate.delete(keys);
         }
     }
 
