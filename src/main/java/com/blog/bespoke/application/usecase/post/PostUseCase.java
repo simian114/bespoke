@@ -15,8 +15,8 @@ import com.blog.bespoke.domain.model.user.UserRelation;
 import com.blog.bespoke.domain.repository.post.PostRepository;
 import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.blog.bespoke.domain.service.PostService;
+import com.blog.bespoke.domain.service.cache.PostCacheService;
 import com.blog.bespoke.domain.service.post.PostS3ImageService;
-import com.blog.bespoke.domain.service.post.PostSearchService;
 import com.blog.bespoke.infrastructure.aws.s3.service.S3Service;
 import com.blog.bespoke.infrastructure.repository.post.S3PostImageRepository;
 import com.blog.bespoke.infrastructure.repository.redis.RedisUtil;
@@ -37,10 +37,10 @@ public class PostUseCase {
     private final S3PostImageRepository imageRepository;
     private final PostService postService;
     private final PostS3ImageService postS3ImageService;
-    private final PostSearchService postSearchService;
     private final EventPublisher publisher;
     private final S3Service s3Service;
     private final RedisUtil redisUtil;
+    private final PostCacheService postCacheService;
 
     private String getPostDetailCacheKey(Long postId) {
         String POST_DETAIL_CACHE_KEY = "showPostById:";
@@ -109,18 +109,26 @@ public class PostUseCase {
     }
 
     /**
-     * DRAFT -> PUBLISHED 인 경우 이벤트 발생
-     * * -> DRAFT 는 안된다.
+     * 상태는 PUBLISHED / HIDDEN 둘 중 하나로 변한다.
+     * 이벤트
+     * - DRAFT -> PUBLISHED 의 경우만 published 이벤트 발송. 이렇게 해야지만 published 에 대한 이벤트가 한번만 보내지는 걸로 보장할 수 있음
+     * ---
+     * 캐싱
+     * - DRAFT -> HIDDEN 가 아닌 경우에 대해서 캐싱 invalidation
      */
     @Transactional
     public PostResponseDto changeStatus(Long postId, PostStatusCmd cmd, User currentUser) {
-        Post post = postRepository.getById(postId);
+        PostRelation relation = PostRelation.builder().category(true).build();
+        Post post = postRepository.getById(postId, relation);
+
         if (!post.canUpdateBy(currentUser)) {
             throw new BusinessException(ErrorCode.POST_FORBIDDEN);
         }
+
         if (!postService.canUpdateStatus(post, cmd.getStatus(), currentUser)) {
             throw new BusinessException(ErrorCode.POST_BAD_STATUS);
         }
+
         Post.Status asIs = post.getStatus();
 
         // NOTE: 기존 draft 에서 published 가 되면 이벤트 쏘기
@@ -140,7 +148,9 @@ public class PostUseCase {
         if (asIs == Post.Status.PUBLISHED && cmd.getStatus() != Post.Status.PUBLISHED) {
             userRepository.decrementPublishedPostCount(post.getAuthor().getId());
         }
-        redisUtil.invalidate(getPostDetailCacheKey(postId));
+        if (post.getCategory() != null) {
+            postCacheService.invalidateBlogCategoryPosts(post.getCategory().getId());
+        }
 
         return PostResponseDto.from(postRepository.save(post));
     }
@@ -152,7 +162,7 @@ public class PostUseCase {
     @Transactional
     public PostResponseDto updatePost(Long postId, PostUpdateRequestDto requestDto, User currentUser) {
         User author = userRepository.getById(currentUser.getId(), UserRelation.builder().categories(true).build());
-        PostRelation relation = PostRelation.builder().cover(true).build();
+        PostRelation relation = PostRelation.builder().category(true).cover(true).build();
         Post post = postRepository.getById(postId, relation);
         if (!post.canUpdateBy(currentUser)) {
             throw new BusinessException(ErrorCode.POST_FORBIDDEN);
@@ -173,20 +183,33 @@ public class PostUseCase {
         Category category = author.getCategories().stream().filter(c -> c.getId().equals(requestDto.getCategoryId()))
                 .findFirst().orElse(null);
         PostUpdateCmd cmd = new PostUpdateCmd(requestDto.getTitle(), requestDto.getDescription(), requestDto.getContent(), category, requestDto.getStatus());
+
         post.update(cmd);
-        redisUtil.invalidate(getPostDetailCacheKey(postId));
+        // 이미 publish 되어있으면 캐싱 제거
+        // category 를 변경한 경우라면? 이전 & 이후 모두 캐시 제거해줘야함
+        if (post.getStatus().equals(Post.Status.PUBLISHED) && post.getCategory() != null) {
+            // 이전
+            postCacheService.invalidateBlogCategoryPosts(post.getCategory().getId());
+            // 이후
+            if (!post.getCategory().getId().equals(cmd.getCategory().getId())) {
+                postCacheService.invalidateBlogCategoryPosts(cmd.getCategory().getId());
+            }
+        }
         // NOTE: 캐싱 제거
         return PostResponseDto.from(postRepository.save(post), relation);
     }
 
     @Transactional
     public void deletePost(Long postId, User currentUser) {
-        Post post = postRepository.getById(postId);
+        PostRelation relation = PostRelation.builder().category(true).build();
+        Post post = postRepository.getById(postId, relation);
         if (!post.canUpdateBy(currentUser)) {
             throw new BusinessException(ErrorCode.POST_FORBIDDEN);
         }
         post.delete();
-        redisUtil.invalidate(getPostDetailCacheKey(postId));
+        if (post.getStatus().equals(Post.Status.PUBLISHED) && post.getCategory() != null) {
+            postCacheService.invalidateBlogCategoryPosts(post.getCategory().getId());
+        }
         postRepository.save(post);
     }
 
