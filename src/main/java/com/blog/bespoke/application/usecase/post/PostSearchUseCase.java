@@ -24,13 +24,28 @@ public class PostSearchUseCase {
     private final PostRepository postRepository;
 
     /**
-     * 1. redis 캐시에서 찾음
-     * 2. 캐시에 존재하면 바로 return
-     * 3. 캐시에 존재하지 않으면 postSearch 를 이용해 데이터 가져옴
+     * 캐싱
+     *   1. redis 캐시에서 찾음
+     *   2. 캐시에 존재하면 바로 return
+     *   3. 캐시에 존재하지 않으면 postSearch 를 이용해 데이터 가져옴
+     * 어떤 경우에는 캐싱을 하면 안됨. -> manage 가 true 인 경우
+     * ---
+     * relation
+     *   list 에는 일단 공식적으로 relation 이 적용되지 않음.
+     *   왜냐면 list 요청에는 최소한의 정보만을 가져오기 때문임.
+     *   따라서 relation 의 역할은, entity -> dto 의 변환 과정에 관여하기 위함.
+     *
      */
     @Transactional
     public PostSearchResponseDto postSearch(PostSearchRequestDto requestDto, User currentUser) {
         PostSearchCond cond = requestDto.toModel();
+        PostRelation postRelation = PostRelation.builder().cover(true).author(true).build();
+        // NOTE: search 객체로 분리
+        if (!postSearchService.useMemoryCache(cond)) {
+            return PostSearchResponseDto.from(postRepository.search(cond)
+                    .map(post -> PostResponseDto.from(post, postRelation)));
+        }
+
         if (!postSearchService.canSearch(cond, currentUser)) {
             throw new BusinessException(ErrorCode.POST_FORBIDDEN);
         }
@@ -39,7 +54,7 @@ public class PostSearchUseCase {
             return cached;
         }
         PostSearchResponseDto res = PostSearchResponseDto.from(postRepository.search(cond)
-                .map(post -> PostResponseDto.from(post, PostRelation.builder().cover(true).build())));
+                .map(post -> PostResponseDto.from(post, postRelation)));
         redisUtil.set(CACHE_KEY_PREFIX + requestDto, res);
         return res;
     }
