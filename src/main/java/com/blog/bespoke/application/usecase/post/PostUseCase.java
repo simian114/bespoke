@@ -98,8 +98,6 @@ public class PostUseCase {
         return PostResponseDto.from(post, relation);
     }
 
-
-
     @Transactional
     public PostResponseDto writePostAsTempSave(PostCreateRequestDto requestDto, User currentUser) {
         // user 의 상태를 검사해야하나?
