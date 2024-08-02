@@ -25,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequiredArgsConstructor
-public class MyblogPostController {
+public class BlogPostManageController {
     private final PostUseCase postUseCase;
     private final UserUseCase userUseCase;
 

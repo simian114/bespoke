@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Controller
-public class MyBlogController {
+public class BlogManageController {
     private final UserUseCase userUseCase;
     private final PostUseCase postUseCase;
     private final UserCategoryUseCase userCategoryUseCase;
@@ -152,19 +152,6 @@ public class MyBlogController {
         return String.format("redirect:/blog/manage/posts/%d/edit", post.getId());
     }
 
-
-    @GetMapping("/blog/manage/follows")
-    public String followManage(@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
-                               @LoginUser User currentUser
-    ) {
-        // page
-        PostSearchCond postSearchCond = new PostSearchCond();
-        postSearchCond.setPage(page);
-        postSearchCond.setPageSize(20);
-        postSearchCond.setNickname(currentUser.getNickname());
-        Page<PostResponseDto> postPage = postUseCase.postSearch(postSearchCond, currentUser);
-        return "";
-    }
 
     /**
      * 카테고리 리스트
