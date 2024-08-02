@@ -1,16 +1,15 @@
 package com.blog.bespoke.presentation.web.view.blog;
 
-import com.blog.bespoke.application.dto.response.PostResponseDto;
+import com.blog.bespoke.application.dto.request.postSearch.PostSearchForBlogRequestDto;
+import com.blog.bespoke.application.dto.response.PostSearchResponseDto;
 import com.blog.bespoke.application.dto.response.UserResponseDto;
-import com.blog.bespoke.application.usecase.post.PostUseCase;
+import com.blog.bespoke.application.usecase.post.PostSearchUseCase;
 import com.blog.bespoke.application.usecase.user.UserUseCase;
-import com.blog.bespoke.domain.model.post.PostSearchCond;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +29,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 public class BlogController {
     private final UserUseCase userUseCase;
-    private final PostUseCase postUseCase;
-
+    private final PostSearchUseCase postSearchUseCase;
 
     // NOTE: /{nickname}/{category}
     @GetMapping("/{nickname}")
@@ -79,15 +77,16 @@ public class BlogController {
     // NOTE: 나중에..
     @HxRequest
     @GetMapping("/posts")
-    public String getUserPosts(@ModelAttribute PostSearchCond cond,
+    public String getUserPosts(@ModelAttribute PostSearchForBlogRequestDto requestDto,
                                @LoginUser User currentUser,
                                Model model) {
-        Page<PostResponseDto> posts = postUseCase.postSearch(cond, currentUser);
-        model.addAttribute("isEmpty", posts.getTotalElements() == 0);
+        PostSearchResponseDto posts = postSearchUseCase.postSearch(requestDto, currentUser);
+
+        model.addAttribute("isEmpty", posts.isEmpty());
         model.addAttribute("totalElements", posts.getTotalElements());
         model.addAttribute("hasNextPage", posts.hasNext());
         model.addAttribute("posts", posts.getContent());
-        model.addAttribute("page", posts.getPageable().getPageNumber() + 1);
+        model.addAttribute("page", posts.getPage() + 1);
 
         return "page/blog/category :: .post-list";
     }

@@ -23,7 +23,6 @@ import com.blog.bespoke.infrastructure.repository.redis.RedisUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,6 +45,11 @@ public class PostUseCase {
     private String getPostDetailCacheKey(Long postId) {
         String POST_DETAIL_CACHE_KEY = "showPostById:";
         return POST_DETAIL_CACHE_KEY + postId;
+    }
+
+    private String getPostSearchCacheKey(PostSearchCond cond) {
+        String POST_SEARCH_CACHE_KEY = "postSearch:";
+        return POST_SEARCH_CACHE_KEY + cond.toString();
     }
 
     /**
@@ -94,15 +98,7 @@ public class PostUseCase {
         return PostResponseDto.from(post, relation);
     }
 
-    @Transactional
-    public Page<PostResponseDto> postSearch(PostSearchCond cond, User currentUser) {
-        if (!postSearchService.canSearch(cond, currentUser)) {
-            throw new BusinessException(ErrorCode.POST_FORBIDDEN);
-        }
 
-        return postRepository.search(cond)
-                .map(post -> PostResponseDto.from(post, PostRelation.builder().cover(true).build()));
-    }
 
     @Transactional
     public PostResponseDto writePostAsTempSave(PostCreateRequestDto requestDto, User currentUser) {

@@ -40,7 +40,7 @@
                           hx-swap="outerHTML"
                           hx-target="closest .cell"
                           hx-trigger="revealed"
-                          hx:get="@{/hx/home/posts(page=${(page!=null?page:-1)+1},authorId=${param.authorId},orderBy=${param.orderBy})}"
+                          hx:get="@{/hx/home/posts(page=${(page!=null?page:-1)+1},orderBy=${param.orderBy})}"
                           hx-indicator="#htmx-skeleton"
                     ></span>
                 </div>
