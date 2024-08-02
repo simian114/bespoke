@@ -3,10 +3,13 @@ package com.blog.bespoke.presentation.web.view.myblog;
 import com.blog.bespoke.application.dto.request.CategoryCreateRequestDto;
 import com.blog.bespoke.application.dto.request.PostCreateRequestDto;
 import com.blog.bespoke.application.dto.request.UserUpdateRequestDto;
+import com.blog.bespoke.application.dto.request.postSearch.PostSearchForManageRequestDto;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
+import com.blog.bespoke.application.dto.response.PostSearchResponseDto;
 import com.blog.bespoke.application.dto.response.UserResponseDto;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
+import com.blog.bespoke.application.usecase.post.PostSearchUseCase;
 import com.blog.bespoke.application.usecase.post.PostUseCase;
 import com.blog.bespoke.application.usecase.user.UserCategoryUseCase;
 import com.blog.bespoke.application.usecase.user.UserUseCase;
@@ -31,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 public class BlogManageController {
     private final UserUseCase userUseCase;
     private final PostUseCase postUseCase;
+    private final PostSearchUseCase postSearchUseCase;
     private final UserCategoryUseCase userCategoryUseCase;
 
     @ModelAttribute
@@ -114,27 +118,22 @@ public class BlogManageController {
      */
     @GetMapping("/blog/manage/posts")
     public String postManage(
-            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @ModelAttribute PostSearchForManageRequestDto requestDto,
             @LoginUser User currentUser,
             Model model) {
-
         // TODO: 정리 필요함
-        PostSearchCond postSearchCond = new PostSearchCond();
-        postSearchCond.setPage(page);
-        postSearchCond.setPageSize(20);
-        postSearchCond.setManage(true);
-        postSearchCond.setNickname(currentUser.getNickname());
+        requestDto.setNickname(currentUser.getNickname());
+        model.addAttribute("posts", null);
+        PostSearchResponseDto posts = postSearchUseCase.postSearch(requestDto, currentUser);
 
-        Page<PostResponseDto> postPage = postUseCase.postSearch(postSearchCond, currentUser);
-
-        model.addAttribute("posts", postPage.getContent());
+        model.addAttribute("posts", posts.getContent());
 
         // 페이지네이션 관련된 객체로 하나 만들고 그거 넣으면 페이제네이션 완성되도록 하기.
-        model.addAttribute("totalElements", postPage.getTotalElements());
-        model.addAttribute("isLast", postPage.isLast());
-        model.addAttribute("isFirst", postPage.isFirst());
-        model.addAttribute("totalPages", postPage.getTotalPages());
-        model.addAttribute("page", page);
+        model.addAttribute("totalElements", posts.getTotalElements());
+        model.addAttribute("isLast", posts.hasNext());
+        model.addAttribute("isFirst", posts.hasPrevious());
+        model.addAttribute("totalPages", posts.getTotalPage());
+        model.addAttribute("page", posts.getPage());
 
         return "page/myblog/postTable";
     }

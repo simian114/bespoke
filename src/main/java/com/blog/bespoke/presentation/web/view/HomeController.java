@@ -1,8 +1,9 @@
 package com.blog.bespoke.presentation.web.view;
 
+import com.blog.bespoke.application.dto.request.postSearch.PostSearchForMainHomeRequestDto;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
-import com.blog.bespoke.application.usecase.post.PostUseCase;
-import com.blog.bespoke.domain.model.post.PostSearchCond;
+import com.blog.bespoke.application.dto.response.PostSearchResponseDto;
+import com.blog.bespoke.application.usecase.post.PostSearchUseCase;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
@@ -14,14 +15,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
-    private final PostUseCase postUseCase;
+    private final PostSearchUseCase postSearchUseCase;
 
     /**
      * NOTE
@@ -37,19 +37,6 @@ public class HomeController {
     public String home(HttpServletRequest request, HttpServletResponse response, @LoginUser User currentUser, Model model) {
         model.addAttribute("me", currentUser);
         // TODO: 캐싱
-//        response.setHeader("Cache-Control", "max-age=3600, must-revalidate, no-transform");
-//        response.setHeader("Pragma", "");
-//        response.setHeader("Expires", "");
-//        ZonedDateTime now = ZonedDateTime.now();
-//        response.setHeader("Last-Modified", now.format(DateTimeFormatter.RFC_1123_DATE_TIME));
-//        // 조건부 요청 처리
-//        String ifNoneMatch = request.getHeader("If-None-Match");
-//        String eTag = UUID.randomUUID().toString();
-//        response.setHeader("ETag", eTag);
-//        if (ifNoneMatch != null && ifNoneMatch.equals(eTag)) {
-//            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-//            return null;
-//        }
         return "page/home/home";
     }
 
@@ -58,18 +45,18 @@ public class HomeController {
     @HxRequest
     @GetMapping("/hx/home/posts")
     // 공통으로 model 에 user 는 넣기
-    public String getPostList(@ModelAttribute PostSearchCond cond, @LoginUser User currentUser, Model model) {
-        if (cond.getOrderBy() == null) {
-            cond.setOrderBy(PostSearchCond.OrderBy.LATEST);
-        }
-        Page<PostResponseDto> postResponseDtos = postUseCase.postSearch(cond, currentUser);
-        List<PostResponseDto> contents = postResponseDtos.getContent();
-        long totalElements = postResponseDtos.getTotalElements();
+    public String getPostList(@ModelAttribute PostSearchForMainHomeRequestDto requestDto,
+                              @LoginUser User currentUser,
+                              Model model) {
+        PostSearchResponseDto posts = postSearchUseCase.postSearch(requestDto, currentUser);
+
+        List<PostResponseDto> contents = posts.getContent();
+        long totalElements = posts.getTotalElements();
 
         model.addAttribute("totalElements", totalElements);
-        model.addAttribute("hasNextPage", postResponseDtos.hasNext());
+        model.addAttribute("hasNextPage", posts.hasNext());
         model.addAttribute("posts", contents);
-        model.addAttribute("page", postResponseDtos.getPageable().getPageNumber());
+        model.addAttribute("page", posts.getPage());
         model.addAttribute("me", currentUser);
 
         return "page/home/home :: .post-list";

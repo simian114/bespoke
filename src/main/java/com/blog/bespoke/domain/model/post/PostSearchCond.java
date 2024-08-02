@@ -42,4 +42,5 @@ public class PostSearchCond extends CommonSearchCond {
         VIEW,       // 조회순
         COMMENT     // 댓글순
     }
+
 }
