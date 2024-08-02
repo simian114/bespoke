@@ -35,8 +35,5 @@ public class PostSearchService {
         return true;
     }
 
-    public boolean useMemoryCache(PostSearchCond cond) {
-        return !TRUE.equals(cond.getManage());
-    }
 }
 
