@@ -1,14 +1,22 @@
 package com.blog.bespoke.application.dto.request.postSearch;
 
 import com.blog.bespoke.domain.model.post.PostSearchCond;
+import com.blog.bespoke.domain.service.cache.PostCacheService;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+@Getter
 @Setter
 @ToString
 public class PostSearchForBlogRequestDto implements PostSearchRequestDto {
     private Long category;
     private Integer page;
+
+    @Override
+    public PostCacheService.PostSearchCacheType getType() {
+        return PostCacheService.PostSearchCacheType.BLOG;
+    }
 
     public PostSearchCond toModel() {
         PostSearchCond postSearchCond = new PostSearchCond();

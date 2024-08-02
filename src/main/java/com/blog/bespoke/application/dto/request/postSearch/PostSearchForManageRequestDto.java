@@ -1,6 +1,7 @@
 package com.blog.bespoke.application.dto.request.postSearch;
 
 import com.blog.bespoke.domain.model.post.PostSearchCond;
+import com.blog.bespoke.domain.service.cache.PostCacheService;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -10,6 +11,11 @@ public class PostSearchForManageRequestDto implements PostSearchRequestDto {
     private Integer page;
     private Long categoryId;
     private String nickname;
+
+    @Override
+    public PostCacheService.PostSearchCacheType getType() {
+        return null;
+    }
 
     public PostSearchCond toModel() {
         PostSearchCond postSearchCond = new PostSearchCond();
