@@ -5,6 +5,8 @@ import com.blog.bespoke.domain.model.post.PostSearchCond;
 import com.blog.bespoke.domain.model.user.User;
 import org.springframework.stereotype.Service;
 
+import static java.lang.Boolean.TRUE;
+
 @Service
 public class PostSearchService {
 
@@ -31,6 +33,10 @@ public class PostSearchService {
             return false;
         }
         return true;
+    }
+
+    public boolean useMemoryCache(PostSearchCond cond) {
+        return !TRUE.equals(cond.getManage());
     }
 }
 

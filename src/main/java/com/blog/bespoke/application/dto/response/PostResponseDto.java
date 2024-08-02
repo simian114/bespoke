@@ -65,7 +65,7 @@ public class PostResponseDto {
 
     static public PostResponseDto from(Post post, PostRelation relation) {
         return base(post)
-                .category(relation.isCategory()
+                .category(relation.isCategory() && post.getCategory() != null
                         ? UserResponseDto.CategoryResponseDto.from(post.getCategory())
                         : null)
                 .countInfo(relation.isCount() ? PostCountInfoResponseDto.from(post.getPostCountInfo()) : null)
