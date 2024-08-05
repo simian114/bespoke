@@ -10,7 +10,16 @@ import static java.lang.Boolean.TRUE;
 @Service
 @RequiredArgsConstructor
 public class PostCacheService {
+    private final RedisUtil redisUtil;
+
     public static String DETAIL_POST = "postDetail:%d";
+
+    /**
+     * 한 시간 캐싱.
+     * invalidation 은 하지 않음
+     * 1. %s: nickname
+     */
+    public static String SEARCH_BLOG_HOME_POSTS_KEY = "postSearch:blog-home:%s";
 
     /**
      * 아래의 경우 캐싱 invalidation
@@ -36,7 +45,6 @@ public class PostCacheService {
     }
 
 
-    private final RedisUtil redisUtil;
 
     public String getPostSearchCacheKey(PostSearchCond cond, PostSearchCacheType type) {
         switch (type) {
@@ -46,16 +54,23 @@ public class PostCacheService {
             case MAIN -> {
                 return String.format(SEARCH_MAIN_POSTS, cond.getOrderBy().name(), cond.getPage());
             }
+            case BLOG_HOME -> {
+                return String.format(SEARCH_BLOG_HOME_POSTS_KEY, cond.getNickname());
+            }
         }
         return "postSearch";
     }
 
+    /**
+     * invalidate
+     */
     public void invalidateBlogCategoryPosts(Long categoryId) {
         redisUtil.invalidateByPattern(String.format(SEARCH_BLOG_POSTS_INVALIDATION_KEY, categoryId));
     }
 
     public enum PostSearchCacheType {
         MAIN,
-        BLOG
+        BLOG_HOME,
+        BLOG,
     }
 }

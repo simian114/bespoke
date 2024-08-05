@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<th:block th:fragment="post-carousel">
+    <section class="carousel" style="opacity: 0;transition: all 0.15s ease;">
+        <div class="carousel__viewport">
+            <div class="carousel__container">
+                <div class="carousel__slide" th:each="post: ${posts}">
+                    <a class="card" th:href="@{/blog/posts/{postId}(postId=${post.id})}" style="width: 640px;">
+                        <div class="card-image is-position-relative">
+                            <figure class="image is-16by9">
+                                <img
+                                        th:src="${post.cover.url}"
+                                        src="https://bulma.io/assets/images/placeholders/1280x960.png"
+                                        alt="Placeholder image"
+                                        style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);"
+                                />
+                            </figure>
+                        </div>
+                        <div class="card-content p-2" th:text="${post.title}"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <script>
+            me().run(async (ev) => {
+                const checkEmbla = setInterval(() => {
+                    if (typeof EmblaCarousel !== 'undefined') {
+                        clearInterval(checkEmbla);
+                        const emblaNode = me(ev);
+                        const viewportNode = emblaNode.querySelector('.carousel__viewport');
+                        const OPTIONS = { loop: true, autoplay: true };
+                        const emblaApi = EmblaCarousel(viewportNode, OPTIONS);
+                        emblaNode.style.opacity = 1;
+                        emblaApi.slideNodes();
+                    }
+                }, 100); // 100ms 간격으로 체크
+            })
+        </script>
+    </section>
+</th:block>
+</body>
+</html>

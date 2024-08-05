@@ -1,21 +1,5 @@
-// TODO: 옮겨야함. 위치는 어디로 할지 아직 미정
-// Set your brand colors
-$purple: #8a4d76;
-$pink: #fa7c91;
-$brown: #757763;
-$beige-light: #d0d1cd;
-$beige-lighter: #eff0eb;
-
-// Path to Bulma's sass folder
-@use "../../../../../node_modules/bulma/sass/index" with (
-  $family-primary: '"Nunito", sans-serif',
-  $grey-dark: $brown,
-  $grey-light: $beige-light,
-  $link: $pink,
-);
-
-// Import the Google Font
-@import url("https://fonts.googleapis.com/css?family=Nunito:400,700");
+@use "bulma/sass/utilities/mixins";
+@use "bulma/sass/utilities/extends";
 
 details {
   > summary {
@@ -27,12 +11,21 @@ details {
     &:hover {
       background-color: var(--bulma-primary-95);
     }
+    font-size: 20px;
+    font-weight: bold;
     transition: background-color ease 0.25s;
   }
 }
 
 a {
- &:hover {
-   opacity: 0.8;
- }
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+@include mixins.tablet {
+  .content-area {
+    margin: auto;
+    max-width: 640px;
+  }
 }
