@@ -4,13 +4,14 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}"
 >
-<head>
-    <title th:text="|${owner.name}'s blog'.|">Bespoke</title>
+<head layout:fragment="head">
+    <title th:text="|${owner.name}'s blog|">Bespoke</title>
 
     <meta name="title" th:content="|Bespoke - ${owner.nickname}|">
     <meta name="description" th:content="|Bespoke - ${owner.nickname}'s blog'|">
     <meta name="image" content="https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png">
-    <meta name="keywords" content="blog platform, simple, comfortable, diverse, fast, write stories, share stories, discover stories, velog, inblog, medium, wix, wordpress, tistory, naver blog, 벨로그, 블로그, 인블로그, 워드프레스, 티스토리, 네이버블로그">
+    <meta name="keywords"
+          content="blog platform, simple, comfortable, diverse, fast, write stories, share stories, discover stories, velog, inblog, medium, wix, wordpress, tistory, naver blog, 벨로그, 블로그, 인블로그, 워드프레스, 티스토리, 네이버블로그">
 
     <meta property="og:site_name" content="Bespoke">
     <meta property="og:type" content="website">
@@ -25,55 +26,38 @@
     <meta property="twitter:description" th:content="|Bespoke - ${owner.nickname}'s blog'|">
     <meta property="twitter:image" content="https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png">
 
+    <!--script-->
+    <script type="text/javascript" src="https://unpkg.com/embla-carousel/embla-carousel.umd.js"></script>
+    <script type="text/javascript" th:src="@{/js/tinymce/tinymce.min.js}"></script>
 </head>
 <body layout:fragment="content">
-    <section class="common-page blog-page section px-2">
-        <div class="container">
-            <div class="block is-flex is-justify-content-space-between">
-                <h1 class="has-text-weight-bold is-size-4">
-                    <a class="hax-text-weight-bold" th:text="${owner.nickname}"></a> ﹒ <span
-                        class="hax-text-weight-bold"
-                        th:text="${owner.name}"></span>
-                </h1>
-                <a th:if="${isOwner}" hx-boost="false" th:href="@{/blog/manage/posts}"
-                   class="button is-small">manage</a>
-            </div>
-
-            <div class="block box is-flex is-align-items-baseline">
-                <div class="mr-4 is-flex-shrink-0 is-size-5 has-text-weight-semibold">space</div>
-                <ul class="space-list is-flex-grow-5">
-                    <th:block th:if="${owner.categories != null && #lists.size(owner.categories) > 0}">
-                        <li class="is-flex" th:each="category: ${owner.categories}">
-                            <a
-                                    hx-boost="true"
-                                    th:href="@{/blog/{nickname}/category/{url}(nickname=${owner.nickname},url=${category.url})}"
-                                    class="has-text-weight-semibold is-underlined mr-2 is-flex-shrink-0"
-                                    th:text="${category.name}"></a>
-                            <p style="text-align: end" class="is-flex-grow-5" th:text="${category.description}"></p>
-                        </li>
-                    </th:block>
-                    <th:block th:unless="${owner.categories != null && #lists.size(owner.categories) > 0}">
-                        <div class="is-flex is-gap-2">
-                            <p>empty space</p>
-                            <a th:if="${isOwner}" class="button is-small"
-                               th:href="@{/blog/{nickname}/manage/categories(nickname=${owner.nickname})}">추가</a>
-                        </div>
-                    </th:block>
-                </ul>
-            </div>
-
-
-            <article class="block content">
-                <p th:utext="${owner.introduce}"></p>
-            </article>
-            <!--            TODO: sns list-->
-            <div class="block">
-            </div>
-
-
-        </div>
+<section class="blog-page section px-2">
+    <section class="content-area block">
+        <th:block th:replace="~{page/blog/fragments/header :: home}"></th:block>
+    </section>
+    <section class="content-area block">
+        <th:block th:replace="~{page/blog/fragments/space :: space}"></th:block>
     </section>
 
+    <section class="block">
+        <th:block th:replace="~{page/blog/fragments/sectionTitle :: section-title('Best posts')}"></th:block>
+        <th:block th:replace="~{page/blog/fragments/postCarousel :: post-carousel}">
+        </th:block>
+    </section>
+
+    <section class="content-area block">
+        <th:block th:replace="~{page/blog/fragments/introduce :: introduce(true)}">
+        </th:block>
+    </section>
+    <!--            TODO: sns list-->
+
+    <div class="block">
+
+    </div>
+    <!--        -->
+
+
+</section>
 
 </body>
 </html>

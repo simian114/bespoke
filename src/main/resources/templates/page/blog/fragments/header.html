@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<th:block th:fragment="home">
+    <div class="block is-flex is-justify-content-space-between">
+        <h1 class="has-text-weight-bold is-size-4">
+            <a class="hax-text-weight-bold" th:text="${owner.nickname}"></a> ﹒ <span
+                class="hax-text-weight-bold"
+                th:text="${owner.name}"></span>
+        </h1>
+        <a th:if="${isOwner}" hx-boost="false" th:href="@{/blog/manage/posts}"
+           class="button is-small">manage</a>
+    </div>
+</th:block>
+
+<th:block th:fragment="category">
+    <div class="block is-flex is-justify-content-space-between">
+        <h1 class="has-text-weight-bold is-size-4">
+            <a th:href="@{/blog/{nickname}(nickname=${owner.nickname})}"
+               th:text="${owner.nickname}"></a>'s&nbsp;<span th:text="${category.name}"></span>
+        </h1>
+
+        <a th:if="${isOwner}" th:href="@{/blog/manage/categories}"
+           class="button is-small">manage</a>
+    </div>
+    <p class="block is-underlined has-text-weight-semibold is-size-6" th:text="${category.description}"></p>
+</th:block>
+
+</body>
+</html>

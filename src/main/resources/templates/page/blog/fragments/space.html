@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<th:block th:fragment="space">
+
+    <div class="block box is-flex is-align-items-baseline">
+        <div class="mr-4 is-flex-shrink-0 is-size-5 has-text-weight-semibold">space</div>
+        <ul class="space-list is-flex-grow-5">
+            <th:block th:if="${owner.categories != null && #lists.size(owner.categories) > 0}">
+                <li class="is-flex" th:each="category: ${owner.categories}">
+                    <a
+                            hx-boost="true"
+                            th:href="@{/blog/{nickname}/category/{url}(nickname=${owner.nickname},url=${category.url})}"
+                            class="has-text-weight-semibold is-underlined mr-2 is-flex-shrink-0"
+                            th:text="${category.name}"></a>
+                    <p style="text-align: end" class="is-flex-grow-5" th:text="${category.description}"></p>
+                </li>
+            </th:block>
+            <th:block th:unless="${owner.categories != null && #lists.size(owner.categories) > 0}">
+                <div class="is-flex is-gap-2">
+                    <p>empty space</p>
+                    <a th:if="${isOwner}" class="button is-small"
+                       th:href="@{/blog/{nickname}/manage/categories(nickname=${owner.nickname})}">추가</a>
+                </div>
+            </th:block>
+        </ul>
+    </div>
+
+</th:block>
+
+
+</body>
+</html>

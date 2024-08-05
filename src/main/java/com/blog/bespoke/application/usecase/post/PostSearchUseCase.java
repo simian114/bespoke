@@ -1,5 +1,6 @@
 package com.blog.bespoke.application.usecase.post;
 
+import com.blog.bespoke.application.dto.request.postSearch.PostSearchForBlogHome;
 import com.blog.bespoke.application.dto.request.postSearch.PostSearchForBlogRequestDto;
 import com.blog.bespoke.application.dto.request.postSearch.PostSearchForMainHomeRequestDto;
 import com.blog.bespoke.application.dto.request.postSearch.PostSearchRequestDto;
@@ -56,6 +57,8 @@ public class PostSearchUseCase {
                         ? PostCacheService.PostSearchCacheType.BLOG
                         : requestDto.getClass().equals(PostSearchForMainHomeRequestDto.class)
                         ? PostCacheService.PostSearchCacheType.MAIN
+                        : requestDto.getClass().equals(PostSearchForBlogHome.class)
+                        ? PostCacheService.PostSearchCacheType.BLOG_HOME
                         : null
         );
 
