@@ -10,7 +10,6 @@ import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +35,8 @@ public class HomeController {
     @GetMapping({"", "/",})
     public String home(HttpServletRequest request, HttpServletResponse response, @LoginUser User currentUser, Model model) {
         model.addAttribute("me", currentUser);
-        // TODO: 캐싱
+
+        // NOTE: post list
         return "page/home/home";
     }
 

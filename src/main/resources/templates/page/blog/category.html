@@ -28,48 +28,18 @@
 
 </head>
 <body layout:fragment="content">
-<section class="common-page blog-page section px-2">
+<section class="blog-page section px-2">
+    <section class="content-area block">
+        <th:block th:replace="~{/page/blog/fragments/header :: category}"></th:block>
+    </section>
+    <section class="content-area block">
+        <th:block th:replace="~{page/blog/fragments/space :: space}"></th:block>
+    </section>
+    <section class="content-area block">
+        <th:block th:replace="~{page/blog/fragments/introduce :: introduce(false)}"></th:block>
+    </section>
+
     <div class="container" style="max-width: 640px">
-        <div class="block is-flex is-justify-content-space-between">
-            <h1 class="has-text-weight-bold is-size-4">
-                <a th:href="@{/blog/{nickname}(nickname=${owner.nickname})}"
-                   th:text="${owner.nickname}"></a>'s&nbsp;<span th:text="${category.name}"></span>
-            </h1>
-
-            <a th:if="${isOwner}" th:href="@{/blog/manage/categories}"
-               class="button is-small">manage</a>
-        </div>
-        <p class="block is-underlined has-text-weight-semibold is-size-6" th:text="${category.description}"></p>
-
-        <div class="block box is-flex is-align-items-baseline">
-            <div class="mr-4 is-flex-shrink-0 is-size-5 has-text-weight-semibold">category</div>
-            <ul class="space-list is-flex-grow-5">
-                <th:block th:if="${owner.categories != null && #lists.size(owner.categories) > 0}">
-                    <li class="is-flex" th:each="category: ${owner.categories}">
-                        <a
-                                hx-boost="true"
-                                th:href="@{/blog/{nickname}/category/{url}(nickname=${nickname},url=${category.url})}"
-                                class="has-text-weight-semibold is-underlined mr-2 is-flex-shrink-0"
-                                th:text="${category.name}"></a>
-                        <p style="text-align: end" class="is-flex-grow-5" th:text="${category.description}"></p>
-                    </li>
-                </th:block>
-                <th:block th:unless="${owner.categories != null && #lists.size(owner.categories) > 0}">
-                    <div class="is-flex is-gap-2">
-                        <p>empty space</p>
-                        <a class="button is-small"
-                           th:href="@{/blog/{nickname}/manage/categories(nickname=${owner.nickname})}">추가</a>
-                    </div>
-                </th:block>
-            </ul>
-        </div>
-
-        <details>
-            <summary>Introduce</summary>
-            <article class="block content">
-                <p th:utext="${owner.introduce}"></p>
-            </article>
-        </details>
         <!--            TODO: sns list-->
         <div class="block">
         </div>

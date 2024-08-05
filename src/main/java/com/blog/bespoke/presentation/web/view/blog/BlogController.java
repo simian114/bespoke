@@ -1,6 +1,8 @@
 package com.blog.bespoke.presentation.web.view.blog;
 
+import com.blog.bespoke.application.dto.request.postSearch.PostSearchForBlogHome;
 import com.blog.bespoke.application.dto.request.postSearch.PostSearchForBlogRequestDto;
+import com.blog.bespoke.application.dto.response.PostResponseDto;
 import com.blog.bespoke.application.dto.response.PostSearchResponseDto;
 import com.blog.bespoke.application.dto.response.UserResponseDto;
 import com.blog.bespoke.application.usecase.post.PostSearchUseCase;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 /**
  * me: 로그인 한 유저의 jwt 정보
@@ -38,10 +42,15 @@ public class BlogController {
                                Model model) {
         // getUserForBlog -> profile & category
         UserResponseDto owner = userUseCase.getUserForUserHome(nickname);
+        PostSearchResponseDto postSearchResponseDto = postSearchUseCase.postSearch(PostSearchForBlogHome.builder().nickname(owner.getNickname()).build(), currentUser);
+        List<PostResponseDto> posts = postSearchResponseDto.getContent();
+
 
         model.addAttribute("me", currentUser);
         model.addAttribute("owner", owner);
         model.addAttribute("isOwner", isOwner(nickname, currentUser));
+        model.addAttribute("hasPosts", posts != null && !posts.isEmpty());
+        model.addAttribute("posts", posts);
 
         return "page/blog/blog";
     }
