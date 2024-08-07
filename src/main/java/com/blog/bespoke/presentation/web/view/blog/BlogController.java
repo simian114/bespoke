@@ -35,6 +35,12 @@ public class BlogController {
     private final UserUseCase userUseCase;
     private final PostSearchUseCase postSearchUseCase;
 
+    /**
+     * caching
+     * - user
+     * - most liked posts
+     *
+     */
     // NOTE: /{nickname}/{category}
     @GetMapping("/{nickname}")
     public String blogHomePage(@PathVariable("nickname") String nickname,

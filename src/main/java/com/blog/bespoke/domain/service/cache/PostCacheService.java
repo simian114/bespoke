@@ -15,11 +15,12 @@ public class PostCacheService {
     public static String DETAIL_POST = "postDetail:%d";
 
     /**
+     * 블로그홈
      * 한 시간 캐싱.
      * invalidation 은 하지 않음
      * 1. %s: nickname
      */
-    public static String SEARCH_BLOG_HOME_POSTS_KEY = "postSearch:blog-home:%s";
+    public static String SEARCH_BLOG_HOME_POSTS_KEY = "p:s:blog-home:%s";
 
     /**
      * 아래의 경우 캐싱 invalidation
@@ -29,14 +30,13 @@ public class PostCacheService {
      * 1. %d: category
      * 2. %d: page
      */
-    public static String SEARCH_BLOG_POSTS_KEY = "postSearch:blog:%d:%d";
-    public static String SEARCH_BLOG_POSTS_INVALIDATION_KEY = "postSearch:blog:%d:*";
+    public static String SEARCH_BLOG_POSTS_KEY = "p:s:blog:%d:%d";
+    public static String SEARCH_BLOG_POSTS_INVALIDATION_KEY = "p:s:blog:%d:*";
 
     /**
      * 메인홈 post search list 는 캐싱 무효화를 직접하지 않음
      */
-    public static String SEARCH_MAIN_POSTS = "postSearch:main:%s:%d";
-    // public static String SEARCH_MAIN_POSTS_INVALIDATION_KEY = "postSearch:main:%s:*";
+    public static String SEARCH_MAIN_POSTS = "p:s:main:%s:%d";
 
 
 
