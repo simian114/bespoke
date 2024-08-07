@@ -62,4 +62,14 @@ public class UserCategoryUseCase {
     }
 
 
+    @Transactional
+    public UserResponseDto.CategoryResponseDto changeVisibilty(Long categoryId, User currentUser, boolean visible) {
+        UserRelation relation = UserRelation.builder().categories(true).build();
+        User user = userRepository.getById(currentUser.getId(), relation);
+        Category category = user.categories.stream().filter(c -> c.getId().equals(categoryId))
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND));
+        category.setVisible(visible);
+        return UserResponseDto.CategoryResponseDto.from(category);
+    }
 }

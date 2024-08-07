@@ -1,6 +1,5 @@
 package com.blog.bespoke.domain.model.category;
 
-import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.user.CategoryUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
 import jakarta.persistence.*;
@@ -14,9 +13,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Getter
 @Entity
@@ -28,6 +24,10 @@ import java.util.Set;
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener.class)
 public class Category {
+    @CreatedDate
+    @Column(updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    protected LocalDateTime createdAt;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
@@ -37,16 +37,9 @@ public class Category {
     private boolean visible;
     private Integer priority;
     private String url;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-
-    @CreatedDate
-    @Column(updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    protected LocalDateTime createdAt;
-
 
     public void setUser(User user) {
         this.user = user;
@@ -59,5 +52,9 @@ public class Category {
         if (cmd.getDescription() != null && !cmd.getDescription().isBlank()) {
             this.description = cmd.getDescription();
         }
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 }
