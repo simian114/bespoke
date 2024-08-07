@@ -22554,11 +22554,4 @@ a:hover {
   }
 }
 
-@media screen and (min-width: 769px), print {
-  .common-page {
-    margin: auto;
-    max-width: 640px;
-  }
-}
-
 /*# sourceMappingURL=application.css.map */
