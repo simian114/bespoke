@@ -43,7 +43,9 @@ public class UserResponseDto {
                 .id(user.getId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
+                .avatarUrl(user.getAvatar() == null ? "" : user.getAvatar().getUrl())
                 .name(user.getName());
+
     }
 
     static public UserResponseDto from(User user) {

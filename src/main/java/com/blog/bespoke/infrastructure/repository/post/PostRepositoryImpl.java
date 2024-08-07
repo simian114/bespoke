@@ -192,6 +192,7 @@ public class PostRepositoryImpl implements PostRepository {
                 )
                 .from(post)
                 .leftJoin(post.author)
+                .leftJoin(post.author.avatar)
                 .leftJoin(post.cover)
                 .leftJoin(post.postCountInfo);
         applyLike(query, cond);
@@ -228,7 +229,8 @@ public class PostRepositoryImpl implements PostRepository {
                         post.author.email,
                         post.author.nickname,
                         post.author.name,
-                        post.author.createdAt
+                        post.author.createdAt,
+                        post.author.avatar
                 ).as("author"),
                 // TODO: 이게 들어가면 list 에서 불러올 때 cover 가 없는건 불러오질 않음.
                 Projections.fields(
