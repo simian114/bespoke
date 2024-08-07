@@ -98,13 +98,6 @@ public class UserUseCase {
     }
 
     /**
-     * 아무 연관관계 없는 순수한 user
-     */
-    public UserResponseDto getUserById(Long userId) {
-        return UserResponseDto.from(userRepository.getById(userId));
-    }
-
-    /**
      * 유저홈 페이지
      */
     public UserResponseDto getUserForUserHome(String nickname) {
