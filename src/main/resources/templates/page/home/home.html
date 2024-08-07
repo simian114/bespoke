@@ -40,9 +40,10 @@
                           hx-swap="outerHTML"
                           hx-target="closest .cell"
                           hx-trigger="revealed"
-                          hx:get="@{/hx/home/posts(page=${(page!=null?page:-1)+1},orderBy=${param.orderBy})}"
+                          hx:get="@{/(page=${(page!=null?page:-1)+1},orderBy=${param.orderBy})}"
                           hx-indicator="#htmx-skeleton"
                     ></span>
+<!--                    hx:get="@{/hx/home/posts(page=${(page!=null?page:-1)+1},orderBy=${param.orderBy})}"-->
                 </div>
             </div>
             <!--            TODO: 로딩 스켈레톤-->
