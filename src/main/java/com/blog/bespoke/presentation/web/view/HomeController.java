@@ -6,9 +6,8 @@ import com.blog.bespoke.application.dto.response.PostSearchResponseDto;
 import com.blog.bespoke.application.usecase.post.PostSearchUseCase;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
-import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxRequest;
+import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,27 +28,17 @@ public class HomeController {
      * 이후에 홈페이지는 캐싱 후 사용자에게 제공
      * 1. http 캐싱
      * 2. 레디스 캐싱
-     * <p>
      * TODO: spring security 의 http.headers().cacheControl 에 대해 알아봐야함
      */
     @GetMapping({"", "/",})
-    public String home(HttpServletRequest request, HttpServletResponse response, @LoginUser User currentUser, Model model) {
+    public HtmxResponse home(@ModelAttribute PostSearchForMainHomeRequestDto requestDto,
+                             @LoginUser User currentUser,
+                             HtmxRequest htmxRequest,
+                             HtmxResponse htmxResponse,
+                             Model model) {
         model.addAttribute("me", currentUser);
 
-        // NOTE: post list
-        return "page/home/home";
-    }
-
-
-    // TODO: cacheing 처리 해야함
-    @HxRequest
-    @GetMapping("/hx/home/posts")
-    // 공통으로 model 에 user 는 넣기
-    public String getPostList(@ModelAttribute PostSearchForMainHomeRequestDto requestDto,
-                              @LoginUser User currentUser,
-                              Model model) {
         PostSearchResponseDto posts = postSearchUseCase.postSearch(requestDto, currentUser);
-
         List<PostResponseDto> contents = posts.getContent();
         long totalElements = posts.getTotalElements();
 
@@ -58,8 +47,16 @@ public class HomeController {
         model.addAttribute("posts", contents);
         model.addAttribute("page", posts.getPage());
         model.addAttribute("me", currentUser);
+        if (htmxRequest.isHtmxRequest() && !htmxRequest.isBoosted()) {
+            return HtmxResponse.builder()
+                    .view("page/home/home :: .post-list")
+                    .build();
+        }
 
-        return "page/home/home :: .post-list";
+        // NOTE: post list
+        return HtmxResponse.builder()
+                .view("page/home/home")
+                .build();
     }
 
 }
