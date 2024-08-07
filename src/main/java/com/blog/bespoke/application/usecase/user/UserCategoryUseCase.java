@@ -1,6 +1,5 @@
 package com.blog.bespoke.application.usecase.user;
 
-import com.blog.bespoke.application.dto.mapper.CategoryRequestMapper;
 import com.blog.bespoke.application.dto.request.CategoryCreateRequestDto;
 import com.blog.bespoke.application.dto.response.UserResponseDto;
 import com.blog.bespoke.application.exception.BusinessException;
@@ -30,7 +29,7 @@ public class UserCategoryUseCase {
     public UserResponseDto createCategory(CategoryCreateRequestDto requestDto, Long userId) {
         UserRelation relation = UserRelation.builder().categories(true).build();
         User user = userRepository.getById(userId, relation);
-        Category category = CategoryRequestMapper.INSTANCE.toDomain(requestDto);
+        Category category = requestDto.toModel();
 
         if (!userCategoryService.canMakeCategory(user, category)) {
             throw new BusinessException(ErrorCode.NO_MORE_CATEGORY);

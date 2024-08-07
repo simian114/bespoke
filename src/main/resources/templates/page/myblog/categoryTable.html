@@ -22,19 +22,21 @@
         <table class="table">
             <thead>
             <tr>
-                <th><abbr title="Post Id">id</abbr></th>
-                <th><abbr title="Title">이름</abbr></th>
-                <th><abbr title="Status">설명</abbr></th>
-                <th>액션</th>
+                <th><abbr title="Url">Url</abbr></th>
+                <th><abbr title="Name">Name</abbr></th>
+                <th><abbr title="Description">Description</abbr></th>
+                <th><abbr title="Visible">Visible</abbr></th>
+                <th>Actions</th>
             </tr>
             </thead>
             <!--  tfoot  -->
             <tfoot>
             <tr>
-                <th><abbr title="Post Id">id</abbr></th>
-                <th><abbr title="Title">제목</abbr></th>
-                <th><abbr title="Status">상태</abbr></th>
-                <th>액션</th>
+                <th><abbr title="Url">Url</abbr></th>
+                <th><abbr title="Name">Name</abbr></th>
+                <th><abbr title="Description">Description</abbr></th>
+                <th><abbr title="Visible">Visible</abbr></th>
+                <th>Actions</th>
             </tr>
             </tfoot>
             <tbody hx-swap="outerHTML swap:0.5s">
@@ -42,9 +44,10 @@
             <th:block th:each="category: ${categories}">
                 <!--                    delete 된 post 라면 ...-->
                 <tr th:fragment="category-item-row">
-                    <th><abbr title="Post Id" th:text="${category.id}">id</abbr></th>
-                    <th><abbr title="Title" th:text="${category.name}">이름</abbr></th>
-                    <th><abbr title="Status" th:text="${category.description}">설명</abbr></th>
+                    <th><abbr title="Url" th:text="|/blog/${me.nickname}/category/${category.url}|">url</abbr></th>
+                    <th><abbr title="Name" th:text="${category.name}">name</abbr></th>
+                    <th><abbr title="Description" th:text="${category.description}">description</abbr></th>
+                    <th><abbr title="Visible" th:text="${category.visible ? 'visible' : 'hide' }">description</abbr></th>
                     <th class="buttons are-small">
                         <a th:href="@{/blog/manage/categories/{categoryId}(categoryId=${category.id})}"
                            class="button is-primary"
@@ -73,6 +76,7 @@
                                 hx:delete="@{/blog/manage/categories/{categoryId}(categoryId=${category.id})}"
                                 class="button is-danger"
                                 hx-confirm="Are you sure?"
+                                hx-swap="delete"
                         >
                             delete
                         </button>
