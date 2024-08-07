@@ -167,8 +167,7 @@ public class BlogManageController {
     public String categoryCreatePage(@ModelAttribute("category") CategoryCreateRequestDto requestDto,
                                      @LoginUser User currentUser,
                                      Model model) {
-        UserResponseDto me = userUseCase.getUserById(currentUser.getId());
-        model.addAttribute("owner", me);
+        model.addAttribute("owner", currentUser);
         model.addAttribute("action", "/blog/manage/categories");
         return "page/myblog/categoryForm";
     }
