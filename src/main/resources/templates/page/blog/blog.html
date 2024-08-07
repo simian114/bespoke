@@ -39,9 +39,14 @@
     </section>
 
     <section class="block">
-        <th:block th:replace="~{page/blog/fragments/sectionTitle :: section-title('Most Liked Posts')}"></th:block>
-        <th:block th:replace="~{page/blog/fragments/postCarousel :: post-carousel}">
-        </th:block>
+        <details th:open="${open}">
+            <summary class="content-area">
+                Most Liked Posts
+            </summary>
+            <th:block th:replace="~{page/blog/fragments/postCarousel :: post-carousel}">
+            </th:block>
+        </details>
+
     </section>
 
     <section class="content-area block">
@@ -53,8 +58,6 @@
     <section class="block">
 
     </section>
-    <!--        -->
-
 
 </section>
 
