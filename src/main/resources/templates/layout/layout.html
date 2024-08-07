@@ -4,7 +4,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 >
 <script>
-    var theme = localStorage.getItem('theme');
+    const theme = localStorage.getItem('theme');
     if (theme) {
         document.documentElement.classList.add(theme);
     }
@@ -25,11 +25,14 @@
     <!--Common JS-->
     <!--query에버전을붙이는걸로 할 수 있을듯?-->
     <script type="text/javascript" th:src="@{/js/htmx.min.js(v=${randomValue})}"></script>
-    <script src="https://unpkg.com/htmx-ext-head-support@2.0.0/head-support.js"></script>
+    <!--    <script src="https://unpkg.com/htmx-ext-head-support@2.0.0/head-support.js"></script>-->
 
     <script type="text/javascript" th:src="@{/js/surreal.js(v=${randomValue})}"></script>
     <script type="text/javascript" th:src="@{/js/htmx-sse.js(v=${randomValue})}"></script>
     <script type="text/javascript" th:src="@{/js/nprogress.js(v=${randomValue})}"></script>
+
+    <script type="text/javascript" src="https://unpkg.com/embla-carousel/embla-carousel.umd.js" defer></script>
+
 
     <!-- toastify -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
