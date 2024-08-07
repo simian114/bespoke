@@ -8,27 +8,32 @@
 </head>
 <body>
 <th:block th:fragment="post-carousel">
-    <section class="carousel" style="opacity: 0;transition: all 0.15s ease;">
+    <!-- 캐러셀이 포함되는 페이지는 htmx의 history에 캐싱하지 않음 -->
+    <section class="carousel" style="opacity: 0;transition: all 0.15s ease;" hx-history="false">
         <div class="carousel__viewport">
             <div class="carousel__container">
                 <div class="carousel__slide" th:each="post: ${posts}">
-                    <a class="card" th:href="@{/blog/posts/{postId}(postId=${post.id})}" style="width: 640px;">
-                        <div class="card-image is-position-relative">
-                            <figure class="image is-16by9">
-                                <img
-                                        th:src="${post.cover.url}"
-                                        src="https://bulma.io/assets/images/placeholders/1280x960.png"
-                                        alt="Placeholder image"
-                                        style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);"
-                                />
-                            </figure>
+                    <a th:href="@{/blog/posts/{postId}(postId=${post.id})}">
+                        <div class="card" style="width: 640px;">
+                            <div class="card-image is-position-relative">
+                                <figure class="image is-16by9">
+                                    <img
+                                            th:src="${post.cover.url}"
+                                            src="https://bulma.io/assets/images/placeholders/1280x960.png"
+                                            alt="Placeholder image"
+                                            style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);"
+                                    />
+                                </figure>
+                            </div>
+                            <div class="card-content p-2" th:text="${post.title}"></div>
                         </div>
-                        <div class="card-content p-2" th:text="${post.title}"></div>
                     </a>
+
                 </div>
             </div>
         </div>
-        <script>
+        <script type="text/javascript">
+            <!--문제없이 화면에 렌더링 되기 위해서는 history 캐싱을 하면 안된다. hx-history=false 로 하면됨-->
             me().run(async (ev) => {
                 const checkEmbla = setInterval(() => {
                     if (typeof EmblaCarousel !== 'undefined') {
@@ -43,6 +48,7 @@
                 }, 100); // 100ms 간격으로 체크
             })
         </script>
+
     </section>
 </th:block>
 </body>

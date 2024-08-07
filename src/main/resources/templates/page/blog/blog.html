@@ -27,7 +27,6 @@
     <meta property="twitter:image" content="https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png">
 
     <!--script-->
-    <script type="text/javascript" src="https://unpkg.com/embla-carousel/embla-carousel.umd.js"></script>
     <script type="text/javascript" th:src="@{/js/tinymce/tinymce.min.js}"></script>
 </head>
 <body layout:fragment="content">
@@ -40,7 +39,7 @@
     </section>
 
     <section class="block">
-        <th:block th:replace="~{page/blog/fragments/sectionTitle :: section-title('Best posts')}"></th:block>
+        <th:block th:replace="~{page/blog/fragments/sectionTitle :: section-title('Most Liked Posts')}"></th:block>
         <th:block th:replace="~{page/blog/fragments/postCarousel :: post-carousel}">
         </th:block>
     </section>
@@ -51,9 +50,9 @@
     </section>
     <!--            TODO: sns list-->
 
-    <div class="block">
+    <section class="block">
 
-    </div>
+    </section>
     <!--        -->
 
 
