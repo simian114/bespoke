@@ -22466,6 +22466,18 @@ a:hover {
     max-width: 640px;
   }
 }
+.toastify.error {
+  background: linear-gradient(to right, #ff5f6d, #ffc371);
+}
+
+.toastify.success {
+  background: linear-gradient(to right, rgb(0, 176, 155), rgb(150, 201, 61));
+}
+
+.toastify.info {
+  background: linear-gradient(to right, rgb(0, 176, 155), rgb(150, 201, 61));
+}
+
 .home-page__post-list .card {
   transition: transform 0.25s ease-in-out;
 }
