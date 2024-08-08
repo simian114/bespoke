@@ -3,15 +3,13 @@ package com.blog.bespoke.presentation.web.view.myblog;
 import com.blog.bespoke.application.dto.request.CategoryCreateRequestDto;
 import com.blog.bespoke.application.dto.response.UserResponseDto;
 import com.blog.bespoke.application.usecase.user.UserCategoryUseCase;
-import com.blog.bespoke.domain.model.category.Category;
 import com.blog.bespoke.domain.model.user.CategoryUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
-import com.blog.bespoke.infrastructure.aop.ResponseEnvelope.Envelope;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
+import com.blog.bespoke.infrastructure.web.htmx.Toast;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -70,27 +68,40 @@ public class BlogCategoryManageController {
      * 카테고리 생성 api
      */
     @PostMapping("/blog/manage/categories")
-    public String categoryCreate(@LoginUser User currentUser,
-                                 @Valid @ModelAttribute("category") CategoryCreateRequestDto requestDto,
-                                 BindingResult bindingResult) {
+    public HtmxResponse categoryCreate(@LoginUser User currentUser,
+                                       @Valid @ModelAttribute("category") CategoryCreateRequestDto requestDto,
+                                       BindingResult bindingResult
+    ) {
         if (bindingResult.hasErrors()) {
-            return "page/myblog/categoryForm";
+            return HtmxResponse.builder()
+                    .view("page/myblog/categoryForm")
+                    .preventHistoryUpdate()
+                    .build();
         }
         userCategoryUseCase.createCategory(requestDto, currentUser.getId());
-        return "redirect:/blog/manage/categories";
+        return HtmxResponse.builder()
+                .redirect("/blog/manage/categories")
+                .trigger(
+                        Toast.TRIGGER,
+                        Toast.info("category created!")
+                )
+                .build();
     }
 
     /**
      * 카테고리 삭제 api
      */
-    @Envelope("category delete success!")
-    @ResponseBody
     @DeleteMapping("/blog/manage/categories/{categoryId}")
-    public ResponseEntity<?> deleteCategory(@PathVariable("categoryId") Long categoryId,
-                                 @LoginUser User currentUser
+    public HtmxResponse deleteCategory(@PathVariable("categoryId") Long categoryId,
+                                       @LoginUser User currentUser
     ) {
         userCategoryUseCase.deleteCategory(categoryId, currentUser);
-        return ResponseEntity.ok().build();
+        return HtmxResponse.builder()
+                .trigger(
+                        Toast.TRIGGER,
+                        Toast.info("success")
+                )
+                .build();
     }
 
     /**
@@ -106,6 +117,9 @@ public class BlogCategoryManageController {
         model.addAttribute("category", categoryResponseDto);
         return HtmxResponse.builder()
                 .view("page/myblog/categoryTable :: category-item-row")
+                .trigger(Toast.TRIGGER,
+                        Toast.info("success!")
+                        )
                 .build();
     }
 
