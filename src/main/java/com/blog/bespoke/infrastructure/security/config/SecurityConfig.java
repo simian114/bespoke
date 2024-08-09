@@ -90,6 +90,7 @@ public class SecurityConfig {
                 // 실제 서비스
                 .requestMatchers("/login").permitAll()
                 .requestMatchers("/signup").permitAll()
+                .requestMatchers("/signup/success").permitAll()
                 .requestMatchers("/email-validation").permitAll()
                 .requestMatchers(
                         PathRequest.toStaticResources().at(

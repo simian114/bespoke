@@ -44,6 +44,13 @@ public class SignupController {
         return "page/signup/signup";
     }
 
+    @GetMapping("/signup/success")
+    public HtmxResponse success() {
+        return HtmxResponse.builder()
+                .view("/page/signup/success")
+                .build();
+    }
+
     // 성공하면, signup/success 로 이동
     @HxRequest
     @PostMapping("/signup")
@@ -91,7 +98,8 @@ public class SignupController {
         }
 
         return HtmxResponse.builder()
-                .view("/page/signup/success :: section")
+                .view("/page/signup/success")
+                .redirect("/signup/success")
                 .build();
 
     }
