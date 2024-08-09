@@ -47,7 +47,7 @@ public class SignupController {
     @GetMapping("/signup/success")
     public HtmxResponse success() {
         return HtmxResponse.builder()
-                .view("/page/signup/success")
+                .view("page/signup/success")
                 .build();
     }
 
@@ -98,7 +98,6 @@ public class SignupController {
         }
 
         return HtmxResponse.builder()
-                .view("/page/signup/success")
                 .redirect("/signup/success")
                 .build();
 
@@ -108,7 +107,7 @@ public class SignupController {
     @GetMapping("/email-validation")
     public String emailValidation(@RequestParam(name = "code") String code) {
         UserResponseDto userResponseDto = userUseCase.emailValidation(code);
-        return "/page/signup/emailValidation";
+        return "page/signup/emailValidation";
     }
 
 }
