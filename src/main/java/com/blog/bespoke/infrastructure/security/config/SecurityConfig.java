@@ -22,7 +22,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import java.util.Set;
 
@@ -70,6 +69,7 @@ public class SecurityConfig {
         /*
         TODO: 401, 403 exception handling
          */
+
         http.exceptionHandling(e -> e
                 .authenticationEntryPoint(authenticationEntryPoint()) // 401
                 .accessDeniedHandler(accessDeniedHandler()) // 403
@@ -88,10 +88,10 @@ public class SecurityConfig {
                 .requestMatchers("/error/**").permitAll()
                 .requestMatchers("/errors").permitAll()
                 // 실제 서비스
-                .requestMatchers("/login").permitAll()
-                .requestMatchers("/signup").permitAll()
-                .requestMatchers("/signup/success").permitAll()
-                .requestMatchers("/email-validation").permitAll()
+                .requestMatchers("/login").anonymous()
+                .requestMatchers("/signup").anonymous()
+                .requestMatchers("/signup/success").anonymous()
+                .requestMatchers("/email-validation").anonymous()
                 .requestMatchers(
                         PathRequest.toStaticResources().at(
                                 Set.of(
@@ -111,6 +111,7 @@ public class SecurityConfig {
                 .requestMatchers("/blog/manage").authenticated()
                 .requestMatchers("/signup/success").anonymous()
                 .requestMatchers("/").permitAll()
+                .requestMatchers("/favicon.ico").permitAll()
                 .anyRequest().authenticated()
         );
 

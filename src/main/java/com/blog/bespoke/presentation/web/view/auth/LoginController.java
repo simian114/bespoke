@@ -5,6 +5,7 @@ import com.blog.bespoke.application.dto.response.LoginResponseDto;
 import com.blog.bespoke.application.usecase.AuthUseCase;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
+import com.blog.bespoke.infrastructure.web.htmx.Toast;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxResponse;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
 import jakarta.servlet.http.Cookie;
@@ -28,16 +29,13 @@ public class LoginController {
     private final AuthUseCase authUseCase;
 
     @GetMapping("/login")
-    public String loginPage(Model model, @LoginUser User currentUser, RedirectAttributes redirectAttributes) {
-        if (currentUser != null) {
-            redirectAttributes.addFlashAttribute("flash", "접근하지 못하는 경로입니다.");
-            return "redirect:/";
-        }
-
+    public HtmxResponse loginPage(Model model, @LoginUser User currentUser, RedirectAttributes redirectAttributes) {
         LoginRequestDto dto = new LoginRequestDto();
         model.addAttribute("user", dto);
 
-        return "page/login/login";
+        return HtmxResponse.builder()
+                .view("page/login/login")
+                .build();
     }
 
     // NOTE: htmx 을 이용하면

@@ -33,10 +33,6 @@ public class SignupController {
                              @LoginUser User currentUser,
                              RedirectAttributes redirectAttributes
     ) {
-        if (currentUser != null) {
-            redirectAttributes.addFlashAttribute("flash", "접근하지 못하는 경로입니다.");
-            return "redirect:/";
-        }
         // 회원가입 성공하면 ...
         UserSignupRequestDto dto = UserSignupRequestDto.builder().build();
         model.addAttribute("user", dto);
@@ -106,7 +102,7 @@ public class SignupController {
     // NOTE: 이메일 인증
     @GetMapping("/email-validation")
     public String emailValidation(@RequestParam(name = "code") String code) {
-        UserResponseDto userResponseDto = userUseCase.emailValidation(code);
+        userUseCase.emailValidation(code);
         return "page/signup/emailValidation";
     }
 

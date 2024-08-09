@@ -1,36 +1,27 @@
 package com.blog.bespoke.infrastructure.security.exception;
 
-import com.blog.bespoke.infrastructure.aop.ResponseEnvelope.EnvelopeResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
+/**
+ * 유저의 인증 여부에 따라 실행됨.
+ * 예를 들면, 인증 된 유저가 접근 가능한 페이지에 인증안된 유저가 접근하면
+ * <p>
+ * 만약, 인증 여부가 아니라 인증 된 유저인데 유저의 권한이 맞지 않는 경우에 대한 핸들링은 AccessDeniedHandler 에서 담당
+ */
 @RequiredArgsConstructor
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
     private final ObjectMapper objectMapper;
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding(StandardCharsets.UTF_8.displayName());
-        response.getWriter().write(
-                objectMapper.writeValueAsString(
-                        EnvelopeResponse.envelope(
-                                HttpStatus.UNAUTHORIZED,
-                                "인증된 유저만 접근이 가능합니다.",
-                                request.getRequestURI()
-                        ).getBody()
-                )
-        );
+        response.sendRedirect("/errors");
     }
 }
