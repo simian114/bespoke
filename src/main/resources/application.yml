@@ -21,6 +21,7 @@ spring:
   data:
     redis:
       port: ${REDIS_PORT}
+      host: ${REDIS_HOST}
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/bespoke
