@@ -60,7 +60,7 @@ public class SignupController {
     ) {
         if (bindingResult.hasErrors()) {
             return HtmxResponse.builder()
-                    .view("/page/signup/signup :: form")
+                    .view("page/signup/signup :: form")
                     .trigger("reload:tinymce")
                     .preventHistoryUpdate()
                     .build();
@@ -85,13 +85,13 @@ public class SignupController {
             }
 
             return HtmxResponse.builder()
-                    .view("/page/signup/signup :: form")
+                    .view("page/signup/signup :: form")
                     .preventHistoryUpdate()
                     .trigger("reload:tinymce")
                     .build();
         } catch (Exception e) {
             return HtmxResponse.builder()
-                    .view("/page/signup/signup :: form")
+                    .view("page/signup/signup :: form")
                     .trigger("reload:tinymce")
                     .preventHistoryUpdate()
                     .build();
