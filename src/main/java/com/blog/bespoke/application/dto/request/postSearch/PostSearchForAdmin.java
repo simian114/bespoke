@@ -25,6 +25,8 @@ public class PostSearchForAdmin implements PostSearchRequestDto {
 
     private final List<Post.Status> statuses;
 
+    private final Integer page;
+
     @Override
     public PostSearchCond toModel() {
         PostSearchCond postSearchCond = new PostSearchCond();
@@ -33,11 +35,10 @@ public class PostSearchForAdmin implements PostSearchRequestDto {
         postSearchCond.setFrom(from != null ? from.atStartOfDay() : null);
         postSearchCond.setTo(to != null ? to.atTime(23, 59, 59) : null);
         postSearchCond.setStatuses(statuses);
+        postSearchCond.setPage(page);
         if (statuses == null) {
             postSearchCond.setStatuses(List.of());
         }
-
-
         return postSearchCond;
     }
 }

@@ -12,11 +12,16 @@
 
     <div class="post-filter-container p-4">
         <form class="post-filter-form"
+              id="post-filter-form"
               method="get"
               th:action="@{/admin/post}"
               th:object="${cond}"
               hx-push-url="true"
         >
+            <!--       hidden start     -->
+            <input type="hidden" name="page" id="page-input" value="0"/>
+            <!--       hidden end    -->
+
             <div class="field is-horizontal">
                 <div class="field-label is-normal">
                     <label class="label" for="title">Title</label>
@@ -61,7 +66,6 @@
                 </div>
             </div>
 
-
             <div class="field is-horizontal">
                 <div class="field-label">
                     <label class="label">Status</label>
@@ -76,6 +80,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="field is-horizontal">
                 <div class="field-label">
                     <!-- Left empty for spacing -->
@@ -83,7 +88,7 @@
                 <div class="field-body">
                     <div class="field">
                         <div class="control is-flex is-justify-content-center">
-                            <button class="button is-primary">
+                            <button th:id="form-submit-button" class="button is-primary">
                                 Search
                             </button>
                         </div>
@@ -92,11 +97,197 @@
             </div>
         </form>
     </div>
+    <div class="pagination-container p-4 is-flex is-justify-content-space-between" th:with="page=${page}">
+        <!--
+          form 에 hidden 필드로 page 를 넣는다.
+          이 hidden 필드 값의 초기 값은 항상 0 이다. 왜냐면 일반 검색을 했을 때는 page 는 초기화 되어야하기 때문
+          prev 버튼을 누르면 value 를 page - 1, next 를 누르면 page + 1 로 변경
+          그리고 form 의 submit 버튼의 click 을 실행한다.
+
+          만약 일반 submit 을 누르면
+        -->
+        <button class="button is-small" th:disabled="${isFirst}">
+            prev
+            <script type="text/javascript">
+                me().on("click", ev => {
+                    let target = me(ev);
+                    const submitButton = document.querySelector("#form-submit-button");
+                    let pageInput = document.querySelector("#page-input");
+                    const page = parseInt(`[[${page}]]`);
+                    pageInput.value = page - 1;
+                    submitButton.click();
+                })
+            </script>
+        </button>
+        <!-- 현재 기준 앞,뒤 2개씩 리스트 노출 -->
+        <div>
+            pages list..
+        </div>
+        <button class="button is-small" th:disabled="${isLast}">
+            next
+            <script type="text/javascript">
+                me().on("click", ev => {
+                    debugger;
+                    let target = me(ev);
+                    const submitButton = document.querySelector("#form-submit-button");
+                    let pageInput = document.querySelector("#page-input");
+                    const page = parseInt(`[[${page}]]`);
+                    pageInput.value = page + 1;
+                    submitButton.click();
+                })
+            </script>
+
+        </button>
+    </div>
 
     <div class="post-table-container p-4">
-        <ul>
-            <li th:each="post: ${posts}" th:text="${post.title}"></li>
-        </ul>
+        <div class="table-container is-flex is-flex-direction-column is-justify-content-center	">
+            <!--  테이블 넣기  -->
+            <table class="table">
+                <thead>
+                <tr>
+                    <th><abbr title="Post Id">id</abbr></th>
+                    <th><abbr title="Title">title</abbr></th>
+                    <th><abbr title="Status">status</abbr></th>
+                    <th><abbr title="Created At">createdAt</abbr></th>
+                    <th><abbr title="Author">author</abbr></th>
+                    <th>action</th>
+                </tr>
+                </thead>
+                <!--  tfoot  -->
+                <tfoot>
+                <tr>
+                    <th><abbr title="Post Id">id</abbr></th>
+                    <th><abbr title="Title">title</abbr></th>
+                    <th><abbr title="Status">status</abbr></th>
+                    <th><abbr title="Created At">createdAt</abbr></th>
+                    <th><abbr title="Author">author</abbr></th>
+                    <th>action</th>
+                </tr>
+                </tfoot>
+                <tbody hx-swap="outerHTML swap:0.5s">
+                <!-- tbody -->
+                <th:block th:each="post: ${posts}">
+                    <!--                    delete 된 post 라면 ...-->
+                    <tr th:fragment="post-item-row">
+                        <th><abbr title="Post Id" th:text="${post.id}">id</abbr></th>
+                        <th>
+                            <div class="is-flex is-align-items-center is-gap-0.5">
+                                <span th:text="${post.title}"></span>
+                                <a class="button is-small"
+                                   th:href="@{/blog/posts/{id}(id=${post.id})}"
+                                   target="_blank"
+                                >
+                                    <span class="icon is-small">
+                                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                    </span>
+                                </a>
+
+                            </div>
+                        </th>
+                        <th><abbr title="Status" th:text="${post.status}">status</abbr></th>
+                        <th><abbr title="Created At" th:text="${post.createdAt}">createdAt</abbr></th>
+                        <th>
+                            <div class="is-flex is-align-items-center is-gap-0.5">
+                                <span th:text="${post.author.nickname}"></span>
+                                <a class="button is-small"
+                                   th:href="@{/blog/{nickname}(nickname=${post.author.nickname})}"
+                                   target="_blank"
+                                >
+                                    <span class="icon is-small">
+                                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        </th>
+                        <th class="buttons are-small">
+                            <a th:href="@{/blog/manage/posts/{postId}/edit(postId=${post.id})}"
+                               hx-boost="false"
+                               class="button is-primary">edit</a>
+                            <button class="button is-danger" hx-confirm="Are you sure?"
+                                    hx-target="closest tr"
+                                    hx:delete="@{/admin/post/{postId}(postId=${post.id})}">
+                                delete
+                            </button>
+                            <th:block th:if="${post.status.name() == 'DRAFT'}">
+                                <button hx:patch="@{/admin/post/{postId}/status/PUBLISHED(postId=${post.id})}"
+                                        hx-confirm="Are you sure?"
+                                        hx-target="closest tr"
+                                        hx-swap="outerHTML"
+                                        class="button is-info">publish
+                                </button>
+                                <button hx:patch="@{/admin/post/{postId}/status/HIDDEN(postId=${post.id})}"
+                                        hx-confirm="Are you sure?"
+                                        hx-target="closest tr"
+                                        hx-swap="outerHTML"
+                                        class="button is-warning">hidden
+                                </button>
+                            </th:block>
+                            <!-- TODO: block / unblock-->
+                            <th:block th:unless="${post.status.name() == 'DRAFT'}">
+                                <button hx:patch="@{/admin/post/{postId}/status/PUBLISHED(postId=${post.id})}"
+                                        hx-confirm="Are you sure?"
+                                        class="button is-warning" th:if="${post.status.name() == 'HIDDEN'}"
+                                        hx-target="closest tr"
+                                        hx-swap="outerHTML"
+                                >
+                                    publish
+                                </button>
+                                <button hx:patch="@{/admin/post/{postId}/status/HIDDEN(postId=${post.id})}"
+                                        hx-confirm="Are you sure?"
+                                        class="button is-info" th:if="${post.status.name() == 'PUBLISHED'}"
+                                        hx-target="closest tr"
+                                        hx-swap="outerHTML"
+                                >
+                                    hidden
+                                </button>
+                            </th:block>
+
+                        </th>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+            <div class="pagination-container p-4 is-flex is-justify-content-space-between" th:with="page=${page}">
+                <!--
+                  form 에 hidden 필드로 page 를 넣는다.
+                  이 hidden 필드 값의 초기 값은 항상 0 이다. 왜냐면 일반 검색을 했을 때는 page 는 초기화 되어야하기 때문
+                  prev 버튼을 누르면 value 를 page - 1, next 를 누르면 page + 1 로 변경
+                  그리고 form 의 submit 버튼의 click 을 실행한다.
+
+                  만약 일반 submit 을 누르면
+                -->
+                <button class="button is-small" th:disabled="${isFirst}">
+                    prev
+                    <script type="text/javascript">
+                        me().on("click", ev => {
+                            const submitButton = document.querySelector("#form-submit-button");
+                            let pageInput = document.querySelector("#page-input");
+                            const page = parseInt(`[[${page}]]`);
+                            pageInput.value = page - 1;
+                            submitButton.click();
+                        })
+                    </script>
+                </button>
+                <!-- 현재 기준 앞,뒤 2개씩 리스트 노출 -->
+                <div>
+                    pages list..
+                </div>
+                <button class="button is-small" th:disabled="${isLast}">
+                    next
+                    <script type="text/javascript">
+                        me().on("click", ev => {
+                            const submitButton = document.querySelector("#form-submit-button");
+                            let pageInput = document.querySelector("#page-input");
+                            const page = parseInt(`[[${page}]]`);
+                            pageInput.value = page + 1;
+                            submitButton.click();
+                        })
+                    </script>
+
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 </body>

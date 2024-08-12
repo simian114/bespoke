@@ -98,7 +98,7 @@ public class PostUseCase {
      */
     @Transactional
     public PostResponseDto changeStatus(Long postId, PostStatusCmd cmd, User currentUser) {
-        PostRelation relation = PostRelation.builder().category(true).build();
+        PostRelation relation = PostRelation.builder().category(true).author(true).build();
         Post post = postRepository.getById(postId, relation);
 
         if (!post.canUpdateBy(currentUser)) {
@@ -129,7 +129,7 @@ public class PostUseCase {
             userRepository.decrementPublishedPostCount(post.getAuthor().getId());
         }
 
-        return PostResponseDto.from(postRepository.save(post));
+        return PostResponseDto.from(postRepository.save(post), relation);
     }
 
 
