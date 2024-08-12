@@ -15,11 +15,9 @@ import com.blog.bespoke.domain.model.user.UserRelation;
 import com.blog.bespoke.domain.repository.post.PostRepository;
 import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.blog.bespoke.domain.service.PostService;
-import com.blog.bespoke.domain.service.cache.PostCacheService;
 import com.blog.bespoke.domain.service.post.PostS3ImageService;
 import com.blog.bespoke.infrastructure.aws.s3.service.S3Service;
 import com.blog.bespoke.infrastructure.repository.post.S3PostImageRepository;
-import com.blog.bespoke.infrastructure.repository.redis.RedisUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,18 +37,6 @@ public class PostUseCase {
     private final PostS3ImageService postS3ImageService;
     private final EventPublisher publisher;
     private final S3Service s3Service;
-    private final RedisUtil redisUtil;
-    private final PostCacheService postCacheService;
-
-    private String getPostDetailCacheKey(Long postId) {
-        String POST_DETAIL_CACHE_KEY = "showPostById:";
-        return POST_DETAIL_CACHE_KEY + postId;
-    }
-
-    private String getPostSearchCacheKey(PostSearchCond cond) {
-        String POST_SEARCH_CACHE_KEY = "postSearch:";
-        return POST_SEARCH_CACHE_KEY + cond.toString();
-    }
 
     /**
      * 게시글 디테일 페이지
@@ -61,16 +47,10 @@ public class PostUseCase {
      */
     @Transactional
     public PostResponseDto showPostById(Long postId, User currentUser) {
-        PostResponseDto dto = redisUtil.get(getPostDetailCacheKey(postId), PostResponseDto.class);
-
-        if (dto == null) {
-            PostRelation relation = PostRelation.builder().count(true).author(true).category(true).build();
-            dto = postRepository.findById(postId, relation)
-                    .map(p -> PostResponseDto.from(p, relation))
-                    .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
-            // NOTE: 캐싱은 기본 한 시간
-            redisUtil.set(getPostDetailCacheKey(postId), dto);
-        }
+        PostRelation relation = PostRelation.builder().count(true).author(true).category(true).build();
+        PostResponseDto dto = postRepository.findById(postId, relation)
+                .map(p -> PostResponseDto.from(p, relation))
+                .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
 
         if (!dto.getStatus().equals(Post.Status.PUBLISHED)) {
             throw new BusinessException(ErrorCode.POST_FORBIDDEN);
@@ -81,8 +61,8 @@ public class PostUseCase {
          * 조건에 따른 조회수 증가 로직을 구현해야함. 그런에 redis 를 이용해 entity 가 아닌 dto 를 가져와서
          * post 의 비즈니스 메서드를 호출할 수 없음.
          * 아직 마땅한 해결방법을 찾지 못함. 해결 방법 찾은 이후 바로 수정할것.
+         * postService.getPostAndUpdateViewCountWhenNeeded(post, currentUser);
          */
-//         postService.getPostAndUpdateViewCountWhenNeeded(post, currentUser);
 
         return dto;
     }
@@ -148,9 +128,6 @@ public class PostUseCase {
         if (asIs == Post.Status.PUBLISHED && cmd.getStatus() != Post.Status.PUBLISHED) {
             userRepository.decrementPublishedPostCount(post.getAuthor().getId());
         }
-        if (post.getCategory() != null) {
-            postCacheService.invalidateBlogCategoryPosts(post.getCategory().getId());
-        }
 
         return PostResponseDto.from(postRepository.save(post));
     }
@@ -185,17 +162,7 @@ public class PostUseCase {
         PostUpdateCmd cmd = new PostUpdateCmd(requestDto.getTitle(), requestDto.getDescription(), requestDto.getContent(), category, requestDto.getStatus());
 
         post.update(cmd);
-        // 이미 publish 되어있으면 캐싱 제거
-        // category 를 변경한 경우라면? 이전 & 이후 모두 캐시 제거해줘야함
-        if (post.getStatus().equals(Post.Status.PUBLISHED) && post.getCategory() != null) {
-            // 이전
-            postCacheService.invalidateBlogCategoryPosts(post.getCategory().getId());
-            // 이후
-            if (!post.getCategory().getId().equals(cmd.getCategory().getId())) {
-                postCacheService.invalidateBlogCategoryPosts(cmd.getCategory().getId());
-            }
-        }
-        // NOTE: 캐싱 제거
+
         return PostResponseDto.from(postRepository.save(post), relation);
     }
 
@@ -207,9 +174,6 @@ public class PostUseCase {
             throw new BusinessException(ErrorCode.POST_FORBIDDEN);
         }
         post.delete();
-        if (post.getStatus().equals(Post.Status.PUBLISHED) && post.getCategory() != null) {
-            postCacheService.invalidateBlogCategoryPosts(post.getCategory().getId());
-        }
         postRepository.save(post);
     }
 

@@ -7,6 +7,4 @@ public interface PostSearchRequestDto {
     String toString();
 
     PostSearchCond toModel();
-
-    PostCacheService.PostSearchCacheType getType();
 }
