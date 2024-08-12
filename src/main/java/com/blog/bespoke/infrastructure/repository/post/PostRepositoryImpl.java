@@ -395,15 +395,15 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     /**
-     * statuses 가 빈 리스트면 모든 상태
+     * statuses 가 빈 리스트면 TEMP_SAVE 를 제외한 모든 상태
      */
     private BooleanExpression statusesIn(PostSearchCond cond) {
-        if (cond.getStatuses() != null && cond.getStatuses().isEmpty()) {
-            return null;
-        }
         if (cond == null || cond.getStatuses() == null) {
             return null;
-       }
+        }
+        if (cond.getStatuses() != null && cond.getStatuses().isEmpty()) {
+            return post.status.ne(Post.Status.TEMP_SAVE);
+        }
         return post.status.in(cond.getStatuses());
     }
 }
