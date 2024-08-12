@@ -84,6 +84,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/test").authenticated()
                 .requestMatchers("/api/user/{id}/follow").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
+                // admin
+                .requestMatchers("/admin/**").hasRole(Role.Code.ADMIN.name())
                 // error
                 .requestMatchers("/error/**").permitAll()
                 .requestMatchers("/errors").permitAll()
