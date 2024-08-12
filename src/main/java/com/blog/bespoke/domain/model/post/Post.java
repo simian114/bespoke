@@ -12,9 +12,7 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @DynamicInsert
 @DynamicUpdate
@@ -155,6 +153,11 @@ public class Post extends TimeStamp {
         DRAFT,
         PUBLISHED,
         HIDDEN, // 숨김처리
-        BLOCKED
+        BLOCKED;
+
+        static public List<Status> getStatusesWithoutTempSave() {
+            return Arrays.stream(values()).filter(v -> !v.equals(Status.TEMP_SAVE))
+                    .toList();
+        }
     }
 }

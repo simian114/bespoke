@@ -51,6 +51,14 @@ public class AdminController {
         // NOTE: temp save 는 제외하고
         model.addAttribute("statuses", Post.Status.getStatusesWithoutTempSave());
 
+        // pagination modela
+
+        model.addAttribute("totalElements", res.getTotalElements());
+        model.addAttribute("isLast", !res.hasNext());
+        model.addAttribute("isFirst", !res.hasPrevious());
+        model.addAttribute("totalPages", res.getTotalPage());
+        model.addAttribute("page", res.getPage());
+
         return HtmxResponse.builder()
                 .view("page/admin/post/post")
                 .build();
