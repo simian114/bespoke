@@ -4,6 +4,7 @@ import com.blog.bespoke.domain.model.category.Category;
 import com.blog.bespoke.domain.model.common.TimeStamp;
 import com.blog.bespoke.domain.model.follow.Follow;
 import com.blog.bespoke.domain.model.post.Post;
+import com.blog.bespoke.domain.model.user.role.Role;
 import com.blog.bespoke.domain.model.user.role.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -161,7 +162,10 @@ public class User extends TimeStamp {
 
     @Transient
     public boolean isAdmin() {
-        return false;
+        UserRole userRole = this.roles.stream().filter(role -> role.getRole().getCode().equals(Role.Code.ADMIN))
+                .findFirst()
+                .orElse(null);
+        return userRole != null;
     }
 
 
