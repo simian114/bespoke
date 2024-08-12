@@ -4,12 +4,21 @@ import com.blog.bespoke.domain.model.common.CommonSearchCond;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Getter
 @Setter
 public class PostSearchCond extends CommonSearchCond {
     private Long authorId;
     private String nickname; // author nickname
     private Post.Status status;
+
+    private String title;
+    private LocalDateTime from;
+    private LocalDateTime to;
+
+    private List<Post.Status> statuses; // status list
 
     /**
      * category 가 있음 이걸로만 검색하면 된다.

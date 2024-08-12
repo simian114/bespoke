@@ -34,7 +34,6 @@ public class HomeController {
     public HtmxResponse home(@ModelAttribute PostSearchForMainHomeRequestDto requestDto,
                              @LoginUser User currentUser,
                              HtmxRequest htmxRequest,
-                             HtmxResponse htmxResponse,
                              Model model) {
         model.addAttribute("me", currentUser);
 

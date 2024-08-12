@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/adminLayout}"
+>
+<head>
+    <title>Bespoke</title>
+</head>
+<body layout:fragment="content">
+<div class="">
+
+    <div class="post-filter-container p-4">
+        <form class="post-filter-form"
+              method="get"
+              th:action="@{/admin/post}"
+              th:object="${cond}"
+              hx-push-url="true"
+        >
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label" for="title">Title</label>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <div class="control">
+                            <input class="input" type="text" th:field="*{title}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label" for="nickname">Nickname</label>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <div class="control">
+                            <input class="input" type="text" th:field="*{nickname}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Date(from - to)</label>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <p class="control">
+                            <input class="input" type="date" placeholder="start-date" th:field="*{from}">
+                        </p>
+                    </div>
+                    <span>
+                    </span>
+                    <div class="field">
+                        <p class="control">
+                            <input class="input" type="date" placeholder="end-date" th:field="*{to}">
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="field is-horizontal">
+                <div class="field-label">
+                    <label class="label">Status</label>
+                </div>
+                <div class="field-body">
+                    <div class="checkboxes">
+                        <!--  status 의 리스트로 나와야함. enum 의 리스트를 뿌려주기 -->
+                        <label th:each="status: ${statuses}">
+                            <input type="checkbox" th:field="*{statuses}" th:value="${status}">
+                            <span th:text="${status}"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="field is-horizontal">
+                <div class="field-label">
+                    <!-- Left empty for spacing -->
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <div class="control is-flex is-justify-content-center">
+                            <button class="button is-primary">
+                                Search
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="post-table-container p-4">
+        <ul>
+            <li th:each="post: ${posts}" th:text="${post.title}"></li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

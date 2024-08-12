@@ -204,7 +204,11 @@ public class PostRepositoryImpl implements PostRepository {
                         authorIdEq(cond),
                         nicknameEq(cond),
                         categoryEq(cond),
-                        filterDeletePost()
+                        filterDeletePost(),
+                        titleContain(cond),
+                        from(cond),
+                        to(cond),
+                        statusesIn(cond)
                 );
     }
 
@@ -270,7 +274,11 @@ public class PostRepositoryImpl implements PostRepository {
                         authorIdEq(cond),
                         nicknameEq(cond),
                         categoryEq(cond),
-                        filterDeletePost()
+                        filterDeletePost(),
+                        titleContain(cond),
+                        from(cond),
+                        to(cond),
+                        statusesIn(cond)
                 );
     }
 
@@ -355,10 +363,47 @@ public class PostRepositoryImpl implements PostRepository {
         if (cond != null && cond.getManage() != null && cond.getManage() && cond.getStatus() == null) {
             return null;
         }
+        if (cond != null && cond.getStatuses() != null) {
+            return null;
+        }
         if (cond == null || cond.getStatus() == null) {
             return post.status.eq(Post.Status.PUBLISHED);
         }
         return post.status.eq(cond.getStatus());
     }
 
+
+    private BooleanExpression titleContain(PostSearchCond cond) {
+        if (cond == null || cond.getTitle() == null || cond.getTitle().isEmpty()) {
+            return null;
+        }
+        return post.title.containsIgnoreCase(cond.getTitle());
+    }
+
+    private BooleanExpression from(PostSearchCond cond) {
+        if (cond == null || cond.getFrom() == null) {
+            return null;
+        }
+        return post.createdAt.after(cond.getFrom());
+    }
+
+    private BooleanExpression to(PostSearchCond cond) {
+        if (cond == null || cond.getTo() == null) {
+            return null;
+        }
+        return post.createdAt.before(cond.getTo());
+    }
+
+    /**
+     * statuses 가 빈 리스트면 모든 상태
+     */
+    private BooleanExpression statusesIn(PostSearchCond cond) {
+        if (cond.getStatuses() != null && cond.getStatuses().isEmpty()) {
+            return null;
+        }
+        if (cond == null || cond.getStatuses() == null) {
+            return null;
+       }
+        return post.status.in(cond.getStatuses());
+    }
 }
