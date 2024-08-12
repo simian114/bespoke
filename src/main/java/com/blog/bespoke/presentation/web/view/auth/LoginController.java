@@ -82,7 +82,7 @@ public class LoginController {
     }
 
     @GetMapping("/logout")
-    public String logoutPage(HttpServletResponse response) {
+    public HtmxResponse logoutPage(HttpServletResponse response) {
         Cookie accessTokenCookie = new Cookie("access_token", null);
         accessTokenCookie.setMaxAge(0);
         accessTokenCookie.setHttpOnly(true);
@@ -96,7 +96,9 @@ public class LoginController {
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
 
-        return "redirect:/";
+        return HtmxResponse.builder()
+                .redirect("/")
+                .build();
     }
 
 }
