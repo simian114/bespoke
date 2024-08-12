@@ -64,9 +64,6 @@ public class PostCacheService {
     /**
      * invalidate
      */
-    public void invalidateBlogCategoryPosts(Long categoryId) {
-        redisUtil.invalidateByPattern(String.format(SEARCH_BLOG_POSTS_INVALIDATION_KEY, categoryId));
-    }
 
     public enum PostSearchCacheType {
         MAIN,

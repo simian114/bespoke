@@ -23,9 +23,4 @@ public class PostSearchForBlogHome implements PostSearchRequestDto {
         cond.setPage(0);
         return cond;
     }
-
-    @Override
-    public PostCacheService.PostSearchCacheType getType() {
-        return PostCacheService.PostSearchCacheType.BLOG_HOME;
-    }
 }

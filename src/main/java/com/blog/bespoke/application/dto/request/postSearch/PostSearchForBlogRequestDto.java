@@ -13,11 +13,6 @@ public class PostSearchForBlogRequestDto implements PostSearchRequestDto {
     private Long category;
     private Integer page;
 
-    @Override
-    public PostCacheService.PostSearchCacheType getType() {
-        return PostCacheService.PostSearchCacheType.BLOG;
-    }
-
     public PostSearchCond toModel() {
         PostSearchCond postSearchCond = new PostSearchCond();
         postSearchCond.setPage(page != null ? page : 0);

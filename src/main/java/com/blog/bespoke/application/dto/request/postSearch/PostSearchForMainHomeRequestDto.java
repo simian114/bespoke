@@ -12,11 +12,6 @@ public class PostSearchForMainHomeRequestDto implements PostSearchRequestDto {
     private Integer size;
     private PostSearchCond.OrderBy orderBy;
 
-    @Override
-    public PostCacheService.PostSearchCacheType getType() {
-        return PostCacheService.PostSearchCacheType.MAIN;
-    }
-
     public Integer getPage() {
         return page == null ? 0 : page;
     }

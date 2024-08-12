@@ -1,8 +1,5 @@
 package com.blog.bespoke.application.usecase.post;
 
-import com.blog.bespoke.application.dto.request.postSearch.PostSearchForBlogHome;
-import com.blog.bespoke.application.dto.request.postSearch.PostSearchForBlogRequestDto;
-import com.blog.bespoke.application.dto.request.postSearch.PostSearchForMainHomeRequestDto;
 import com.blog.bespoke.application.dto.request.postSearch.PostSearchRequestDto;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
 import com.blog.bespoke.application.dto.response.PostSearchResponseDto;
@@ -12,9 +9,7 @@ import com.blog.bespoke.domain.model.post.PostRelation;
 import com.blog.bespoke.domain.model.post.PostSearchCond;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.post.PostRepository;
-import com.blog.bespoke.domain.service.cache.PostCacheService;
 import com.blog.bespoke.domain.service.post.PostSearchService;
-import com.blog.bespoke.infrastructure.repository.redis.RedisUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,11 +17,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PostSearchUseCase {
-    private final RedisUtil redisUtil;
     private final PostSearchService postSearchService;
     private final PostRepository postRepository;
-    private final PostCacheService postSearchCacheService;
-    private final PostCacheService postCacheService;
 
     /**
      * 캐싱
@@ -46,34 +38,13 @@ public class PostSearchUseCase {
     public PostSearchResponseDto postSearch(PostSearchRequestDto requestDto, User currentUser) {
         PostSearchCond cond = requestDto.toModel();
         PostRelation postRelation = PostRelation.builder().cover(true).author(true).build();
-        // NOTE: search 객체로 분리
-        if (!postSearchCacheService.useMemoryCache(cond)) {
-            return PostSearchResponseDto.from(postRepository.search(cond)
-                    .map(post -> PostResponseDto.from(post, postRelation)));
-        }
-
-        String key = postCacheService.getPostSearchCacheKey(cond,
-                requestDto.getClass().equals(PostSearchForBlogRequestDto.class)
-                        ? PostCacheService.PostSearchCacheType.BLOG
-                        : requestDto.getClass().equals(PostSearchForMainHomeRequestDto.class)
-                        ? PostCacheService.PostSearchCacheType.MAIN
-                        : requestDto.getClass().equals(PostSearchForBlogHome.class)
-                        ? PostCacheService.PostSearchCacheType.BLOG_HOME
-                        : null
-        );
 
         if (!postSearchService.canSearch(cond, currentUser)) {
             throw new BusinessException(ErrorCode.POST_FORBIDDEN);
         }
 
-        PostSearchResponseDto cached = redisUtil.get(key, PostSearchResponseDto.class);
-        if (cached != null) {
-            return cached;
-        }
-        PostSearchResponseDto res = PostSearchResponseDto.from(postRepository.search(cond)
+        return PostSearchResponseDto.from(postRepository.search(cond)
                 .map(post -> PostResponseDto.from(post, postRelation)));
-        redisUtil.set(key, res);
-        return res;
     }
 
 }

@@ -12,11 +12,6 @@ public class PostSearchForManageRequestDto implements PostSearchRequestDto {
     private Long categoryId;
     private String nickname;
 
-    @Override
-    public PostCacheService.PostSearchCacheType getType() {
-        return null;
-    }
-
     public PostSearchCond toModel() {
         PostSearchCond postSearchCond = new PostSearchCond();
         postSearchCond.setPage(page != null ? page : 0);
