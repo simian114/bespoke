@@ -1,0 +1,49 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:fragment="header"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+>
+<header class="container is-position-relative">
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item has-text-weight-bold is-size-3" href="/" hx-boost="true">
+                Bespoke
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+               data-target="navbar-target">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <script>
+                    me().on("click", ev => {
+                        let el = me(ev);
+                        const target = el.dataset.target;
+                        let menu = document.getElementById(target);
+                        el.classList.toggle("is-active");
+                        menu.classList.toggle("is-active")
+                    }) </script>
+            </a>
+        </div>
+        <div id="navbar-target" class="navbar-menu">
+            <div class="navbar-start">
+                <div class="navbar-item">
+                    <span class="is-size-4 ">
+                        Admin
+                    </span>
+                </div>
+            </div>
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-danger" href="/logout">
+                            Log out
+                        </a>
+                        <div th:replace="~{fragments/themeSelector}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+</html>
