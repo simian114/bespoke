@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<th:block th:fragment="filter">
+    <form class="post-filter-form"
+          id="post-filter-form"
+          method="get"
+          th:action="@{/admin/post}"
+          th:object="${cond}"
+          hx-push-url="true"
+    >
+        <!--       hidden start     -->
+        <input type="hidden" name="page" id="page-input" value="0"/>
+        <!--       hidden end    -->
+
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label" for="title">Title</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="text" th:field="*{title}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label" for="nickname">Nickname</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="text" th:field="*{nickname}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Date(from - to)</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <p class="control">
+                        <input class="input" type="date" placeholder="start-date" th:field="*{from}">
+                    </p>
+                </div>
+                <span>
+                    </span>
+                <div class="field">
+                    <p class="control">
+                        <input class="input" type="date" placeholder="end-date" th:field="*{to}">
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-label">
+                <label class="label">Status</label>
+            </div>
+            <div class="field-body">
+                <div class="checkboxes">
+                    <!--  status 의 리스트로 나와야함. enum 의 리스트를 뿌려주기 -->
+                    <label th:each="status: ${statuses}">
+                        <input type="checkbox" th:field="*{statuses}" th:value="${status}">
+                        <span th:text="${status}"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-label">
+                <!-- Left empty for spacing -->
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control is-flex is-justify-content-center">
+                        <button th:id="form-submit-button" class="button is-primary">
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</th:block>
+
+<th:block th:fragment="table">
+    <div class="table-container is-flex is-flex-direction-column is-justify-content-center	">
+        <!--  테이블 넣기  -->
+        <table class="table">
+            <thead>
+            <tr>
+                <th><abbr title="Post Id">id</abbr></th>
+                <th><abbr title="Title">title</abbr></th>
+                <th><abbr title="Status">status</abbr></th>
+                <th><abbr title="Created At">createdAt</abbr></th>
+                <th><abbr title="Author">author</abbr></th>
+                <th>action</th>
+            </tr>
+            </thead>
+            <!--  tfoot  -->
+            <tfoot>
+            <tr>
+                <th><abbr title="Post Id">id</abbr></th>
+                <th><abbr title="Title">title</abbr></th>
+                <th><abbr title="Status">status</abbr></th>
+                <th><abbr title="Created At">createdAt</abbr></th>
+                <th><abbr title="Author">author</abbr></th>
+                <th>action</th>
+            </tr>
+            </tfoot>
+            <tbody hx-swap="outerHTML swap:0.5s">
+            <!-- tbody -->
+            <th:block th:each="post: ${posts}">
+                <!--                    delete 된 post 라면 ...-->
+                <tr th:fragment="post-item-row">
+                    <th><abbr title="Post Id" th:text="${post.id}">id</abbr></th>
+                    <th>
+                        <div class="is-flex is-align-items-center is-gap-0.5">
+                            <span th:text="${post.title}"></span>
+                            <a class="button is-small"
+                               th:href="@{/blog/posts/{id}(id=${post.id})}"
+                               target="_blank"
+                            >
+                                    <span class="icon is-small">
+                                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                    </span>
+                            </a>
+
+                        </div>
+                    </th>
+                    <th><abbr title="Status" th:text="${post.status}">status</abbr></th>
+                    <th><abbr title="Created At" th:text="${post.createdAt}">createdAt</abbr></th>
+                    <th>
+                        <div class="is-flex is-align-items-center is-gap-0.5">
+                            <span th:text="${post.author.nickname}"></span>
+                            <a class="button is-small"
+                               th:href="@{/blog/{nickname}(nickname=${post.author.nickname})}"
+                               target="_blank"
+                            >
+                                    <span class="icon is-small">
+                                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                    </span>
+                            </a>
+                        </div>
+                    </th>
+                    <th class="buttons are-small">
+                        <button class="button is-danger" hx-confirm="Are you sure?"
+                                hx-target="closest tr"
+                                hx:delete="@{/admin/post/{postId}(postId=${post.id})}">
+                            delete
+                        </button>
+                        <th:block th:if="${post.status.name() == 'DRAFT'}">
+                            <button hx:patch="@{/admin/post/{postId}/status/PUBLISHED(postId=${post.id})}"
+                                    hx-confirm="Are you sure?"
+                                    hx-target="closest tr"
+                                    hx-swap="outerHTML"
+                                    class="button is-info">publish
+                            </button>
+                            <button hx:patch="@{/admin/post/{postId}/status/HIDDEN(postId=${post.id})}"
+                                    hx-confirm="Are you sure?"
+                                    hx-target="closest tr"
+                                    hx-swap="outerHTML"
+                                    class="button is-warning">hidden
+                            </button>
+                        </th:block>
+                        <!-- TODO: block / unblock-->
+                        <th:block th:unless="${post.status.name() == 'DRAFT'}">
+                            <button hx:patch="@{/admin/post/{postId}/status/PUBLISHED(postId=${post.id})}"
+                                    hx-confirm="Are you sure?"
+                                    class="button is-warning" th:if="${post.status.name() == 'HIDDEN'}"
+                                    hx-target="closest tr"
+                                    hx-swap="outerHTML"
+                            >
+                                publish
+                            </button>
+                            <button hx:patch="@{/admin/post/{postId}/status/HIDDEN(postId=${post.id})}"
+                                    hx-confirm="Are you sure?"
+                                    class="button is-info" th:if="${post.status.name() == 'PUBLISHED'}"
+                                    hx-target="closest tr"
+                                    hx-swap="outerHTML"
+                            >
+                                hidden
+                            </button>
+                        </th:block>
+
+                    </th>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </div>
+</th:block>
+</body>
+</html>
