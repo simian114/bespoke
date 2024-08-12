@@ -201,9 +201,6 @@
                             </div>
                         </th>
                         <th class="buttons are-small">
-                            <a th:href="@{/blog/manage/posts/{postId}/edit(postId=${post.id})}"
-                               hx-boost="false"
-                               class="button is-primary">edit</a>
                             <button class="button is-danger" hx-confirm="Are you sure?"
                                     hx-target="closest tr"
                                     hx:delete="@{/admin/post/{postId}(postId=${post.id})}">
