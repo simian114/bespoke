@@ -23,6 +23,10 @@ public class UserResponseDto {
     private String nickname;
     private String name;
     private String avatarUrl;
+    private String createdAt;
+    private String bannedUntil;
+
+    private User.Status status;
 
     private UserProfileResponseDto userProfile;
 
@@ -39,11 +43,16 @@ public class UserResponseDto {
     private S3UserAvatarResponseDto avatar;
 
     static private UserResponseDtoBuilder base(User user) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+
         return UserResponseDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .avatarUrl(user.getAvatar() == null ? "" : user.getAvatar().getUrl())
+                .status(user.getStatus())
+                .createdAt(user.getCreatedAt().format(formatter))
+                .bannedUntil(user.getBannedUntil() == null ? "" : user.getBannedUntil().format(formatter))
                 .name(user.getName());
 
     }

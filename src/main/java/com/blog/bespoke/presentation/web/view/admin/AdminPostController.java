@@ -4,7 +4,6 @@ import com.blog.bespoke.application.dto.response.PostResponseDto;
 import com.blog.bespoke.application.usecase.post.PostUseCase;
 import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.post.PostStatusCmd;
-import com.blog.bespoke.domain.model.post.PostUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
 import com.blog.bespoke.infrastructure.web.htmx.Toast;
@@ -17,6 +16,8 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.LocalDate;
+
 @Controller
 @RequestMapping("/admin/post")
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class AdminPostController {
 
     @PatchMapping("/{postId}/status/{status}")
     public HtmxResponse changeStatus(@PathVariable("postId") Long postId,
-                                     @PathVariable("status")Post.Status status,
+                                     @PathVariable("status") Post.Status status,
                                      @LoginUser User currentUser,
                                      Model model) {
         PostStatusCmd cmd = new PostStatusCmd();

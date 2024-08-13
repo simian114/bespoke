@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<th:block th:fragment="filter">
+    <form class="post-filter-form"
+          id="post-filter-form"
+          method="get"
+          th:action="@{/admin/user}"
+          th:object="${cond}"
+          hx-push-url="true"
+    >
+        <!--       hidden start     -->
+        <input type="hidden" name="page" id="page-input" value="0"/>
+        <!--       hidden end    -->
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label" for="email">Email</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="text" th:field="*{email}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label" for="nickname">Nickname</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="text" th:field="*{nickname}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label" for="name">name</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="text" th:field="*{name}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-label">
+                <!-- Left empty for spacing -->
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control is-flex is-justify-content-center">
+                        <button th:id="form-submit-button" class="button is-primary">
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</th:block>
+
+<th:block th:fragment="table">
+    <div class="table-container is-flex is-flex-direction-column is-justify-content-center	">
+        <!--  테이블 넣기  -->
+        <table class="table">
+            <thead>
+            <tr>
+                <th><abbr title="Email">email</abbr></th>
+                <th><abbr title="Nickname">nickname</abbr></th>
+                <th><abbr title="Name">name</abbr></th>
+                <th><abbr title="Activated">activated</abbr></th>
+                <th><abbr title="Banned Until">banned until</abbr></th>
+                <th><abbr title="sign date">signup date</abbr></th>
+                <th>action</th>
+            </tr>
+            </thead>
+            <!--  tfoot  -->
+            <tfoot>
+            <tr>
+                <th><abbr title="Email">email</abbr></th>
+                <th><abbr title="Nickname">nickname</abbr></th>
+                <th><abbr title="Name">name</abbr></th>
+                <th><abbr title="Activated">activated</abbr></th>
+                <th><abbr title="Banned Until">banned until</abbr></th>
+                <th><abbr title="sign date">signup date</abbr></th>
+                <th>action</th>
+            </tr>
+            </tfoot>
+            <tbody hx-swap="outerHTML swap:0.5s">
+            <!-- tbody -->
+            <th:block th:each="user: ${users}">
+                <!--                    delete 된 post 라면 ...-->
+                <tr th:fragment="user-item-row">
+                    <th>
+                        <span th:text="${user.email}"></span>
+                    </th>
+                    <th>
+                        <div class="is-flex is-align-items-center is-gap-0.5">
+                            <span th:text="${user.nickname}"></span>
+                            <a class="button is-small"
+                               th:href="@{/blog/{nickname}/{nickname}(nickname=${user.nickname})}"
+                               target="_blank"
+                            >
+                                    <span class="icon is-small">
+                                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                    </span>
+                            </a>
+
+                        </div>
+                    </th>
+                    <th><span title="Name" th:text="${user.name}">name</span></th>
+                    <th><span title="Activated"
+                              th:text="${user.status.name() == 'ACTIVE' ? 'activated' : 'deactivated'}">activated</span>
+                    </th>
+                    <th><span title="Banned until" th:text="${user.bannedUntil}">banned until</span></th>
+                    <th><span title="Signup date" th:text="${user.createdAt}">signup date</span></th>
+                    <th class="buttons are-small"
+                        hx-target="closest tr"
+                        hx-swap="outerHTML"
+                    >
+                        <button class="button is-danger"
+                                hx:delete="@{/admin/user/{userId}(userId=${user.id})}"
+                                hx-swap="delete"
+                        >
+                            del
+                        </button>
+                        <button hx-prompt="How many days??(number only, default 3, over 99 permenent)"
+                                class="button"
+                                hx:patch="@{/admin/user/{userId}/ban(userId=${user.id})}"
+                        >
+                            ban
+                        </button>
+                        <button th:if="${!#strings.isEmpty(user.bannedUntil)}"
+                                class="button"
+                                hx:patch="@{/admin/user/{userId}/unban(userId=${user.id})}"
+                                hx-confirm="Are you sure?"
+                        >
+                            unban
+                        </button>
+                        <button class="button is-info"
+                                hx-confirm="Are you sure?"
+                                th:if="${user.status.name() == 'INACTIVE'}"
+                                hx:patch="@{/admin/user/{userId}/activate(userId=${user.id})}"
+                        >
+                            activate
+                        </button>
+                    </th>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </div>
+</th:block>
+</body>
+</html>

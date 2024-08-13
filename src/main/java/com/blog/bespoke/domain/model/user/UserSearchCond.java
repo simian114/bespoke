@@ -4,12 +4,17 @@ import com.blog.bespoke.domain.model.common.CommonSearchCond;
 import com.blog.bespoke.domain.model.user.role.Role;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
+@NoArgsConstructor
 public class UserSearchCond extends CommonSearchCond {
-    User.Status status;
-    Role.Code role;
+    private String email;
+    private String nickname;
+    private String name;
+
+    private User.Status status;
+    private Role.Code role;
 }

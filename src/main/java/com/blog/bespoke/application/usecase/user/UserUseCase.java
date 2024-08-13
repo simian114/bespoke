@@ -138,5 +138,46 @@ public class UserUseCase {
         return UserResponseDto.from(user);
     }
 
+    @Transactional
+    public UserResponseDto userActivate(Long userId, User currentUser) {
+        if (!currentUser.isAdmin()) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
+        User user = userRepository.getById(userId);
+
+        user.activate();
+        return UserResponseDto.from(user);
+    }
+
+    @Transactional
+    public void deleteUser(Long userId, User currentUser) {
+        if (!currentUser.isAdmin()) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
+        userRepository.deleteById(userId);
+    }
+
+    @Transactional
+    public UserResponseDto bannedUntil(Long userId, Integer days, User currentUser) {
+        if (!currentUser.isAdmin()) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
+        User user = userRepository.getById(userId);
+
+        LocalDateTime bannedUntilFromDays = userService.getBannedUntilFromDays(days);
+        user.ban(bannedUntilFromDays);
+        return UserResponseDto.from(user);
+    }
+
+    @Transactional
+    public UserResponseDto unban(Long userId, User currentUser) {
+        if (!currentUser.isAdmin()) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
+        User user = userRepository.getById(userId);
+
+        user.unban();
+        return UserResponseDto.from(user);
+    }
 }
 
