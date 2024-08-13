@@ -221,6 +221,28 @@ public class User extends TimeStamp {
         s3UserAvatar.setUser(this);
     }
 
+    public boolean canUpdateBy(User currentUser) {
+        if (currentUser.isAdmin()) {
+            return true;
+        }
+        if (currentUser.id.equals(currentUser.getId())) {
+            return true;
+        }
+        return false;
+    }
+
+    public void changeStatus(Status status) {
+        this.status = status;
+    }
+
+    public void ban(LocalDateTime bannedUntilFromDays) {
+        this.bannedUntil = bannedUntilFromDays;
+    }
+
+    public void unban() {
+        this.bannedUntil = null;
+    }
+
 
     public enum Status {
         INACTIVE,

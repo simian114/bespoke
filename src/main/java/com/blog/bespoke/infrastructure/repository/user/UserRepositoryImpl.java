@@ -4,7 +4,6 @@ import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.category.QCategory;
 import com.blog.bespoke.domain.model.user.*;
-import com.blog.bespoke.domain.model.user.role.QRole;
 import com.blog.bespoke.domain.model.user.role.QUserRole;
 import com.blog.bespoke.domain.model.user.role.Role;
 import com.blog.bespoke.domain.repository.user.UserRepository;
@@ -19,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
@@ -281,7 +281,9 @@ public class UserRepositoryImpl implements UserRepository {
 
     // --- search
     @Override
-    public Page<User> search(UserSearchCond cond, Pageable pageable) {
+    public Page<User> search(UserSearchCond cond) {
+        Pageable pageable = PageRequest.of(cond.getPage() == null ? 0 : cond.getPage(), cond.getPageSize() == null ? 20 : cond.getPageSize());
+
         JPAQuery<User> jpaQuery = query(user, cond)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
@@ -304,8 +306,11 @@ public class UserRepositoryImpl implements UserRepository {
                 .from(user)
                 .leftJoin(user.roles).fetchJoin()
                 .where(
-                        statusEq(cond != null ? cond.getStatus() : null),
-                        roleEq(cond != null ? cond.getRole() : null)
+                        statusEq(cond),
+                        roleEq(cond),
+                        nicknameEq(cond),
+                        nameContain(cond),
+                        emailEq(cond)
                 );
     }
 
@@ -313,17 +318,48 @@ public class UserRepositoryImpl implements UserRepository {
         return queryFactory.select(Wildcard.count)
                 .from(user)
                 .where(
-                        statusEq(cond != null ? cond.getStatus() : null),
-                        roleEq(cond != null ? cond.getRole() : null)
+                        statusEq(cond),
+                        roleEq(cond),
+                        nicknameEq(cond),
+                        nameContain(cond),
+                        emailEq(cond)
+
                 );
     }
 
-    private BooleanExpression statusEq(User.Status status) {
-        return user.status.eq(Objects.requireNonNullElse(status, User.Status.ACTIVE));
+    private BooleanExpression statusEq(UserSearchCond cond) {
+        if (cond == null || cond.getStatus() == null) {
+            return null;
+        }
+        return user.status.eq(cond.getStatus());
     }
 
-    private BooleanExpression roleEq(Role.Code role) {
-        return user.roles.any().role.code.eq(Objects.requireNonNullElse(role, Role.Code.USER));
+    private BooleanExpression roleEq(UserSearchCond cond) {
+        if (cond == null || cond.getRole() == null) {
+            return null;
+        }
+        return user.roles.any().role.code.eq(cond.getRole());
+    }
+
+    private BooleanExpression nicknameEq(UserSearchCond cond) {
+        if (cond == null || cond.getNickname() == null || cond.getNickname().isBlank()) {
+            return null;
+        }
+        return user.nickname.eq(cond.getNickname());
+    }
+
+    private BooleanExpression nameContain(UserSearchCond cond) {
+        if (cond == null || cond.getName() == null || cond.getName().isBlank()) {
+            return null;
+        }
+        return user.name.containsIgnoreCase(cond.getName());
+    }
+
+    private BooleanExpression emailEq(UserSearchCond cond) {
+        if (cond == null || cond.getEmail() == null || cond.getEmail().isBlank()) {
+            return null;
+        }
+            return user.email.eq(cond.getEmail());
     }
 
 }
