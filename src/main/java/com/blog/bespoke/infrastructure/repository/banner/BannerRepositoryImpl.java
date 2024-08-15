@@ -70,6 +70,8 @@ public class BannerRepositoryImpl implements BannerRepository {
     private JPAQuery<Banner> query(BannerSearchCond cond) {
         return queryFactory.select(QBanner.banner)
                 .from(QBanner.banner)
+                .leftJoin(QBanner.banner.advertiser)
+                .leftJoin(QBanner.banner.advertiser.avatar)
                 .where(advertiserIdEq(cond),
                         advertiserNicknameEq(cond)
                 );

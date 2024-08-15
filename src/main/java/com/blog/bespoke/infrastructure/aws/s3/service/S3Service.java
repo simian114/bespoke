@@ -6,6 +6,8 @@ import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
+import com.blog.bespoke.domain.model.banner.S3BannerImage;
+import com.blog.bespoke.domain.model.banner.S3BannerImageType;
 import com.blog.bespoke.domain.model.post.S3PostImage;
 import com.blog.bespoke.domain.model.user.S3UserAvatar;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class S3Service {
     private final AmazonS3 s3Client;
+
+    private final String bannerFolder = "banner/";
 
     @Value("${aws.s3.bucket}")
     private String bucketName;
@@ -53,7 +57,7 @@ public class S3Service {
     }
 
     public S3UserAvatar uploadAvatar(MultipartFile file) {
-         // TODO: db 에도 저장해야함
+        // TODO: db 에도 저장해야함
         String originalFilename = file.getOriginalFilename();
         String ext = originalFilename.substring(originalFilename.lastIndexOf('.'));
         String filename = UUID.randomUUID().toString() + ext;
@@ -73,6 +77,31 @@ public class S3Service {
                 .originalFilename(originalFilename)
                 .build();
     }
+
+    public S3BannerImage uploadBannerImage(MultipartFile file, S3BannerImageType type) {
+        // 폴더
+        // TODO: db 에도 저장해야함
+        String originalFilename = file.getOriginalFilename();
+        String ext = originalFilename.substring(originalFilename.lastIndexOf('.'));
+        String filename = UUID.randomUUID().toString() + ext;
+        String fileUrl = bucketUrl + bannerFolder + filename;
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(file.getContentType());
+        metadata.setContentLength(file.getSize());
+        try {
+            PutObjectResult putObjectResult = s3Client.putObject(bucketName, filename, file.getInputStream(), metadata);
+        } catch (IOException e) {
+            throw new BusinessException(ErrorCode.NOT_FOUND.INTERNAL_SERVER_ERROR);
+        }
+        return S3BannerImage.builder()
+                .url(fileUrl)
+                .filename(filename)
+                .size(file.getSize())
+                .originalFilename(originalFilename)
+                .type(type)
+                .build();
+    }
+
 
     public S3Object getFile(String keyName) {
         return s3Client.getObject(bucketName, keyName);

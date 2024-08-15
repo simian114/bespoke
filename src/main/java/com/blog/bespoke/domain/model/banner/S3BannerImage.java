@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -15,6 +16,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @DynamicUpdate
 @DynamicInsert
 @Table(name = "s3_banner_image")
+@SuperBuilder
 public class S3BannerImage extends S3File {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
