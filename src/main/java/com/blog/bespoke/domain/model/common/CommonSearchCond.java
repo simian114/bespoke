@@ -2,6 +2,8 @@ package com.blog.bespoke.domain.model.common;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 /**
  * pageSize: default 값: 10
@@ -15,4 +17,8 @@ public class CommonSearchCond {
 
     // protected Long cursor;
     protected Integer page = 0;
+
+    public Pageable getPageable() {
+        return PageRequest.of(page == null ? 0 : page, pageSize == null ? 20 : pageSize);
+    }
 }
