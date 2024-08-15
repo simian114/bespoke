@@ -1,10 +1,13 @@
 package com.blog.bespoke.infrastructure.repository.config;
 
 import com.blog.bespoke.domain.repository.TokenRepository;
+import com.blog.bespoke.domain.repository.banner.BannerRepository;
 import com.blog.bespoke.domain.repository.comment.CommentRepository;
 import com.blog.bespoke.domain.repository.notification.NotificationRepository;
 import com.blog.bespoke.domain.repository.post.PostRepository;
 import com.blog.bespoke.domain.repository.user.UserRepository;
+import com.blog.bespoke.infrastructure.repository.banner.BannerJpaRepository;
+import com.blog.bespoke.infrastructure.repository.banner.BannerRepositoryImpl;
 import com.blog.bespoke.infrastructure.repository.comment.CommentJpaRepository;
 import com.blog.bespoke.infrastructure.repository.comment.CommentRepositoryImpl;
 import com.blog.bespoke.infrastructure.repository.notification.NotificationJpaRepository;
@@ -34,6 +37,7 @@ public class RepositoryConfig {
     private final PostJpaRepository postJpaRepository;
     private final NotificationJpaRepository notificationJpaRepository;
     private final CommentJpaRepository commentJpaRepository;
+    private final BannerJpaRepository bannerJpaRepository;
 
 
     @PersistenceContext
@@ -67,5 +71,10 @@ public class RepositoryConfig {
     @Bean
     public CommentRepository commentRepository() {
         return new CommentRepositoryImpl(commentJpaRepository);
+    }
+
+    @Bean
+    public BannerRepository bannerRepository() {
+        return new BannerRepositoryImpl(jpaQueryFactory(), bannerJpaRepository);
     }
 }
