@@ -1,11 +1,14 @@
 package com.blog.bespoke.infrastructure.repository.config;
 
 import com.blog.bespoke.domain.repository.TokenRepository;
+import com.blog.bespoke.domain.repository.banner.BannerFormRepository;
 import com.blog.bespoke.domain.repository.banner.BannerRepository;
 import com.blog.bespoke.domain.repository.comment.CommentRepository;
 import com.blog.bespoke.domain.repository.notification.NotificationRepository;
 import com.blog.bespoke.domain.repository.post.PostRepository;
 import com.blog.bespoke.domain.repository.user.UserRepository;
+import com.blog.bespoke.infrastructure.repository.banner.BannerFormJpaRepository;
+import com.blog.bespoke.infrastructure.repository.banner.BannerFormRepositoryImpl;
 import com.blog.bespoke.infrastructure.repository.banner.BannerJpaRepository;
 import com.blog.bespoke.infrastructure.repository.banner.BannerRepositoryImpl;
 import com.blog.bespoke.infrastructure.repository.comment.CommentJpaRepository;
@@ -38,6 +41,7 @@ public class RepositoryConfig {
     private final NotificationJpaRepository notificationJpaRepository;
     private final CommentJpaRepository commentJpaRepository;
     private final BannerJpaRepository bannerJpaRepository;
+    private final BannerFormJpaRepository bannerFormJpaRepository;
 
 
     @PersistenceContext
@@ -76,5 +80,10 @@ public class RepositoryConfig {
     @Bean
     public BannerRepository bannerRepository() {
         return new BannerRepositoryImpl(jpaQueryFactory(), bannerJpaRepository);
+    }
+
+    @Bean
+    public BannerFormRepository bannerFormRepository() {
+        return new BannerFormRepositoryImpl(jpaQueryFactory(), bannerFormJpaRepository);
     }
 }
