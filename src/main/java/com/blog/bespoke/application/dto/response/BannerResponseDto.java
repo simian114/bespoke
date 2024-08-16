@@ -1,7 +1,6 @@
 package com.blog.bespoke.application.dto.response;
 
 import com.blog.bespoke.domain.model.banner.Banner;
-import com.blog.bespoke.domain.model.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,8 +29,8 @@ public class BannerResponseDto {
                 .title(banner.getTitle())
                 .subTitle(banner.getSubTitle())
                 .content(banner.getContent())
-                .createdAt(banner.getCreatedAt().format(formatter))
-                .advertiser(UserResponseDto.from(banner.getAdvertiser()))
+                .createdAt(banner.getCreatedAt() == null ? "" : banner.getCreatedAt().format(formatter))
+                .advertiser(banner.getAdvertiser() == null ? null : UserResponseDto.from(banner.getAdvertiser()))
                 .build();
     }
 
