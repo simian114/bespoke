@@ -18,6 +18,10 @@
 <!--           th:href="@{/blog/manage/follows}">follow</a>-->
         <a hx-swap="outerHTML transition: true"
            th:href="@{/blog/manage/categories}">category</a>
+
+        <a hx-swap="outerHTML transition: true"
+           th:href="@{/blog/manage/banners}">banner</a>
+
         <script>
             any(".panel-tabs a")?.forEach(el => {
                 const currentUrl = window.location.pathname;

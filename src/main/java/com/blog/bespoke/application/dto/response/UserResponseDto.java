@@ -51,7 +51,7 @@ public class UserResponseDto {
                 .nickname(user.getNickname())
                 .avatarUrl(user.getAvatar() == null ? "" : user.getAvatar().getUrl())
                 .status(user.getStatus())
-                .createdAt(user.getCreatedAt().format(formatter))
+                .createdAt(user.getCreatedAt() == null ? "" : user.getCreatedAt().format(formatter))
                 .bannedUntil(user.getBannedUntil() == null ? "" : user.getBannedUntil().format(formatter))
                 .name(user.getName());
 

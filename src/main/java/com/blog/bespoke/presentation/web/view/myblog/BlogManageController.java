@@ -1,33 +1,37 @@
 package com.blog.bespoke.presentation.web.view.myblog;
 
-import com.blog.bespoke.application.dto.request.CategoryCreateRequestDto;
 import com.blog.bespoke.application.dto.request.PostCreateRequestDto;
 import com.blog.bespoke.application.dto.request.UserUpdateRequestDto;
 import com.blog.bespoke.application.dto.request.postSearch.PostSearchForManageRequestDto;
+import com.blog.bespoke.application.dto.request.search.banner.BannerSearchForManage;
+import com.blog.bespoke.application.dto.response.BannerResponseDto;
 import com.blog.bespoke.application.dto.response.PostResponseDto;
 import com.blog.bespoke.application.dto.response.PostSearchResponseDto;
 import com.blog.bespoke.application.dto.response.UserResponseDto;
+import com.blog.bespoke.application.dto.response.search.CommonSearchResponseDto;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
+import com.blog.bespoke.application.usecase.banner.BannerSearchUseCase;
+import com.blog.bespoke.application.usecase.banner.BannerUseCase;
 import com.blog.bespoke.application.usecase.post.PostSearchUseCase;
 import com.blog.bespoke.application.usecase.post.PostUseCase;
 import com.blog.bespoke.application.usecase.user.UserCategoryUseCase;
 import com.blog.bespoke.application.usecase.user.UserUseCase;
-import com.blog.bespoke.domain.model.post.PostSearchCond;
-import com.blog.bespoke.domain.model.user.CategoryUpdateCmd;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxResponse;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @RequiredArgsConstructor
 @Controller
@@ -36,6 +40,9 @@ public class BlogManageController {
     private final PostUseCase postUseCase;
     private final PostSearchUseCase postSearchUseCase;
     private final UserCategoryUseCase userCategoryUseCase;
+    private final BannerSearchUseCase bannerSearchUseCase;
+    private final RabbitConnectionDetails rabbitConnectionDetails;
+    private final BannerUseCase bannerUseCase;
 
     @ModelAttribute
     public String handleCommonAttribute(@LoginUser User currentUser,
@@ -163,4 +170,34 @@ public class BlogManageController {
         return "page/myblog/categoryTable";
     }
 
+    /**
+     * 배너 리스트
+     */
+
+//    @ModelAttribute PostSearchForManageRequestDto requestDto,
+    @GetMapping("/blog/manage/banners")
+    public HtmxResponse bannerManage(@LoginUser User currentUser,
+                                     @ModelAttribute BannerSearchForManage requestDto,
+                                     Model model) {
+
+        requestDto.setNickname(currentUser.getNickname());
+        CommonSearchResponseDto<BannerResponseDto> res = bannerSearchUseCase.searchBanner(requestDto, currentUser);
+
+        model.addAttribute("cond", requestDto);
+
+        model.addAttribute("items", res.getContent());
+        model.addAttribute("totalElements", res.getTotalElements());
+        model.addAttribute("isLast", !res.hasNext());
+        model.addAttribute("isFirst", !res.hasPrevious());
+        model.addAttribute("totalPages", res.getTotalPage());
+        model.addAttribute("page", res.getPage());
+
+        System.out.println("------- start --------");
+        System.out.println(res.getContent());
+        System.out.println("------- end ---------");
+
+        return HtmxResponse.builder()
+                .view("page/myblog/bannerTable")
+                .build();
+    }
 }

@@ -6,14 +6,14 @@ import com.blog.bespoke.domain.model.banner.S3BannerImage;
 import com.blog.bespoke.domain.model.user.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
 
-@Getter
-@Setter
+@Data
+@Builder
 public class BannerCreateRequestDto {
     @NotBlank
     private String name;
@@ -36,21 +36,22 @@ public class BannerCreateRequestDto {
     private String backgroundColor;
 
     // images;
-    @NotNull
+//    @NotNull
     private MultipartFile pcImage;
 
-    @NotNull
+    //    @NotNull
     private MultipartFile mobileImage;
 
     public Banner toModel(User currentUser, S3BannerImage pcImage, S3BannerImage mobileImage) {
-        Set<S3BannerImage> images = Set.of(pcImage, mobileImage);
+//        Set<S3BannerImage> images = Set.of(pcImage, mobileImage);
         return Banner.builder()
                 .advertiser(currentUser)
                 .name(name)
                 .title(title)
                 .subTitle(subTitle)
                 .content(content)
-                .bannerImages(images)
+                .link(link)
+                .uiType(uiType)
                 .build();
     }
 }
