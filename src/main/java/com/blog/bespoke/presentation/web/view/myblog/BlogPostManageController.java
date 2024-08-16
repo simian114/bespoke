@@ -30,7 +30,7 @@ public class BlogPostManageController {
     private final UserUseCase userUseCase;
 
     @ModelAttribute
-    public String handleCommonAttribute(@PathVariable("postId") Long postId,
+    public void handleCommonAttribute(@PathVariable("postId") Long postId,
                                         @LoginUser User currentUser,
                                         Model model) {
         model.addAttribute("me", currentUser);
@@ -38,7 +38,6 @@ public class BlogPostManageController {
         if (postId != null) {
             model.addAttribute("postId", postId);
         }
-        return "";
     }
 
     /**

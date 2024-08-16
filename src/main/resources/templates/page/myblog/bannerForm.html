@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+>
+<head>
+    <title>banner form</title>
+</head>
+<body layout:fragment="content">
+<section class="section px-2">
+    <nav th:replace="page/myblog/navigator :: navigator"></nav>
+    <input
+            form="banner-form"
+            type="file"
+            name="pcImage"
+            id="pcImage"
+            accept="image/jpg, image/jpeg, image/gif, image/png, image/webp"
+            class="is-display-none"
+    />
+    <script>
+        me('prev').on("change", (ev) => {
+            const target = me(ev);
+            if (target?.files?.length > 0) {
+                const fileName = document.querySelector("#pc-image-input-container .file-name");
+                fileName.textContent = target.files[0].name;
+            }
+        })
+    </script>
+    <input
+            form="banner-form"
+            type="file"
+            name="mobileImage"
+            id="mobileImage"
+            accept="image/jpg, image/jpeg, image/gif, image/png, image/webp"
+            class="is-display-none"
+    />
+
+    <form class="container" th:id="banner-form" th:action="${action}" th:object="${banner}" method="post"
+          style="max-width: 640px">
+        <!-- NOTE: 마음에 들지 않음 -->
+
+
+        <div layout:replace="~{fragments/form/layout-input :: input('name', 'Name', 'text', 'name...', true)}">
+        </div>
+        <div class="field">
+            <label class="label" for="uiType">UI Types</label>
+            <div class="control">
+                <div class="select">
+                    <select th:field="*{uiType}">
+                        <option th:each="type: ${uiTypes}" th:text="${type}" th:value="${type}"></option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- PC IMAGE START -->
+
+        <!-- PC IMAGE END -->
+
+        <div layout:replace="~{fragments/form/layout-input :: input('title', 'Title', 'text', 'title...', true)}">
+        </div>
+
+        <div layout:replace="~{fragments/form/layout-input :: input('subTitle', 'Sub Title', 'text', 'subtitle', false)}">
+        </div>
+        <div layout:replace="~{fragments/form/layout-input :: input('content', 'Content', 'text', 'content', false)}">
+        </div>
+        <div layout:replace="~{fragments/form/layout-input :: input('link', 'Link', 'text', 'link', false)}">
+        </div>
+        <!--IMAGES-->
+        <div class="field">
+            <div class="control">
+
+            </div>
+        </div>
+
+
+        <div class="field is-grouped">
+            <div class="control">
+                <button class="button is-link">Submit</button>
+            </div>
+            <div class="control">
+                <button class="button is-link is-light">Cancel</button>
+            </div>
+        </div>
+
+
+    </form>
+
+
+</section>
+
+
+</body>
+</html>
