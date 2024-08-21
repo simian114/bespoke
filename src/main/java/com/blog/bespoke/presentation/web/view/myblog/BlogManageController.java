@@ -192,12 +192,8 @@ public class BlogManageController {
         model.addAttribute("totalPages", res.getTotalPage());
         model.addAttribute("page", res.getPage());
 
-        System.out.println("------- start --------");
-        System.out.println(res.getContent());
-        System.out.println("------- end ---------");
-
         return HtmxResponse.builder()
-                .view("page/myblog/bannerTable")
+                .view("page/myblog/banner/bannerTable")
                 .build();
     }
 }

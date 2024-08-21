@@ -4,11 +4,14 @@ import com.blog.bespoke.domain.model.common.TimeStamp;
 import com.blog.bespoke.domain.model.user.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +21,7 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class BannerForm extends TimeStamp {
     @Transient
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -62,23 +66,46 @@ public class BannerForm extends TimeStamp {
     @PrePersist
     @PreUpdate
     private void snapShotBanner() {
-        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        // 타임스탬프 대신 ISO 8601 형식으로 직렬화하도록 설정합니다.
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         try {
-            this.bannerSnapshot = objectMapper.writeValueAsString(bannerObj);
+            this.bannerSnapshot = objectMapper.writeValueAsString(banner);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setBannerSnapShot(String snapShotBanner) {
+        this.bannerSnapshot = snapShotBanner;
+        try {
+            this.bannerObj = objectMapper.readValue(snapShotBanner, Banner.class);
+        } catch (JsonProcessingException e) {
+            this.bannerObj = null;
+        }
+    }
+
+    public void setBannerObj(Banner banner) {
+        this.bannerObj = banner;
     }
 
     /**
      * db 에서 가져올 때
      */
     @PostLoad
-    private void setBannerObj() {
+    protected void setBannerObjOnPostLoad() {
         try {
             this.bannerObj = objectMapper.readValue(this.bannerSnapshot, Banner.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean isOngoing() {
+        return status != BannerFormStatus.DENIED
+                && status != BannerFormStatus.PAYMENT_CANCEL
+                && status != BannerFormStatus.REFUND_COMPLETED
+                && status != BannerFormStatus.TERMINATED;
     }
 }

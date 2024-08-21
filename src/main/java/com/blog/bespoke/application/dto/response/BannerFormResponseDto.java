@@ -1,10 +1,15 @@
 package com.blog.bespoke.application.dto.response;
 
+import com.blog.bespoke.domain.model.banner.Banner;
 import com.blog.bespoke.domain.model.banner.BannerForm;
 import com.blog.bespoke.domain.model.banner.BannerFormStatus;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Data
@@ -12,25 +17,36 @@ import java.time.format.DateTimeFormatter;
 public class BannerFormResponseDto {
     private Long id;
     private BannerFormStatus status;
-    private String startDate;
-    private String endDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime startDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime endDate;
 
     private BannerResponseDto bannerSnapshot;
 
-    private String createdAt;
-    private String auditedAt;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDateTime createdAt;
+
+    private LocalDateTime auditedAt;
 
     static public BannerFormResponseDto from(BannerForm bannerForm) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+        if (!bannerForm.getBannerSnapshot().isBlank() && bannerForm.getBannerObj() == null) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                bannerForm.setBannerObj(objectMapper.readValue(bannerForm.getBannerSnapshot(), Banner.class));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         return BannerFormResponseDto.builder()
                 .id(bannerForm.getId())
                 .status(bannerForm.getStatus())
-                .startDate(bannerForm.getStartDate().format(formatter))
-                .endDate(bannerForm.getEndDate().format(formatter))
+                .startDate(bannerForm.getStartDate())
+                .endDate(bannerForm.getEndDate())
                 .bannerSnapshot(BannerResponseDto.from(bannerForm.getBannerObj()))
-                .createdAt(bannerForm.getCreatedAt().format(formatter))
-                .auditedAt(bannerForm.getAuditedAt().format(formatter))
+                .createdAt(bannerForm.getCreatedAt())
+                .auditedAt(bannerForm.getAuditedAt())
                 .build();
     }
 }

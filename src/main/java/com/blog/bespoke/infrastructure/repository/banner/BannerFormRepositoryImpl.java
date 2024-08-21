@@ -2,7 +2,9 @@ package com.blog.bespoke.infrastructure.repository.banner;
 
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
-import com.blog.bespoke.domain.model.banner.*;
+import com.blog.bespoke.domain.model.banner.BannerForm;
+import com.blog.bespoke.domain.model.banner.BannerFormSearchCond;
+import com.blog.bespoke.domain.model.banner.QBannerForm;
 import com.blog.bespoke.domain.repository.banner.BannerFormRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
@@ -67,8 +69,19 @@ public class BannerFormRepositoryImpl implements BannerFormRepository {
                 .from(QBannerForm.bannerForm)
                 // bannerForm 은 굳이 join 할 필요 없음
                 .leftJoin(QBannerForm.bannerForm.user)
-                .where(userIdEq(cond));
+                .where(
+                        userIdEq(cond),
+                        bannerIdEq(cond)
+                );
     }
+
+    private BooleanExpression bannerIdEq(BannerFormSearchCond cond) {
+        if (cond == null || cond.getBannerId() == null) {
+            return null;
+        }
+        return QBannerForm.bannerForm.banner.id.eq(cond.getBannerId());
+    }
+
 
     private BooleanExpression userIdEq(BannerFormSearchCond cond) {
         if (cond == null || cond.getUserId() == null) {

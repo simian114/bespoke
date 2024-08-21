@@ -57,49 +57,13 @@
                             <th><span th:text="${item.subTitle}">subTitle</span></th>
                             <th><span th:text="${item.content}">content</span></th>
                             <th><span th:text="${item.createdAt}">createdAt</span></th>
-                            <th>action</th>
-<!--                            <th class="buttons are-small">-->
-<!--                                <a th:href="@{/blog/manage/posts/{postId}/edit(postId=${post.id})}"-->
-<!--                                   hx-boost="false"-->
-<!--                                   class="button is-primary">edit</a>-->
-<!--                                <button class="button is-danger" hx-confirm="Are you sure?"-->
-<!--                                        hx-target="closest tr"-->
-<!--                                        hx:delete="@{/blog/manage/posts/{postId}(postId=${post.id})}">-->
-<!--                                    delete-->
-<!--                                </button>-->
-<!--                                <th:block th:if="${post.status.name() == 'DRAFT'}">-->
-<!--                                    <button hx:patch="@{/blog/manage/posts/{postId}/status/PUBLISHED(postId=${post.id})}"-->
-<!--                                            hx-confirm="Are you sure?"-->
-<!--                                            hx-target="closest tr"-->
-<!--                                            hx-swap="outerHTML"-->
-<!--                                            class="button is-info">publish-->
-<!--                                    </button>-->
-<!--                                    <button hx:patch="@{/blog/manage/posts/{postId}/status/HIDDEN(postId=${post.id})}"-->
-<!--                                            hx-confirm="Are you sure?"-->
-<!--                                            hx-target="closest tr"-->
-<!--                                            hx-swap="outerHTML"-->
-<!--                                            class="button is-warning">hidden-->
-<!--                                    </button>-->
-<!--                                </th:block>-->
-<!--                                <th:block th:unless="${post.status.name() == 'DRAFT'}">-->
-<!--                                    <button hx:patch="@{/blog/manage/posts/{postId}/status/PUBLISHED(postId=${post.id})}"-->
-<!--                                            hx-confirm="Are you sure?"-->
-<!--                                            class="button is-warning" th:if="${post.status.name() == 'HIDDEN'}"-->
-<!--                                            hx-target="closest tr"-->
-<!--                                            hx-swap="outerHTML"-->
-<!--                                    >-->
-<!--                                        publish-->
-<!--                                    </button>-->
-<!--                                    <button hx:patch="@{/blog/manage/posts/{postId}/status/HIDDEN(postId=${post.id})}"-->
-<!--                                            hx-confirm="Are you sure?"-->
-<!--                                            class="button is-info" th:if="${post.status.name() == 'PUBLISHED'}"-->
-<!--                                            hx-target="closest tr"-->
-<!--                                            hx-swap="outerHTML"-->
-<!--                                    >-->
-<!--                                        hidden-->
-<!--                                    </button>-->
-<!--                                </th:block>-->
-<!--                            </th>-->
+                            <th class="buttons are-small">
+                                <a class="button"
+                                   th:href="@{/blog/manage/banners/{bannerId}/request(bannerId=${item.id})}"
+                                >
+                                    request publish
+                                </a>
+                            </th>
                         </tr>
                     </th:block>
                     </tbody>

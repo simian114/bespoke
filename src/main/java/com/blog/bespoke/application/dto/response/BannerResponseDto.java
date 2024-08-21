@@ -1,6 +1,7 @@
 package com.blog.bespoke.application.dto.response;
 
 import com.blog.bespoke.domain.model.banner.Banner;
+import com.blog.bespoke.domain.model.banner.BannerUiType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ public class BannerResponseDto {
     // TODO: String 이 아닌 LocalDateTime 으로 넘길 수 있게 뭔가 바꾸기
     private String createdAt;
     private UserResponseDto advertiser;
+    private BannerUiType uiType;
 
     static public BannerResponseDto from(Banner banner) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
@@ -29,6 +31,7 @@ public class BannerResponseDto {
                 .title(banner.getTitle())
                 .subTitle(banner.getSubTitle())
                 .content(banner.getContent())
+                .uiType(banner.getUiType())
                 .createdAt(banner.getCreatedAt() == null ? "" : banner.getCreatedAt().format(formatter))
                 .advertiser(banner.getAdvertiser() == null ? null : UserResponseDto.from(banner.getAdvertiser()))
                 .build();
