@@ -1,14 +1,18 @@
 package com.blog.bespoke.application.usecase.banner;
 
 import com.blog.bespoke.application.dto.request.BannerCreateRequestDto;
+import com.blog.bespoke.application.dto.request.EstimatedPaymentRequestDto;
 import com.blog.bespoke.application.dto.response.BannerResponseDto;
 import com.blog.bespoke.domain.model.banner.Banner;
 import com.blog.bespoke.domain.model.banner.S3BannerImage;
 import com.blog.bespoke.domain.model.banner.S3BannerImageType;
 import com.blog.bespoke.domain.model.user.User;
+import com.blog.bespoke.domain.repository.banner.BannerFormRepository;
 import com.blog.bespoke.domain.repository.banner.BannerRepository;
 import com.blog.bespoke.domain.service.banner.BannerS3ImageService;
+import com.blog.bespoke.domain.service.banner.BannerService;
 import com.blog.bespoke.infrastructure.aws.s3.service.S3Service;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,8 +22,17 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class BannerUseCase {
     private final BannerRepository bannerRepository;
+    private final BannerService bannerService;
     private final S3Service s3Service;
     private final BannerS3ImageService bannerS3ImageService;
+    private final BannerFormRepository bannerFormRepository;
+    private final ObjectMapper objectMapper;
+
+    @Transactional
+    public BannerResponseDto getBannerById(Long bannerId) {
+        Banner banner = bannerRepository.getById(bannerId);
+        return BannerResponseDto.from(banner);
+    }
 
     @Transactional
     public BannerResponseDto createBanner(BannerCreateRequestDto requestDto, User currentUser) {
@@ -47,6 +60,7 @@ public class BannerUseCase {
 
         return unSavedImage;
     }
+
 
 
 }

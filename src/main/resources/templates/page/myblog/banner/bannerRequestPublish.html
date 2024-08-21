@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+>
+<head>
+    <title>Bespoke</title>
+</head>
+<body layout:fragment="content">
+
+<section class="section px-2">
+    <nav th:replace="page/myblog/navigator :: navigator"></nav>
+    <div class="container">
+        <div>
+            <div class="block">
+                <a
+                        th:if="${canCreateNewForm}"
+                        class="button"
+                        th:href="@{/blog/manage/banners/{bannerId}/form(bannerId=${bannerId})}"
+                >
+                    create request form
+                </a>
+                <th:block th:unless="${canCreateNewForm}">
+                    <button class="button" disabled th:unless="${canCreateNewForm}">
+                        create request form
+                    </button>
+                    <p>can't create new form when there is on going form</p>
+                </th:block>
+                <br/>
+
+            </div>
+            <div class="block">
+                TODO:
+                현재 진행중인 form 하나만을 보여줌. 없으면 없음이라고 표현
+                <h2>
+                    on going form
+                </h2>
+            </div>
+            <div class="block">
+                TODO:
+                해당 banner 가 가지고 있는 모든 form 리스트를 보여줌.
+                한번에 가지고 있는 모든걸 가지고 온다.
+                테이블 형태로 보여준다. status 를 반드시 보여줄 수 있어야 한다.
+                <br/>
+                나중에는 결제 까지 할 수 있어야 한다.
+                <br/>
+                <div class="table-container is-flex is-flex-direction-column is-justify-content-center	">
+                    <!--  테이블 넣기  -->
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th><abbr title="Status">status</abbr></th>
+                            <th><abbr title="StartDate">startDate</abbr></th>
+                            <th><abbr title="EndDate">endDate</abbr></th>
+                            <th><abbr title="Created At">createdAt</abbr></th>
+                            <th>actions</th>
+                        </tr>
+                        </thead>
+                        <!--  tfoot  -->
+                        <tfoot>
+                        <tr>
+                            <th><abbr title="Status">status</abbr></th>
+                            <th><abbr title="StartDate">startDate</abbr></th>
+                            <th><abbr title="EndDate">endDate</abbr></th>
+                            <th><abbr title="Created At">createdAt</abbr></th>
+                            <th>actions</th>
+                        </tr>
+                        </tfoot>
+                        <tbody hx-swap="outerHTML">
+                        <!-- tbody -->
+                        <th:block th:each="item: ${items}">
+                            <!--                    delete 된 post 라면 ...-->
+                            <tr th:fragment="post-item-row">
+                                <th><span th:text="${item.status}">status</span></th>
+                                <th><span th:text="${item.startDate}">startDate</span></th>
+                                <th><span th:text="${item.endDate}">endDate</span></th>
+                                <th><span th:text="${item.createdAt}">createdAt</span></th>
+                                <th class="buttons are-small">
+                                    <a class="button">
+                                        hello
+                                    </a>
+                                </th>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+</body>
+</html>
