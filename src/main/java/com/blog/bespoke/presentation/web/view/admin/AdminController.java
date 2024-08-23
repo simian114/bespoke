@@ -1,13 +1,18 @@
 package com.blog.bespoke.presentation.web.view.admin;
 
 import com.blog.bespoke.application.dto.request.postSearch.PostSearchForAdmin;
+import com.blog.bespoke.application.dto.request.search.banner.BannerFormSearchForAdmin;
 import com.blog.bespoke.application.dto.request.userSearch.UserSearchForAdmin;
+import com.blog.bespoke.application.dto.response.BannerFormResponseDto;
 import com.blog.bespoke.application.dto.response.PostSearchResponseDto;
 import com.blog.bespoke.application.dto.response.UserSearchResponseDto;
+import com.blog.bespoke.application.dto.response.search.CommonSearchResponseDto;
+import com.blog.bespoke.application.usecase.banner.BannerFormSearchUseCase;
 import com.blog.bespoke.application.usecase.post.PostSearchUseCase;
 import com.blog.bespoke.application.usecase.post.PostUseCase;
 import com.blog.bespoke.application.usecase.user.UserSearchUseCase;
 import com.blog.bespoke.application.usecase.user.UserUseCase;
+import com.blog.bespoke.domain.model.banner.BannerFormStatus;
 import com.blog.bespoke.domain.model.post.Post;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
@@ -30,6 +35,7 @@ public class AdminController {
     private final UserUseCase userUseCase;
     private final PostSearchUseCase postSearchUseCase;
     private final UserSearchUseCase userSearchUseCase;
+    private final BannerFormSearchUseCase bannerFormSearchUseCase;
 
     @ModelAttribute
     void initModelAttribute(Model model,
@@ -70,7 +76,7 @@ public class AdminController {
     public HtmxResponse userManage(@ModelAttribute UserSearchForAdmin requestDto,
                                    Model model,
                                    @LoginUser User currentUser
-                                   ) {
+    ) {
         UserSearchResponseDto res = userSearchUseCase.userSearch(requestDto, currentUser);
 
         model.addAttribute("users", res.getContent());
@@ -92,8 +98,30 @@ public class AdminController {
      * 배너 관리 페이지 (서비스를 먼저 개발해야함)
      */
     @GetMapping("/banner")
-    public HtmxResponse bannerManage() {
-        return HtmxResponse.builder().build();
+    public HtmxResponse bannerManage(@ModelAttribute BannerFormSearchForAdmin requestDto,
+                                     Model model,
+                                     @LoginUser User currentUser) {
+        CommonSearchResponseDto<BannerFormResponseDto> res = bannerFormSearchUseCase.searchBannerForm(requestDto, currentUser);
+
+        model.addAttribute("items", res.getContent());
+
+        model.addAttribute("cond", requestDto);
+
+        model.addAttribute("statuses", Post.Status.getStatusesWithoutTempSave());
+
+        model.addAttribute("totalElements", res.getTotalElements());
+        model.addAttribute("isLast", !res.hasNext());
+        model.addAttribute("isFirst", !res.hasPrevious());
+        model.addAttribute("totalPages", res.getTotalPage());
+        model.addAttribute("page", res.getPage());
+
+//        statuses
+        model.addAttribute("statuses", BannerFormStatus.values());
+
+
+        return HtmxResponse.builder()
+                .view("page/admin/banner/banner")
+                .build();
     }
 
     /**

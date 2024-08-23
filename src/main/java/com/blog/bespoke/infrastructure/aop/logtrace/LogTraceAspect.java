@@ -16,7 +16,7 @@ public class LogTraceAspect {
     public LogTraceAspect(LogTrace logTrace) {
         this.logTrace = logTrace;
     }
-
+    //execution(* com.blog.bespoke.presentation.web.controller..*(..))
     @Around("execution(* com.blog.bespoke.presentation.web.controller..*(..)) || execution(* com.blog.bespoke.application.usecase..*(..)) || execution(* com.blog.bespoke.domain.service..*(..))")
     public Object trace(ProceedingJoinPoint joinPoint) throws Throwable {
         TraceStatus status = null;

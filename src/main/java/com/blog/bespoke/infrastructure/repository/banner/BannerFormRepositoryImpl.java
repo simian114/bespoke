@@ -71,8 +71,54 @@ public class BannerFormRepositoryImpl implements BannerFormRepository {
                 .leftJoin(QBannerForm.bannerForm.user)
                 .where(
                         userIdEq(cond),
-                        bannerIdEq(cond)
+                        bannerIdEq(cond),
+                        statusesIn(cond),
+                        nicknameEq(cond),
+                        dateAfter(cond),
+                        dateBefore(cond)
                 );
+    }
+
+    private JPAQuery<Long> countQuery(BannerFormSearchCond cond) {
+        return queryFactory.select(Wildcard.count)
+                .from(QBannerForm.bannerForm)
+                .where(
+                        userIdEq(cond),
+                        bannerIdEq(cond),
+                        statusesIn(cond),
+                        nicknameEq(cond),
+                        dateAfter(cond),
+                        dateBefore(cond)
+                );
+    }
+
+    private BooleanExpression dateAfter(BannerFormSearchCond cond) {
+        if (cond == null || cond.getStartDate() == null) {
+            return null;
+        }
+        return QBannerForm.bannerForm.startDate.after(cond.getStartDate());
+    }
+
+    private BooleanExpression dateBefore(BannerFormSearchCond cond) {
+        if (cond == null || cond.getEndDate() == null) {
+            return null;
+        }
+        return QBannerForm.bannerForm.endDate.before(cond.getEndDate());
+    }
+
+    private BooleanExpression datesBetween(BannerFormSearchCond cond) {
+        if (cond == null) {
+            return null;
+        }
+        return QBannerForm.bannerForm.status.in(cond.getStatuses());
+    }
+
+
+    private BooleanExpression statusesIn(BannerFormSearchCond cond) {
+        if (cond == null || cond.getStatuses() == null || cond.getStatuses().isEmpty()) {
+            return null;
+        }
+        return QBannerForm.bannerForm.status.in(cond.getStatuses());
     }
 
     private BooleanExpression bannerIdEq(BannerFormSearchCond cond) {
@@ -80,6 +126,13 @@ public class BannerFormRepositoryImpl implements BannerFormRepository {
             return null;
         }
         return QBannerForm.bannerForm.banner.id.eq(cond.getBannerId());
+    }
+
+    private BooleanExpression nicknameEq(BannerFormSearchCond cond) {
+        if (cond == null || cond.getNickname() == null || cond.getNickname().isBlank()) {
+            return null;
+        }
+        return QBannerForm.bannerForm.user.nickname.eq(cond.getNickname());
     }
 
 
@@ -90,10 +143,5 @@ public class BannerFormRepositoryImpl implements BannerFormRepository {
         return QBannerForm.bannerForm.user.id.eq(cond.getUserId());
     }
 
-    private JPAQuery<Long> countQuery(BannerFormSearchCond cond) {
-        return queryFactory.select(Wildcard.count)
-                .from(QBannerForm.bannerForm)
-                .where(userIdEq(cond));
-    }
 
 }

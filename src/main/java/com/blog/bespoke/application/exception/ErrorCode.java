@@ -48,6 +48,9 @@ public enum ErrorCode {
     UNSUPPORTED_IMAGE(HttpStatus.BAD_REQUEST, "Only jpeg, jpg, png, gif, and webp formats are allowed."),
     OVER_AVATAR_LIMIT_SIZE(HttpStatus.BAD_REQUEST, "The maximum size for an avatar image is 1MB."),
     COVER_IMAGE_LIMIT_SIZE(HttpStatus.BAD_REQUEST, "The maximum size for a cover image is 5MB."),
+
+    // banner
+    BANNER_FORM_CANNOT_BE_AUDITED_STATUS(HttpStatus.BAD_REQUEST, "Only Pending status can be audited"),
     ;
     private final HttpStatus statusCode;
     private final String message;

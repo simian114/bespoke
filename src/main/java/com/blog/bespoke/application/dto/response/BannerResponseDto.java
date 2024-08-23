@@ -17,6 +17,7 @@ public class BannerResponseDto {
     private String title;
     private String subTitle;
     private String content;
+    private String link;
     // TODO: String 이 아닌 LocalDateTime 으로 넘길 수 있게 뭔가 바꾸기
     private String createdAt;
     private UserResponseDto advertiser;
@@ -31,6 +32,7 @@ public class BannerResponseDto {
                 .title(banner.getTitle())
                 .subTitle(banner.getSubTitle())
                 .content(banner.getContent())
+                .link(banner.getLink())
                 .uiType(banner.getUiType())
                 .createdAt(banner.getCreatedAt() == null ? "" : banner.getCreatedAt().format(formatter))
                 .advertiser(banner.getAdvertiser() == null ? null : UserResponseDto.from(banner.getAdvertiser()))
