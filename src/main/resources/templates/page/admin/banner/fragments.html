@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<th:block th:fragment="filter">
+    <form class="banner-filter-form"
+          id="banner-filter-form"
+          method="get"
+          th:action="@{/admin/banner}"
+          th:object="${cond}"
+          hx-push-url="true"
+    >
+        <!--       hidden start     -->
+        <input type="hidden" name="page" id="page-input" value="0"/>
+        <!--       hidden end    -->
+
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label" for="nickname">Nickname</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="text" th:field="*{nickname}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field is-horizontal">
+            <div class="field-label">
+                <label class="label">Status</label>
+            </div>
+            <div class="field-body">
+                <div class="checkboxes">
+                    <!--  status 의 리스트로 나와야함. enum 의 리스트를 뿌려주기 -->
+                    <label th:each="status: ${statuses}">
+                        <input type="checkbox" th:field="*{statuses}" th:value="${status}">
+                        <span th:text="${status}"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Date</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <p class="control">
+                        <input class="input" type="date" placeholder="start-date" th:field="*{startDate}">
+                    </p>
+                </div>
+                <span>
+                    </span>
+                <div class="field">
+                    <p class="control">
+                        <input class="input" type="date" placeholder="end-date" th:field="*{endDate}">
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-label">
+                <!-- Left empty for spacing -->
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control is-flex is-justify-content-center">
+                        <button th:id="form-submit-button" class="button is-primary">
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</th:block>
+
+<th:block th:fragment="table">
+    <div class="table-container is-flex is-flex-direction-column is-justify-content-center	">
+        <!--  테이블 넣기  -->
+        <table class="table">
+            <thead>
+            <tr>
+                <th><abbr title="Status">status</abbr></th>
+                <th><abbr title="StartDate">startDate</abbr></th>
+                <th><abbr title="EndDate">endDate</abbr></th>
+                <th><abbr title="Created At">createdAt</abbr></th>
+                <th>actions</th>
+            </tr>
+            </thead>
+            <!--  tfoot  -->
+            <tfoot>
+            <tr>
+                <th><abbr title="Status">status</abbr></th>
+                <th><abbr title="StartDate">startDate</abbr></th>
+                <th><abbr title="EndDate">endDate</abbr></th>
+                <th><abbr title="Created At">createdAt</abbr></th>
+                <th>actions</th>
+            </tr>
+            </tfoot>
+            <tbody hx-swap="outerHTML">
+            <!-- tbody -->
+            <th:block th:each="item: ${items}">
+                <!--                    delete 된 post 라면 ...-->
+                <tr th:fragment="post-item-row">
+                    <th><span th:text="${item.status}">status</span></th>
+                    <th><span th:text="${item.startDate}">startDate</span></th>
+                    <th><span th:text="${item.endDate}">endDate</span></th>
+                    <th><span th:text="${item.createdAt}">createdAt</span></th>
+                    <th class="buttons are-small">
+                        <a class="button"
+                           th:href="@{/admin/banner/{bannerId}(bannerId=${item.id})}"
+                        >
+                            <!--디테일한 정보를 볼 수 있게 됨.-->
+                            <!--해당 페이지에서만 승인 / 거절을 할 수 있음.-->
+                            <!---->
+                            <!---->
+                            <!---->
+                            <!---->
+                            audit
+                        </a>
+                    </th>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </div>
+</th:block>
+</body>
+</html>

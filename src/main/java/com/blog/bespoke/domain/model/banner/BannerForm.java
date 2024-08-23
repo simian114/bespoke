@@ -61,11 +61,14 @@ public class BannerForm extends TimeStamp {
     private LocalDateTime auditedAt;
 
     /**
-     * db 에 저장할 때
+     * db 에 저장할 때. 업데이트는 절대로 이뤄지지 않음.
      */
     @PrePersist
     @PreUpdate
     private void snapShotBanner() {
+        if (bannerSnapshot != null && !bannerSnapshot.isBlank()) {
+            return;
+        }
         objectMapper.registerModule(new JavaTimeModule());
 
         // 타임스탬프 대신 ISO 8601 형식으로 직렬화하도록 설정합니다.
@@ -107,5 +110,16 @@ public class BannerForm extends TimeStamp {
                 && status != BannerFormStatus.PAYMENT_CANCEL
                 && status != BannerFormStatus.REFUND_COMPLETED
                 && status != BannerFormStatus.TERMINATED;
+    }
+
+    public void approve() {
+        this.status = BannerFormStatus.PAYMENT_WAITING;
+        this.auditedAt = LocalDateTime.now();
+    }
+
+    public void deny(String reason) {
+        this.status = BannerFormStatus.DENIED;
+        this.result = reason;
+        this.auditedAt = LocalDateTime.now();
     }
 }

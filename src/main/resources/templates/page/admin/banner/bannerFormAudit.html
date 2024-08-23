@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/adminLayout}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body layout:fragment="content">
+<section class="p-4">
+    <div th:text="${bannerForm.status.name()}"></div>
+    <th:block th:if="${bannerForm.status.name() == 'PENDING'}">
+        <div class="buttons">
+            <button class="button"
+                    hx:patch="@{/admin/banner/{bannerId}/audit/true(bannerId=${bannerId})}"
+                    hx-confirm="Are you sure?">
+                Approve
+            </button>
+            <button class="button"
+                    hx:patch="@{/admin/banner/{bannerId}/audit/false(bannerId=${bannerId})}"
+                    hx-prompt="deny reason">
+                Deny
+            </button>
+        </div>
+    </th:block>
+
+    <div class="">
+        <form class="container"
+              th:object="${banner}"
+              method="post"
+              style="max-width: 640px">
+            <!-- NOTE: 마음에 들지 않음 -->
+
+            <div class="field">
+                <label class="label">name</label>
+                <div class="control has-icons-right">
+                    <input class="input"
+                           type="text"
+                           th:field="*{name}"
+                    >
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">UI Type</label>
+                <div class="control has-icons-right">
+                    <input class="input"
+                           type="text"
+                           disabled
+                           th:field="*{uiType}"
+                    >
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Title</label>
+                <div class="control has-icons-right">
+                    <input class="input"
+                           type="text"
+                           disabled
+                           th:field="*{title}"
+                    >
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Sub Title</label>
+                <div class="control has-icons-right">
+                    <input class="input"
+                           type="text"
+                           disabled
+                           th:field="*{subTitle}"
+                    >
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Content</label>
+                <div class="control has-icons-right">
+                    <input class="input"
+                           type="text"
+                           disabled
+                           th:field="*{content}"
+                    >
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Link</label>
+                <div class="control has-icons-right">
+                    <input class="input"
+                           type="text"
+                           disabled
+                           th:field="*{link}"
+                    >
+                </div>
+                <a th:href="*{link}" target="_blank">
+                    link
+                </a>
+            </div>
+            <div class="field">
+                <label class="label">Start Date</label>
+                <div class="control has-icons-right">
+                    <input class="input"
+                           type="text"
+                           disabled
+                           th:value="${bannerForm.startDate}"
+                    >
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">End Date</label>
+                <div class="control has-icons-right">
+                    <input class="input"
+                           type="text"
+                           disabled
+                           th:value="${bannerForm.endDate}"
+                    >
+                </div>
+            </div>
+            <!-- PC IMAGE START -->
+
+            <!-- PC IMAGE END -->
+            <!--IMAGES-->
+        </form>
+    </div>
+</section>
+</body>
+
+</html>

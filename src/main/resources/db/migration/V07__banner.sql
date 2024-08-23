@@ -38,7 +38,7 @@ create table if not exists banner_form
     start_date      timestamp   not null,
     end_date        timestamp   not null,
     banner_snapshot longtext    not null,                   # 요청한 그 순간의 banner_type. image 정보들 또한 같이 들어가야한다.
-    status          varchar(10) not null default 'PENDING', # PENDING, APPROVED, DENIED
+    status          varchar(30) not null default 'PENDING', # PENDING, APPROVED, DENIED
     result          varchar(255),                           # 심사 결과. DENIED 면 거절 이유. APPROVED 면 '승인되었습니다.'
     banner_id       bigint      not null,
     user_id         bigint      not null,
