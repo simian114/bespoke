@@ -6,9 +6,11 @@
 >
 <head>
     <meta name="title" content="Bespoke - Write Your Stories">
-    <meta name="description" content="Bespoke is your platform to write, share, and discover stories. Join a community of writers and readers today.">
+    <meta name="description"
+          content="Bespoke is your platform to write, share, and discover stories. Join a community of writers and readers today.">
     <meta name="image" content="https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png">
-    <meta name="keywords" content="blog platform, simple, comfortable, diverse, fast, write stories, share stories, discover stories, velog, inblog, medium, wix, wordpress, tistory, naver blog, 벨로그, 블로그, 인블로그, 워드프레스, 티스토리, 네이버블로그">
+    <meta name="keywords"
+          content="blog platform, simple, comfortable, diverse, fast, write stories, share stories, discover stories, velog, inblog, medium, wix, wordpress, tistory, naver blog, 벨로그, 블로그, 인블로그, 워드프레스, 티스토리, 네이버블로그">
 
     <meta property="og:site_name" content="Bespoke">
     <meta property="og:type" content="website">
@@ -20,13 +22,37 @@
     <meta property="twitter:card" content="https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png">
     <meta property="twitter:url" content="https://www.bespoke.com">
     <meta property="twitter:title" content="Bespoke - Write Your Stories">
-    <meta property="twitter:description" content="Bespoke is your platform to write, share, and discover stories. Join a community of writers and readers today.">
+    <meta property="twitter:description"
+          content="Bespoke is your platform to write, share, and discover stories. Join a community of writers and readers today.">
     <meta property="twitter:image" content="https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png">
 
     <title>Bespoke</title>
 </head>
 <body>
 <section layout:fragment="content" class="section home-page">
+    <!--start-->
+    <th:block th:if="${popupBanners != null}">
+        <div th:replace="~{fragments/banner/mainPopupBanner :: popup-banner}"></div>
+<!--        <div class="modal is-active">-->
+<!--            <div class="modal-background"></div>-->
+<!--            <div class="modal-card"  style="max-width: 380px;">-->
+<!--                <section class="modal-card-body p-0" style="border-top-right-radius: 12px;border-top-left-radius: 12px;">-->
+<!--                    &lt;!&ndash;슬라이더 구현&ndash;&gt;-->
+<!--                    <figure class="image is-4by5">-->
+<!--                        <img src="https://images.unsplash.com/photo-1484589065579-248aad0d8b13?q=80&w=1959&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"/>-->
+<!--                    </figure>-->
+<!--                </section>-->
+<!--                <footer class="modal-card-foot p-4">-->
+<!--                    <div class="buttons is-right">-->
+<!--                        <button class="button is-success">Save changes</button>-->
+<!--                        <button class="button">Cancel</button>-->
+<!--                    </div>-->
+<!--                </footer>-->
+<!--            </div>-->
+<!--        </div>-->
+    </th:block>
+
+    <!--end-->
     <div class="container">
         <div th:replace="~{page/home/filter :: orderBy}"></div>
         <div class="fixed-grid has-1-cols-mobile has-2-cols-tablet has-4-cols-desktop has-4-cols-widescreen">
@@ -43,7 +69,7 @@
                           hx:get="@{/(page=${(page!=null?page:-1)+1},orderBy=${param.orderBy})}"
                           hx-indicator="#htmx-skeleton"
                     ></span>
-<!--                    hx:get="@{/hx/home/posts(page=${(page!=null?page:-1)+1},orderBy=${param.orderBy})}"-->
+                    <!--                    hx:get="@{/hx/home/posts(page=${(page!=null?page:-1)+1},orderBy=${param.orderBy})}"-->
                 </div>
             </div>
             <!--            TODO: 로딩 스켈레톤-->

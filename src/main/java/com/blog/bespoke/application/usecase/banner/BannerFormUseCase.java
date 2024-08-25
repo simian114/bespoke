@@ -59,6 +59,13 @@ public class BannerFormUseCase {
 
     }
 
+    @Transactional
+    public BannerFormResponseDto pay(Long bannerFormId) {
+        BannerForm bannerForm = bannerFormRepository.getById(bannerFormId);
+        bannerForm.pay();
+        return BannerFormResponseDto.from(bannerForm);
+    }
+
     public Long calculatedEstimatedPayment(EstimatedPaymentRequestDto requestDto, User currentUser) {
         return bannerService.calculateAmount(requestDto.getUiType(), requestDto.getDuration(), currentUser);
     }
@@ -69,4 +76,5 @@ public class BannerFormUseCase {
             return bannerForm.isOngoing();
         }).findFirst().orElse(null);
     }
+
 }

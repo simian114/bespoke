@@ -77,9 +77,16 @@
                                 <th><span th:text="${item.endDate}">endDate</span></th>
                                 <th><span th:text="${item.createdAt}">createdAt</span></th>
                                 <th class="buttons are-small">
-                                    <a class="button">
-                                        hello
-                                    </a>
+                                    <th:block th:if="${item.status.name() == 'PAYMENT_WAITING'}">
+                                        <!--TODO: 지금은 임시로 버튼과 경로만 만들어놓음-->
+                                        <!--실제 결제 프로세스가 도입되면, 어드민에서 approve 하는 순간 payment 가 생기고, 아래의 경로에는 payment 에 대한 결제 경로가 생성이됨.-->
+                                        <button class="button is-primary"
+                                                hx:post="@{/blog/manage/banners/{bannerId}/forms/{bannerFormId}/pay(bannerId=${0},bannerFormId=${item.id})}"
+                                        >
+                                            pay(current free!)
+                                        </button>
+                                    </th:block>
+
                                 </th>
                             </tr>
                         </th:block>

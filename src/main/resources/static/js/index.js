@@ -18,5 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         });
     });
-
 });
+
+function setCookie(name, value, days) {
+    var date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000)); // days를 밀리초로 변환
+    var expires = "expires=" + date.toUTCString();
+    document.cookie = name + "=" + value + ";" + expires + ";path=/";
+}

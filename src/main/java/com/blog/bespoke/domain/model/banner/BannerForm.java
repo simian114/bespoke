@@ -125,4 +125,13 @@ public class BannerForm extends TimeStamp {
         this.result = reason;
         this.auditedAt = LocalDateTime.now();
     }
+
+    /**
+     * 임시.
+     * 원래대로라면 바로 PUBLISHED 가 아닌 PAYMENT_COMPLETED 가 되어야하고
+     * 매일 자정 스케줄러에 의해 PAYMENT_COMPLETED 인 것들은 start_date 를 보고 PUBLISHED 로 만들어야한다.
+     */
+    public void pay() {
+        this.status = BannerFormStatus.PUBLISHED;
+    }
 }
