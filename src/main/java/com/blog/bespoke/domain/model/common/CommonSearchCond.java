@@ -18,6 +18,8 @@ public class CommonSearchCond {
     // protected Long cursor;
     protected Integer page = 0;
 
+    protected boolean count = true;
+
     public Pageable getPageable() {
         return PageRequest.of(page == null ? 0 : page, pageSize == null ? 20 : pageSize);
     }

@@ -30,9 +30,8 @@
     <script type="text/javascript" th:src="@{/js/surreal.js(v=${randomValue})}"></script>
     <script type="text/javascript" th:src="@{/js/htmx-sse.js(v=${randomValue})}"></script>
     <script type="text/javascript" th:src="@{/js/nprogress.js(v=${randomValue})}"></script>
-
+    <script type="text/javascript" th:src="@{/js/index.js(v=${randomValue})}"></script>
     <script type="text/javascript" src="https://unpkg.com/embla-carousel/embla-carousel.umd.js" defer></script>
-
 
     <!-- toastify -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
@@ -76,6 +75,7 @@
 <footer th:replace="~{fragments/footer :: mainFooter}"></footer>
 <div id="toast"></div>
 <!--surreal-->
+<script type="text/javascript" th:src="@{/js/modal.js(v=${randomValue})}" defer></script>
 </body>
 <!-- 한번만 실행되어야한다. -->
 <script type="text/javascript">
@@ -128,6 +128,7 @@
         });
 
     })
+
 </script>
 
 </html>

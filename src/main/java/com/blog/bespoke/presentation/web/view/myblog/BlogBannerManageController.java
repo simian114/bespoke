@@ -135,6 +135,20 @@ public class BlogBannerManageController {
                 .build();
     }
 
+    /**
+     * 임시. 결제 프로세스 완성되면 다른 걸로 대체됨
+     */
+    @PostMapping("/{bannerId}/forms/{bannerFormId}/pay")
+    public HtmxResponse payBannerForm(@PathVariable("bannerId")Long bannerId,
+                                      @PathVariable("bannerFormId")Long bannerFormId,
+                                      @LoginUser User currentUser,
+                                      Model model) {
+        BannerFormResponseDto dto = bannerFormUseCase.pay(bannerFormId);
+
+        return HtmxResponse.builder()
+                .build();
+    }
+
     @GetMapping("/{bannerId}/request")
     public HtmxResponse requestPublish(@ModelAttribute BannerFormSearchForManage requestDto,
                                        @PathVariable("bannerId") Long bannerId,

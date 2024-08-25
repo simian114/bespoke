@@ -59,7 +59,7 @@ public class BannerFormRepositoryImpl implements BannerFormRepository {
         jpaQuery.orderBy(QBannerForm.bannerForm.createdAt.desc());
         List<BannerForm> bannerForms = jpaQuery.fetch();
 
-        Long totalSize = countQuery(cond).fetch().get(0);
+        Long totalSize = cond.isCount() ? countQuery(cond).fetch().get(0) : 0L;
 
         return PageableExecutionUtils.getPage(bannerForms, pageable, () -> totalSize);
     }
