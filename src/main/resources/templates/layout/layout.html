@@ -38,7 +38,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <!--Common CSS -->
-    <link th:href="@{/css/application.css(v=${randomValue})}" rel="stylesheet" >
+    <link th:href="@{/css/application.css(v=${randomValue})}" rel="stylesheet">
     <link th:href="@{/css/nprogress.css(v=${randomValue})}" rel="stylesheet"/>
 
     <link th:href="@{/css/fontawesome/brands.min.css(v=${randomValue})}" rel="stylesheet"/>
@@ -49,6 +49,24 @@
 </head>
 
 <body hx-boost="true">
+<!--해당 영역은 페이지 전환 되어도 다시 호출 안하게 할 수 있는 방법이 없을까?-->
+<section
+        class="is-skeleton"
+        hx:get="@{/banner/top-banner}"
+        hx-swap="outerHTML"
+        hx-trigger="load once"
+>
+    <a class="is-block is-overflow-hidden" target="_blank">
+        <div class="container is-hidden-touch py-2">
+            <p style="color: transparent">banner</p>
+        </div>
+
+        <div class="container is-hidden-desktop py-2 px-2">
+            <p style="color: transparent">banner</p>
+        </div>
+    </a>
+</section>
+
 <header th:replace="~{layout/common/header :: header}"></header>
 <main id="main">
     <th:block layout:fragment="content">
@@ -77,7 +95,7 @@
             }).showToast();
         })
 
-        document.body.addEventListener("toast", function(res) {
+        document.body.addEventListener("toast", function (res) {
             const level = res.detail.level;
             const message = res.detail.message;
 
@@ -93,15 +111,15 @@
 
         })
 
-        NProgress.configure({ showSpinner: false });
+        NProgress.configure({showSpinner: false});
 
         window.addEventListener('htmx:beforeRequest', (event) => {
-            if(event.detail.boosted) {
+            if (event.detail.boosted) {
                 NProgress.start();
             }
         });
         window.addEventListener('htmx:afterRequest', (event) => {
-            if(event.detail.boosted) {
+            if (event.detail.boosted) {
                 NProgress.done();
             }
         });

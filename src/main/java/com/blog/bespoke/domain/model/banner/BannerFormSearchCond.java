@@ -17,6 +17,8 @@ public class BannerFormSearchCond extends CommonSearchCond {
 
     private List<BannerFormStatus> statuses;
 
+    private BannerUiType uiType;
+
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 }

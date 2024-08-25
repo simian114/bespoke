@@ -25,8 +25,8 @@
 
     <title>Bespoke</title>
 </head>
-<body layout:fragment="content">
-<section class="section home-page">
+<body>
+<section layout:fragment="content" class="section home-page">
     <div class="container">
         <div th:replace="~{page/home/filter :: orderBy}"></div>
         <div class="fixed-grid has-1-cols-mobile has-2-cols-tablet has-4-cols-desktop has-4-cols-widescreen">

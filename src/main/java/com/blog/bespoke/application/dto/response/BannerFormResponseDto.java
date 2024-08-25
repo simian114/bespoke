@@ -3,6 +3,7 @@ package com.blog.bespoke.application.dto.response;
 import com.blog.bespoke.domain.model.banner.Banner;
 import com.blog.bespoke.domain.model.banner.BannerForm;
 import com.blog.bespoke.domain.model.banner.BannerFormStatus;
+import com.blog.bespoke.domain.model.banner.BannerUiType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
@@ -21,6 +22,8 @@ public class BannerFormResponseDto {
     private LocalDateTime startDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endDate;
+
+    private BannerUiType uiType;
 
     private BannerResponseDto bannerSnapshot;
 
@@ -44,6 +47,7 @@ public class BannerFormResponseDto {
                 .status(bannerForm.getStatus())
                 .startDate(bannerForm.getStartDate())
                 .endDate(bannerForm.getEndDate())
+                .uiType(bannerForm.getUiType())
                 .bannerSnapshot(BannerResponseDto.from(bannerForm.getBannerObj()))
                 .createdAt(bannerForm.getCreatedAt())
                 .auditedAt(bannerForm.getAuditedAt())

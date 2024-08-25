@@ -42,6 +42,7 @@ create table if not exists banner_form
     result          varchar(255),                           # 심사 결과. DENIED 면 거절 이유. APPROVED 면 '승인되었습니다.'
     banner_id       bigint      not null,
     user_id         bigint      not null,
+    ui_type         varchar(25) not null,                   # MAIN_HERO, ...
     audited_at      timestamp,
     created_at      timestamp            default current_timestamp,
     updated_at      timestamp on update current_timestamp,

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--
+1. top-banner
+- ajax call 로 호출한다.
+
+2. main-popup
+- main 페이지에 접속하면 서버는 요청의 쿠키를 본다.
+- 쿠키에 popup-deny 가 없으면 db 에서 값 가져와서 모델에 set 해서 보낸다.
+
+3. main-hero
+- main 페이지 접속하면 서버에서 값 바로 세팅
+-
+-->
+
+<section th:fragment="top-banner" id="top-banner">
+    <a th:href="${banner.link}"
+       th:style="|background-color: ${banner.backgroundColor}|"
+       class="is-block is-overflow-hidden" target="_blank"
+    >
+        <div class="container is-hidden-touch py-2">
+            <p th:text="${banner.title}"></p>
+        </div>
+
+        <div class="container is-hidden-desktop py-2 px-2">
+            <p th:text="${banner.title}"></p>
+        </div>
+    </a>
+</section>
+
+
+</body>
+</html>

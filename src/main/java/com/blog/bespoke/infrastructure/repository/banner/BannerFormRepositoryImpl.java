@@ -75,7 +75,8 @@ public class BannerFormRepositoryImpl implements BannerFormRepository {
                         statusesIn(cond),
                         nicknameEq(cond),
                         dateAfter(cond),
-                        dateBefore(cond)
+                        dateBefore(cond),
+                        uiTypeEq(cond)
                 );
     }
 
@@ -88,7 +89,8 @@ public class BannerFormRepositoryImpl implements BannerFormRepository {
                         statusesIn(cond),
                         nicknameEq(cond),
                         dateAfter(cond),
-                        dateBefore(cond)
+                        dateBefore(cond),
+                        uiTypeEq(cond)
                 );
     }
 
@@ -104,6 +106,13 @@ public class BannerFormRepositoryImpl implements BannerFormRepository {
             return null;
         }
         return QBannerForm.bannerForm.endDate.before(cond.getEndDate());
+    }
+
+    private BooleanExpression uiTypeEq(BannerFormSearchCond cond) {
+        if (cond == null || cond.getUiType() == null) {
+            return null;
+        }
+        return QBannerForm.bannerForm.uiType.eq(cond.getUiType());
     }
 
     private BooleanExpression datesBetween(BannerFormSearchCond cond) {
