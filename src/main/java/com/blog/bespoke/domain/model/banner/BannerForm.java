@@ -40,6 +40,9 @@ public class BannerForm extends TimeStamp {
 
     private String bannerSnapshot;
 
+    @Enumerated(EnumType.STRING)
+    private BannerUiType uiType;
+
     /**
      * bannerForm 은 신청한 순간의 BannerType 을 가지고 있어야한다.
      * db 에서 이 값을 가져올 때 자동으로 obj 으로 만들어서 객체로 관리해아한다.

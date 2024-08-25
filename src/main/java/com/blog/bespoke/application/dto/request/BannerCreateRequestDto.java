@@ -52,6 +52,7 @@ public class BannerCreateRequestDto {
                 .content(content)
                 .link(link)
                 .uiType(uiType)
+                .backgroundColor(backgroundColor)
                 .build();
     }
 }

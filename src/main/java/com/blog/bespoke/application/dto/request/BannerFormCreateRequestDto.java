@@ -25,6 +25,7 @@ public class BannerFormCreateRequestDto {
                 .endDate(e)
                 .status(BannerFormStatus.PENDING)
                 .banner(banner)
+                .uiType(banner.getUiType())
                 .user(currentUser)
                 .build();
     }

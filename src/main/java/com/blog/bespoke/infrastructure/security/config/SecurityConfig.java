@@ -104,6 +104,7 @@ public class SecurityConfig {
                 .requestMatchers("/webfonts/**").permitAll()
                 .requestMatchers("/noti/{nickname}").permitAll()
                 .requestMatchers("/hx/home/posts").permitAll()
+                .requestMatchers("/banner/**").permitAll()
                 .requestMatchers("/blog/posts/{postId}").permitAll()
                 .requestMatchers(HttpMethod.GET, "/blog/posts/{postId}/comments").permitAll()
                 .requestMatchers("/blog/{nickname}/{postId}").permitAll()
