@@ -20,11 +20,21 @@ public class GlobalModelAttributeAdvice {
         randomValue = UUID.randomUUID().toString().substring(0, 8);
     }
 
+    /**
+     * randomValue: static resource 의 캐싱을 위한 값. 재실행 될 때 마다 새로운 값이 부여됨 -> 캐싱이 초기화됨
+     * me: 현재 로그인 한 유저
+     * isAdmin / isAdvertiser: 권한 체크
+     */
     @ModelAttribute
-    public void getRandomValue(Model model,
-                               @LoginUser User currentUser) {
+    public void setGlobalModelAttribute(Model model,
+                                        @LoginUser User currentUser) {
         model.addAttribute("randomValue", randomValue);
         model.addAttribute("me", currentUser);
+        if (currentUser != null) {
+            model.addAttribute("isAdmin", currentUser.isAdmin());
+            model.addAttribute("isAdvertiser", currentUser.isAdvertiser());
+        }
     }
+
 
 }
