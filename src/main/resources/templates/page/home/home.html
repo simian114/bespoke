@@ -31,7 +31,7 @@
 <body>
 <section layout:fragment="content" class="section home-page">
     <!--start-->
-    <th:block th:if="${popupBanners != null}">
+    <th:block th:if="${popupBanners != null && !#lists.isEmpty(popupBanners)}">
         <div th:replace="~{fragments/banner/mainPopupBanner :: popup-banner}"></div>
 <!--        <div class="modal is-active">-->
 <!--            <div class="modal-background"></div>-->

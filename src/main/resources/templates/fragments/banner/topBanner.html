@@ -2,10 +2,6 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
 >
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
 <body>
 <!--
 1. top-banner
@@ -20,7 +16,7 @@
 -
 -->
 
-<th:block  th:fragment="top-banner" th:if="${banner != null}">
+<th:block th:fragment="top-banner" th:if="${banner != null}">
     <section th:fragment="top-banner" id="top-banner">
         <a th:href="${banner.link}"
            th:style="|background-color: ${banner.backgroundColor}|"
@@ -36,7 +32,6 @@
         </a>
     </section>
 </th:block>
-
 
 
 </body>
