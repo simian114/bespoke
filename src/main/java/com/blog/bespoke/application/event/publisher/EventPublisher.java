@@ -25,4 +25,8 @@ public interface EventPublisher {
 
     // NOTE: 댓글 삭제 시 발생
     void publishCommentDeleteEvent(CommentDeleteMessage message);
+
+    void publishBannerAuditApproveEvent(BannerAuditApproveMessage message);
+
+    void publishBannerAuditDenyEvent(BannerAuditDenyMessage message);
 }

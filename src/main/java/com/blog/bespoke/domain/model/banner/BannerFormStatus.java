@@ -31,10 +31,12 @@ public enum BannerFormStatus {
     PENDING, // 심사 대기중
     DENIED, // 심사 거절
     PAYMENT_WAITING, // 심사 승인 후, 결제 대기 중
-    PAYMENT_CANCEL, // 결제 취소
-    PAYMENT_COMPLETED,  // 결제 완료
-    REFUND_REQUEST, // 환불 요청
-    REFUND_COMPLETED, // 환불 완료
+    PAYMENT_COMPLETED, // 결제 완료 후 대기 중
+    PAYMENT_FAILED,
+//    PAYMENT_CANCEL, // 결제 취소
+//    PAYMENT_COMPLETED,  // 결제 완료
+//    REFUND_REQUEST, // 환불 요청
+//    REFUND_COMPLETED, // 환불 완료
     SUSPENDED, // 일시 중지
     TERMINATED, // 영구 중지
     PUBLISHED, // 게시중

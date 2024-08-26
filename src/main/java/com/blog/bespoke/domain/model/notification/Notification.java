@@ -102,5 +102,7 @@ public class Notification {
         POST_LIKE,
         COMMENT_LIKE,
         FOLLOW,
+        BANNER_FORM_APPROVED,
+        BANNER_FORM_DENIED
     }
 }

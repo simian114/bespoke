@@ -54,4 +54,17 @@ public class RabbitMqPublisher implements EventPublisher {
     public void publishCommentDeleteEvent(CommentDeleteMessage message) {
         rabbitTemplate.convertAndSend(commonQueueKey, message);
     }
+
+    /*
+     * 1. payment 객체를 생성한다.
+     */
+    @Override
+    public void publishBannerAuditApproveEvent(BannerAuditApproveMessage message) {
+        rabbitTemplate.convertAndSend(commonQueueKey, message);
+    }
+
+    @Override
+    public void publishBannerAuditDenyEvent(BannerAuditDenyMessage message) {
+        rabbitTemplate.convertAndSend(commonQueueKey, message);
+    }
 }

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+>
+<head>
+    <title>결제 페이지</title>
+</head>
+<body layout:fragment="content">
+
+<section class="section px-2">
+    <div id="payment-method"></div>
+    <!-- 이용약관 UI -->
+    <div id="agreement"></div>
+    <button id="payment-button" class="button is-primary">
+        toss payments
+    </button>
+
+</section>
+
+<script src="https://js.tosspayments.com/v2/standard"></script>
+
+<script type="text/javascript">
+    main();
+
+    async function main() {
+        debugger;
+        const button = document.getElementById("payment-button");
+        // ------  결제위젯 초기화 ------
+        const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+        const tossPayments = TossPayments(clientKey);
+        // 회원 결제
+        const customerKey = 'asdfqlwjlaskjdhf';
+        // const customerKey = '[[${me.id}]]';
+        const widgets = tossPayments.widgets({
+            customerKey,
+        });
+
+        // ------ 주문의 결제 금액 설정 ------
+        await widgets.setAmount({
+            currency: "KRW",
+            value: 50000,
+        });
+
+        await Promise.all([
+            // ------  결제 UI 렌더링 ------
+            widgets.renderPaymentMethods({
+                selector: "#payment-method",
+                variantKey: "DEFAULT",
+            }),
+            // ------  이용약관 UI 렌더링 ------
+            widgets.renderAgreement({selector: "#agreement", variantKey: "AGREEMENT"}),
+        ]);
+
+        // ------  주문서의 결제 금액이 변경되었을 경우 결제 금액 업데이트 ------
+        // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
+
+        const orderName = '[[${payment.orderName}]]';
+        const orderId = '[[${payment.orderId}]]';
+        const paymentId = '[[${payment.id}]]';
+
+        button.addEventListener("click", async function () {
+            await widgets.requestPayment({
+                orderId,
+                orderName,
+                successUrl: window.location.origin + "/payment/" + paymentId + "/success",
+                failUrl: window.location.origin + "/payment/" + paymentId + "/failure",
+                customerEmail: '[[${me.email}]]',
+                customerName: '[[${me.name}]]',
+                // customerMobilePhone: "01012341234", # 연락처가 없어도 되나?
+            });
+        });
+    }
+</script>
+
+</body>
+</html>
