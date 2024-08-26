@@ -17,14 +17,14 @@ public class BlogRoleManageController {
     @PostMapping({"/blog/manage/role/advertiser"})
     public HtmxResponse myBlog(@LoginUser User currentUser) {
         // TODO: token 생성
-        // userUseCase.addRole(currentUser.getId(), Role.Code.ADVERTISER);
         userUseCase.requestAdvertiserRole(currentUser.getId());
 
         return HtmxResponse.builder()
                 .trigger(
                         Toast.TRIGGER,
-                        Toast.success("")
+                        Toast.success("Request Success!")
                 )
+                .redirect("/blog/manage/posts")
                 .build();
     }
 
