@@ -168,6 +168,15 @@ public class User extends TimeStamp {
         return userRole != null;
     }
 
+    @Transient
+    public boolean isAdvertiser() {
+        UserRole userRole = this.roles.stream().filter(role -> role.getRole().getCode().equals(Role.Code.ADVERTISER))
+                .findFirst()
+                .orElse(null);
+        return userRole != null;
+    }
+
+
 
     @JsonIgnore
     @Transient

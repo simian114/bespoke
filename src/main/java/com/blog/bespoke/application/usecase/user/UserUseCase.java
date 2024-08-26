@@ -11,6 +11,7 @@ import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.token.Token;
 import com.blog.bespoke.domain.model.user.*;
 import com.blog.bespoke.domain.model.user.role.Role;
+import com.blog.bespoke.domain.model.user.role.UserRole;
 import com.blog.bespoke.domain.repository.TokenRepository;
 import com.blog.bespoke.domain.repository.user.UserRepository;
 import com.blog.bespoke.domain.service.UserService;
@@ -177,6 +178,27 @@ public class UserUseCase {
         User user = userRepository.getById(userId);
 
         user.unban();
+        return UserResponseDto.from(user);
+    }
+
+    @Transactional
+    public void requestAdvertiserRole(Long userId) {
+        Token token = Token.builder()
+                .refId(userId)
+                .refType(Token.RefType.USER)
+                .type(Token.Type.ADVERTISER_ROLE_REQUEST)
+                .expiredAt(LocalDateTime.now().plusDays(3))
+                .code(UUID.randomUUID().toString())
+                .build();
+        tokenRepository.save(token);
+    }
+
+    @Transactional
+    public UserResponseDto addRole(Long id, Role.Code code) {
+        User user = userRepository.getById(id);
+        Role role = userRepository.getRoleByCode(code);
+        UserRole userRole = new UserRole(user.getId(), role.getId(), user, role);
+        user.addRole(userRole);
         return UserResponseDto.from(user);
     }
 }

@@ -26,6 +26,10 @@ public class BannerController {
     @GetMapping("/banner/top-banner")
     public HtmxResponse topBanner(Model model) {
         CommonSearchResponseDto<BannerFormResponseDto> res = bannerFormSearchUseCase.getTopBanners(topBannerSearchSize);
+        if (res.getContent().isEmpty()) {
+            return HtmxResponse.builder()
+                    .build();
+        }
         Random random = new Random();
         int i = random.nextInt(res.getContent().size());
 

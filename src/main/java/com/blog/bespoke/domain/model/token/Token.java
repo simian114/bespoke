@@ -34,7 +34,8 @@ public class Token {
 
     public enum Type {
         EMAIL_VALIDATION,
-        REFRESH_TOKEN
+        REFRESH_TOKEN,
+        ADVERTISER_ROLE_REQUEST
     }
 
     public enum RefType {

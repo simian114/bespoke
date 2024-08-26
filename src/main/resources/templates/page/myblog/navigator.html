@@ -19,8 +19,28 @@
         <a hx-swap="outerHTML transition: true"
            th:href="@{/blog/manage/categories}">category</a>
 
-        <a hx-swap="outerHTML transition: true"
-           th:href="@{/blog/manage/banners}">banner</a>
+        <th:block th:if="${isAdvertiser}">
+            <a hx-swap="outerHTML transition: true"
+               th:href="@{/blog/manage/banners}">banner</a>
+        </th:block>
+        <th:block th:unless="${isAdvertiser}">
+            <button class="button is-small is-primary p-3"
+                    hx:post="@{/blog/manage/role/advertiser}"
+                    hx-swap="none"
+            >
+                request Advertiser auth
+                <script type="text/javascript">
+                    me().on("click", (e) => {
+                        // a 링크 무력화
+                        // 서버에서는 toast trigger
+                        e.preventDefault();
+                        e.stopPropagation();
+                        alert("Within 3 days, You can enter banner page");
+                    })
+                </script>
+            </button>
+        </th:block>
+
 
         <script>
             any(".panel-tabs a")?.forEach(el => {

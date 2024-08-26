@@ -5,12 +5,13 @@ values (1, 'USER');
 INSERT INTO role(role_id, code)
 values (2, 'ADMIN');
 
+INSERT INTO role(role_id, code)
+values (3, 'ADVERTISER');
+
 # user
 insert into users(user_id, email, password, nickname, name, status)
 values (10000, 'admin@gmail.com', '$2a$10$upVxhxlPCfPTg9rUUTFZmeK1h2E6pvx8n.OIGFeMKHgB57X1JltdK', 'admin', 'admin',
         'ACTIVE');
-
-
 
 insert into users(user_id, email, password, nickname, name, status)
 values (1, 'user@gmail.com', '$2a$10$upVxhxlPCfPTg9rUUTFZmeK1h2E6pvx8n.OIGFeMKHgB57X1JltdK', 'user', 'user', 'ACTIVE');
