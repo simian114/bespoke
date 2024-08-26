@@ -2,18 +2,20 @@ package com.blog.bespoke.presentation.web.view.admin;
 
 import com.blog.bespoke.application.dto.request.postSearch.PostSearchForAdmin;
 import com.blog.bespoke.application.dto.request.search.banner.BannerFormSearchForAdmin;
+import com.blog.bespoke.application.dto.request.search.token.TokenSearchForAdmin;
 import com.blog.bespoke.application.dto.request.userSearch.UserSearchForAdmin;
 import com.blog.bespoke.application.dto.response.BannerFormResponseDto;
 import com.blog.bespoke.application.dto.response.PostSearchResponseDto;
+import com.blog.bespoke.application.dto.response.TokenResponseDto;
 import com.blog.bespoke.application.dto.response.UserSearchResponseDto;
 import com.blog.bespoke.application.dto.response.search.CommonSearchResponseDto;
 import com.blog.bespoke.application.usecase.banner.BannerFormSearchUseCase;
 import com.blog.bespoke.application.usecase.post.PostSearchUseCase;
-import com.blog.bespoke.application.usecase.post.PostUseCase;
+import com.blog.bespoke.application.usecase.token.TokenSearchUseCase;
 import com.blog.bespoke.application.usecase.user.UserSearchUseCase;
-import com.blog.bespoke.application.usecase.user.UserUseCase;
 import com.blog.bespoke.domain.model.banner.BannerFormStatus;
 import com.blog.bespoke.domain.model.post.Post;
+import com.blog.bespoke.domain.model.token.Token;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxResponse;
@@ -31,11 +33,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 public class AdminController {
-    private final PostUseCase postUseCase;
-    private final UserUseCase userUseCase;
     private final PostSearchUseCase postSearchUseCase;
     private final UserSearchUseCase userSearchUseCase;
     private final BannerFormSearchUseCase bannerFormSearchUseCase;
+    private final TokenSearchUseCase tokenSearchUseCase;
 
     @ModelAttribute
     void initModelAttribute(Model model,
@@ -123,6 +124,32 @@ public class AdminController {
                 .view("page/admin/banner/banner")
                 .build();
     }
+
+    @GetMapping("/token")
+    public HtmxResponse tokenManage(@ModelAttribute TokenSearchForAdmin requestDto,
+                                    Model model) {
+        CommonSearchResponseDto<TokenResponseDto> res = tokenSearchUseCase.search(requestDto);
+
+        model.addAttribute("items", res.getContent());
+
+        model.addAttribute("cond", requestDto);
+
+        model.addAttribute("statuses", Post.Status.getStatusesWithoutTempSave());
+
+        model.addAttribute("totalElements", res.getTotalElements());
+        model.addAttribute("isLast", !res.hasNext());
+        model.addAttribute("isFirst", !res.hasPrevious());
+        model.addAttribute("totalPages", res.getTotalPage());
+        model.addAttribute("page", res.getPage());
+
+        // types
+        model.addAttribute("types", Token.Type.values());
+
+        return HtmxResponse.builder()
+                .view("page/admin/token/token")
+                .build();
+    }
+
 
     /**
      * 신고 관리 페이지
