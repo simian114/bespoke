@@ -20,20 +20,23 @@
 -
 -->
 
-<section th:fragment="top-banner" id="top-banner">
-    <a th:href="${banner.link}"
-       th:style="|background-color: ${banner.backgroundColor}|"
-       class="is-block is-overflow-hidden" target="_blank"
-    >
-        <div class="container is-hidden-touch py-2">
-            <p th:text="${banner.title}"></p>
-        </div>
+<th:block  th:fragment="top-banner" th:if="${banner != null}">
+    <section th:fragment="top-banner" id="top-banner">
+        <a th:href="${banner.link}"
+           th:style="|background-color: ${banner.backgroundColor}|"
+           class="is-block is-overflow-hidden" target="_blank"
+        >
+            <div class="container is-hidden-touch py-2">
+                <p th:text="${banner.title}"></p>
+            </div>
 
-        <div class="container is-hidden-desktop py-2 px-2">
-            <p th:text="${banner.title}"></p>
-        </div>
-    </a>
-</section>
+            <div class="container is-hidden-desktop py-2 px-2">
+                <p th:text="${banner.title}"></p>
+            </div>
+        </a>
+    </section>
+</th:block>
+
 
 
 </body>
