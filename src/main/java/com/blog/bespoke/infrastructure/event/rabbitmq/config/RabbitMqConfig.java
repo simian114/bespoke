@@ -16,6 +16,9 @@ public class RabbitMqConfig {
     @Value("${spring.rabbitmq.host}")
     private String rabbitmqHost;
 
+    @Value("${spring.rabbitmq.virtual-host}")
+    private String rabbitmqVirtualHost;
+
     @Value("${spring.rabbitmq.port}")
     private int rabbitmqPort;
 
@@ -57,6 +60,9 @@ public class RabbitMqConfig {
         connectionFactory.setPort(rabbitmqPort);
         connectionFactory.setUsername(rabbitmqUsername);
         connectionFactory.setPassword(rabbitmqPassword);
+        if (rabbitmqVirtualHost != null && !rabbitmqVirtualHost.isBlank()) {
+            connectionFactory.setVirtualHost(rabbitmqVirtualHost);
+        }
         return connectionFactory;
     }
 
