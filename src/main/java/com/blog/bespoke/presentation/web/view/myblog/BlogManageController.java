@@ -12,7 +12,6 @@ import com.blog.bespoke.application.dto.response.search.CommonSearchResponseDto;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.application.usecase.banner.BannerSearchUseCase;
-import com.blog.bespoke.application.usecase.banner.BannerUseCase;
 import com.blog.bespoke.application.usecase.post.PostSearchUseCase;
 import com.blog.bespoke.application.usecase.post.PostUseCase;
 import com.blog.bespoke.application.usecase.user.UserCategoryUseCase;
@@ -23,7 +22,6 @@ import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxResponse;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -41,14 +39,13 @@ public class BlogManageController {
     private final PostSearchUseCase postSearchUseCase;
     private final UserCategoryUseCase userCategoryUseCase;
     private final BannerSearchUseCase bannerSearchUseCase;
-    private final RabbitConnectionDetails rabbitConnectionDetails;
-    private final BannerUseCase bannerUseCase;
 
     @ModelAttribute
     public String handleCommonAttribute(@LoginUser User currentUser,
                                         Model model) {
         model.addAttribute("me", currentUser);
         model.addAttribute("nickname", currentUser.getNickname());
+        model.addAttribute("isAdvertiser", currentUser.isAdvertiser());
         return "";
     }
 
