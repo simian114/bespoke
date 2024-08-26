@@ -39,11 +39,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
     // redis 나중에 redis 사요하게 되면 그때 오픈
-    // implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'redis.clients:jedis'
 
     // rabbitMQ
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     testImplementation 'org.springframework.amqp:spring-rabbit-test'
 
     // thymeleaf & htmx
