@@ -23,6 +23,7 @@ public class Role implements Serializable {
 
     public enum Code {
         USER,
+        ADVERTISER,
         ADMIN
     }
 }
