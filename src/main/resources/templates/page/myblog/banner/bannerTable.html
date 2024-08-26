@@ -9,79 +9,104 @@
 </head>
 <body layout:fragment="content">
 
-<section class="section px-2">
-    <nav th:replace="page/myblog/navigator :: navigator"></nav>
-    <div class="container">
-        <div>
-            <div class="block">
-                <a class="button"
-                   th:href="@{/blog/manage/banners/new}">
-                    create banner
-                </a>
-            </div>
+<th:block th:if="${isAdvertiser}">
+    <section class="section px-2">
+        <nav th:replace="page/myblog/navigator :: navigator"></nav>
+        <div class="container">
+            <div>
+                <div class="block">
+                    <a class="button"
+                       th:href="@{/blog/manage/banners/new}">
+                        create banner
+                    </a>
+                </div>
 
-            <div class="table-container is-flex is-flex-direction-column is-justify-content-center	">
-                <!--  테이블 넣기  -->
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th><abbr title="Id">id</abbr></th>
-                        <th><abbr title="Name">name</abbr></th>
-                        <th><abbr title="Title">title</abbr></th>
-                        <th><abbr title="SubTitle">subTitle</abbr></th>
-                        <th><abbr title="Content">content</abbr></th>
-                        <th><abbr title="Created At">createdAt</abbr></th>
-                        <th>action</th>
-                    </tr>
-                    </thead>
-                    <!--  tfoot  -->
-                    <tfoot>
-                    <tr>
-                        <th><abbr title="Id">id</abbr></th>
-                        <th><abbr title="Name">name</abbr></th>
-                        <th><abbr title="Title">title</abbr></th>
-                        <th><abbr title="SubTitle">subTitle</abbr></th>
-                        <th><abbr title="Content">content</abbr></th>
-                        <th><abbr title="Created At">createdAt</abbr></th>
-                        <th>action</th>
-                    </tr>
-                    </tfoot>
-                    <tbody hx-swap="outerHTML swap:0.5s">
-                    <!-- tbody -->
-                    <th:block th:each="item: ${items}">
-                        <!--                    delete 된 post 라면 ...-->
-                        <tr th:fragment="post-item-row">
-                            <th th:text="${item.id}">id</th>
-                            <th><span th:text="${item.name}">name</span></th>
-                            <th><span th:text="${item.title}">title</span></th>
-                            <th><span th:text="${item.subTitle}">subTitle</span></th>
-                            <th><span th:text="${item.content}">content</span></th>
-                            <th><span th:text="${item.createdAt}">createdAt</span></th>
-                            <th class="buttons are-small">
-                                <a class="button"
-                                   th:href="@{/blog/manage/banners/{bannerId}/request(bannerId=${item.id})}"
-                                >
-                                    request publish
-                                </a>
-                            </th>
+                <div class="table-container is-flex is-flex-direction-column is-justify-content-center	">
+                    <!--  테이블 넣기  -->
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th><abbr title="Id">id</abbr></th>
+                            <th><abbr title="Name">name</abbr></th>
+                            <th><abbr title="Title">title</abbr></th>
+                            <th><abbr title="SubTitle">subTitle</abbr></th>
+                            <th><abbr title="Content">content</abbr></th>
+                            <th><abbr title="Created At">createdAt</abbr></th>
+                            <th>action</th>
                         </tr>
-                    </th:block>
-                    </tbody>
-                </table>
+                        </thead>
+                        <!--  tfoot  -->
+                        <tfoot>
+                        <tr>
+                            <th><abbr title="Id">id</abbr></th>
+                            <th><abbr title="Name">name</abbr></th>
+                            <th><abbr title="Title">title</abbr></th>
+                            <th><abbr title="SubTitle">subTitle</abbr></th>
+                            <th><abbr title="Content">content</abbr></th>
+                            <th><abbr title="Created At">createdAt</abbr></th>
+                            <th>action</th>
+                        </tr>
+                        </tfoot>
+                        <tbody hx-swap="outerHTML swap:0.5s">
+                        <!-- tbody -->
+                        <th:block th:each="item: ${items}">
+                            <!--                    delete 된 post 라면 ...-->
+                            <tr th:fragment="post-item-row">
+                                <th th:text="${item.id}">id</th>
+                                <th><span th:text="${item.name}">name</span></th>
+                                <th><span th:text="${item.title}">title</span></th>
+                                <th><span th:text="${item.subTitle}">subTitle</span></th>
+                                <th><span th:text="${item.content}">content</span></th>
+                                <th><span th:text="${item.createdAt}">createdAt</span></th>
+                                <th class="buttons are-small">
+                                    <a class="button"
+                                       th:href="@{/blog/manage/banners/{bannerId}/request(bannerId=${item.id})}"
+                                    >
+                                        request publish
+                                    </a>
+                                </th>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
 
-                <!--            TODO: 페이지네이션 컴포넌트로 분리해서 거기서 처리할 것.-->
-                <nav class="pagination" role="navigation" aria-label="pagination">
-                    <a hx-boost="true"
-                       th:href="@{/blog/manage/banners(page=${page - 1})}"
-                       class="pagination-previous">Previous</a>
-                    <a hx-boost="true"
-                       th:href="@{/blog/manage/banners(page=${page + 1})}"
-                       class="pagination-next">Next</a>
-                </nav>
+                    <!--            TODO: 페이지네이션 컴포넌트로 분리해서 거기서 처리할 것.-->
+                    <nav class="pagination" role="navigation" aria-label="pagination">
+                        <a hx-boost="true"
+                           th:href="@{/blog/manage/banners(page=${page - 1})}"
+                           class="pagination-previous">Previous</a>
+                        <a hx-boost="true"
+                           th:href="@{/blog/manage/banners(page=${page + 1})}"
+                           class="pagination-next">Next</a>
+                    </nav>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+</th:block>
+<th:block th:unless="${isAdvertiser}">
+    <section class="section px-2">
+        <nav th:replace="page/myblog/navigator :: navigator"></nav>
+        <div class="container is-flex is-flex-direction-column is-align-items-center is-justify-content-center">
+            <p class="is-size-4">
+                You do not have permission. Would you like to request permission?
+                <br />
+                If you request permission, permission will be granted within 3 days.
+            </p>
+
+            <button class="button is-primary mt-3"
+                    hx:post="@{/blog/manage/role/advertiser}"
+                    hx-confirm="Are you sure?"
+            >
+                request permission
+            </button>
+        </div>
+    </section>
+
+</th:block>
+
+
+
 
 
 </body>
