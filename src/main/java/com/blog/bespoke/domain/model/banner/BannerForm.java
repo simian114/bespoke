@@ -1,6 +1,9 @@
 package com.blog.bespoke.domain.model.banner;
 
 import com.blog.bespoke.domain.model.common.TimeStamp;
+import com.blog.bespoke.domain.model.payment.Payment;
+import com.blog.bespoke.domain.model.payment.PaymentRefType;
+import com.blog.bespoke.domain.model.payment.PaymentReferenceTypeObject;
 import com.blog.bespoke.domain.model.user.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,7 +25,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class BannerForm extends TimeStamp {
+public class BannerForm extends TimeStamp implements PaymentReferenceTypeObject {
     @Transient
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -110,9 +113,8 @@ public class BannerForm extends TimeStamp {
 
     public boolean isOngoing() {
         return status != BannerFormStatus.DENIED
-                && status != BannerFormStatus.PAYMENT_CANCEL
-                && status != BannerFormStatus.REFUND_COMPLETED
-                && status != BannerFormStatus.TERMINATED;
+                && status != BannerFormStatus.TERMINATED
+                && status != BannerFormStatus.SUSPENDED;
     }
 
     public void approve() {
@@ -133,5 +135,24 @@ public class BannerForm extends TimeStamp {
      */
     public void pay() {
         this.status = BannerFormStatus.PUBLISHED;
+    }
+
+    public Integer getDuration() {
+        return endDate.compareTo(startDate);
+    }
+
+    @Override
+    public PaymentRefType getPaymentRefType() {
+        return PaymentRefType.BANNER_FORM;
+    }
+
+    @Override
+    public void paymentCompleted() {
+        this.status = BannerFormStatus.PAYMENT_COMPLETED;
+    }
+
+    @Override
+    public void paymentConfirmFailed() {
+        this.status = BannerFormStatus.PAYMENT_FAILED;
     }
 }

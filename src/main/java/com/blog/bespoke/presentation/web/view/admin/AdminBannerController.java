@@ -51,6 +51,8 @@ public class AdminBannerController {
         // TODO: result
         String reason = ok ? null : htmxRequest.getPromptResponse();
         BannerFormResponseDto dto = bannerFormUseCase.audit(bannerId, ok, reason);
+        // payment 생성. 이벤트 쏘기
+
 
         return HtmxResponse.builder()
                 .redirect("/admin/banner")

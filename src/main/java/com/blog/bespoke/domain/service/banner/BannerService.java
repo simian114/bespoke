@@ -1,8 +1,11 @@
 package com.blog.bespoke.domain.service.banner;
 
+import com.blog.bespoke.domain.model.banner.BannerForm;
 import com.blog.bespoke.domain.model.banner.BannerUiType;
 import com.blog.bespoke.domain.model.user.User;
 import org.springframework.stereotype.Service;
+
+import java.time.temporal.ChronoUnit;
 
 @Service
 public class BannerService {
@@ -14,13 +17,18 @@ public class BannerService {
      * 타입에 따라 가격이 다르게 측정됨.
      * 어드민은 무료
      */
-    public Long calculateAmount(BannerUiType type, Integer duration, User currentUser) {
+    public Long calculatePrice(BannerUiType type, Integer duration, User currentUser) {
         if (currentUser.isAdmin()) {
             return 0L;
         }
         return priceOfDayByType(type) * duration;
 
     }
+
+    public Long calculatePrice(BannerForm bannerForm) {
+        return ChronoUnit.DAYS.between(bannerForm.getStartDate(), bannerForm.getEndDate());
+    }
+
 
     private Long priceOfDayByType(BannerUiType type) {
         switch (type) {

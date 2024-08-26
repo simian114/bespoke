@@ -50,7 +50,8 @@ public enum ErrorCode {
     COVER_IMAGE_LIMIT_SIZE(HttpStatus.BAD_REQUEST, "The maximum size for a cover image is 5MB."),
 
     // banner
-    BANNER_FORM_CANNOT_BE_AUDITED_STATUS(HttpStatus.BAD_REQUEST, "Only Pending status can be audited"),
+    BANNER_FORM_CANNOT_BE_AUDITED_STATUS(HttpStatus.BAD_REQUEST, "Only Pending status can be audited."),
+    TOSS_PAYMENT_FAILED(HttpStatus.BAD_REQUEST, "TossPayment has failed.")
     ;
     private final HttpStatus statusCode;
     private final String message;

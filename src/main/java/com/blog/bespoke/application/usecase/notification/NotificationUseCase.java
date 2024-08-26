@@ -1,9 +1,6 @@
 package com.blog.bespoke.application.usecase.notification;
 
-import com.blog.bespoke.application.dto.notification.CommentAddNotificationDto;
-import com.blog.bespoke.application.dto.notification.FollowNotificationDto;
-import com.blog.bespoke.application.dto.notification.PostLikeNotificationDto;
-import com.blog.bespoke.application.dto.notification.PublishNotificationDto;
+import com.blog.bespoke.application.dto.notification.*;
 import com.blog.bespoke.application.dto.response.NotificationResponseDto;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
@@ -88,6 +85,26 @@ public class NotificationUseCase {
                 .extraInfo(extraInfo)
                 .recipient(User.builder().id(dto.getRecipientId()).build())
                 .publisher(User.builder().id(dto.getPublisherId()).build())
+                .build());
+    }
+
+    @Transactional
+    public void createNotification(BannerFormApprovedDto dto) {
+        notificationRepository.save(Notification.builder()
+                .type(Notification.NotificationType.BANNER_FORM_APPROVED)
+                .refId(dto.getBannerFormResponseDto().getId())
+                .recipient(User.builder().id(dto.getBannerFormResponseDto().getUser().getId()).build())
+                .publisher(null)
+                .build());
+    }
+
+    @Transactional
+    public void createNotification(BannerFormDeniedDto dto) {
+        notificationRepository.save(Notification.builder()
+                .type(Notification.NotificationType.BANNER_FORM_APPROVED)
+                .refId(dto.getBannerFormResponseDto().getId())
+                .recipient(User.builder().id(dto.getBannerFormResponseDto().getUser().getId()).build())
+                .publisher(null)
                 .build());
     }
 

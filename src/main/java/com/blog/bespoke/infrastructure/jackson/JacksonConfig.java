@@ -17,6 +17,8 @@ public class JacksonConfig {
 
         // 타임스탬프 대신 ISO 8601 형식으로 직렬화하도록 설정합니다.
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        // NOTE: 이게 뭘까?
+        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
         return objectMapper;
     }

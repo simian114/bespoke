@@ -3,27 +3,43 @@ package com.blog.bespoke.application.usecase.banner;
 import com.blog.bespoke.application.dto.request.BannerFormCreateRequestDto;
 import com.blog.bespoke.application.dto.request.EstimatedPaymentRequestDto;
 import com.blog.bespoke.application.dto.response.BannerFormResponseDto;
+import com.blog.bespoke.application.event.message.BannerAuditApproveMessage;
+import com.blog.bespoke.application.event.message.BannerAuditDenyMessage;
+import com.blog.bespoke.application.event.publisher.EventPublisher;
 import com.blog.bespoke.domain.model.banner.Banner;
 import com.blog.bespoke.domain.model.banner.BannerForm;
+import com.blog.bespoke.domain.model.banner.BannerFormRelation;
+import com.blog.bespoke.domain.model.payment.Payment;
+import com.blog.bespoke.domain.model.payment.PaymentRefType;
+import com.blog.bespoke.domain.model.payment.PaymentStatus;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.banner.BannerFormRepository;
 import com.blog.bespoke.domain.repository.banner.BannerRepository;
+import com.blog.bespoke.domain.repository.payment.PaymentRepository;
 import com.blog.bespoke.domain.service.banner.BannerFormService;
 import com.blog.bespoke.domain.service.banner.BannerService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class BannerFormUseCase {
+    private static final Logger log = LoggerFactory.getLogger(BannerFormUseCase.class);
     private final BannerService bannerService;
     private final BannerFormService bannerFormService;
     private final BannerRepository bannerRepository;
     private final BannerFormRepository bannerFormRepository;
-
+    private final EventPublisher eventPublisher;
+    private final ObjectMapper objectMapper;
+    private final PaymentRepository paymentRepository;
 
     @Transactional
     public BannerFormResponseDto getBannerFormById(Long bannerFormId) {
@@ -44,7 +60,10 @@ public class BannerFormUseCase {
 
     @Transactional
     public BannerFormResponseDto audit(Long bannerId, boolean isApprove, String denyReason) {
-        BannerForm bannerForm = bannerFormRepository.getById(bannerId);
+        // TODO: preload user 로직 구현하기
+        BannerFormRelation relation = BannerFormRelation.builder().user(true).build();
+        // NOTE: user image 바로 가져오도록 수정
+        BannerForm bannerForm = bannerFormRepository.getById(bannerId, relation);
 
         // exception 날림
         bannerFormService.checkCanBeAuditedBannerForm(bannerForm);
@@ -54,9 +73,41 @@ public class BannerFormUseCase {
         } else {
             bannerForm.deny(denyReason);
         }
+        BannerForm updatedBannerForm = bannerFormRepository.save(bannerForm);
+        BannerFormResponseDto responseDto = BannerFormResponseDto.from(updatedBannerForm, relation);
 
-        return BannerFormResponseDto.from(bannerForm);
+        // TODO: payment 객체 생성
+        Payment payment = Payment.builder()
+                .refId(bannerForm.getId())
+                .refType(PaymentRefType.BANNER_FORM)
+                .amount(bannerService.calculatePrice(bannerForm))
+                .user(User.builder().id(bannerForm.getUser().getId()).build())
+                .orderId(UUID.randomUUID().toString())
+                .orderName("배너 구입") // 이름 변경하기
+                .status(PaymentStatus.NONE)
+                .build();
 
+        paymentRepository.save(payment);
+
+        // event
+        String bannerFormAsString = "";
+        try {
+            bannerFormAsString = objectMapper.writeValueAsString(responseDto);
+        } catch (JsonProcessingException e) {
+            System.out.println(e);
+        }
+        if (isApprove) {
+            eventPublisher.publishBannerAuditApproveEvent(
+                    BannerAuditApproveMessage.builder()
+                            .bannerFormResponseDtoAsString(bannerFormAsString)
+                            .build());
+        } else {
+            eventPublisher.publishBannerAuditDenyEvent(
+                    BannerAuditDenyMessage.builder()
+                            .bannerFormResponseDtoAsString(bannerFormAsString)
+                            .build());
+        }
+        return responseDto;
     }
 
     @Transactional
@@ -67,7 +118,7 @@ public class BannerFormUseCase {
     }
 
     public Long calculatedEstimatedPayment(EstimatedPaymentRequestDto requestDto, User currentUser) {
-        return bannerService.calculateAmount(requestDto.getUiType(), requestDto.getDuration(), currentUser);
+        return bannerService.calculatePrice(requestDto.getUiType(), requestDto.getDuration(), currentUser);
     }
 
     public BannerFormResponseDto getOnGoingBannerForm(List<BannerFormResponseDto> bannerForms) {

@@ -1,12 +1,13 @@
 package com.blog.bespoke.infrastructure.event.rabbitmq.consumer;
 
-import com.blog.bespoke.application.dto.notification.CommentAddNotificationDto;
-import com.blog.bespoke.application.dto.notification.FollowNotificationDto;
-import com.blog.bespoke.application.dto.notification.PostLikeNotificationDto;
-import com.blog.bespoke.application.dto.notification.PublishNotificationDto;
+import com.blog.bespoke.application.dto.notification.*;
+import com.blog.bespoke.application.dto.response.BannerFormResponseDto;
 import com.blog.bespoke.application.event.message.*;
 import com.blog.bespoke.application.usecase.CountUseCase;
 import com.blog.bespoke.application.usecase.notification.NotificationUseCase;
+import com.blog.bespoke.application.usecase.payment.PaymentUseCase;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -18,8 +19,10 @@ import org.springframework.stereotype.Component;
 @Component
 @RabbitListener(queues = "${rabbitmq.routing-key.common}")
 public class CommonQueueConsumer {
+    private final ObjectMapper objectMapper;
     private final CountUseCase countUseCase;
     private final NotificationUseCase notificationUseCase;
+    private final PaymentUseCase paymentUseCase;
 
     @RabbitHandler
     public void receiveUserFollowMessage(UserFollowMessage message) {
@@ -128,5 +131,28 @@ public class CommonQueueConsumer {
         }
     }
 
+    @RabbitHandler
+    public void receiveBannerAuditApproveMessage(BannerAuditApproveMessage message) {
+        try {
+            BannerFormResponseDto bannerFormResponseDto = objectMapper.readValue(message.getBannerFormResponseDtoAsString(), BannerFormResponseDto.class);
+            notificationUseCase.createNotification(BannerFormApprovedDto.builder()
+                    .bannerFormResponseDto(bannerFormResponseDto)
+                    .build());
+        } catch (JsonProcessingException e) {
+            System.out.println(e);
+        }
+    }
+
+    @RabbitHandler
+    public void receiveBannerAuditDenyMessage(BannerAuditDenyMessage message) {
+        try {
+            BannerFormResponseDto bannerFormResponseDto = objectMapper.readValue(message.getBannerFormResponseDtoAsString(), BannerFormResponseDto.class);
+            notificationUseCase.createNotification(BannerFormDeniedDto.builder()
+                    .bannerFormResponseDto(bannerFormResponseDto)
+                    .build());
+        } catch (JsonProcessingException e) {
+            System.out.println(e);
+        }
+    }
 
 }

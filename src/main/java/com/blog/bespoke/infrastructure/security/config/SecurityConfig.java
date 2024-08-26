@@ -76,47 +76,49 @@ public class SecurityConfig {
         );
 
         http.authorizeHttpRequests(requests -> requests
-                // 과거 개발용 api
-                .requestMatchers("/api/admin/**").hasRole(Role.Code.ADMIN.name())
-                .requestMatchers("/api/user").permitAll()
-                .requestMatchers("/api/auth/login").permitAll()
-                .requestMatchers("/api/auth/reissue").permitAll()
-                .requestMatchers("/api/auth/test").authenticated()
-                .requestMatchers("/api/user/{id}/follow").authenticated()
-                .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
-                // admin
-                .requestMatchers("/admin/**").hasRole(Role.Code.ADMIN.name())
-                // error
-                .requestMatchers("/error/**").permitAll()
-                .requestMatchers("/errors").permitAll()
-                // 실제 서비스
-                .requestMatchers("/login").anonymous()
-                .requestMatchers("/signup").anonymous()
-                .requestMatchers("/signup/success").anonymous()
-                .requestMatchers("/email-validation").anonymous()
-                .requestMatchers(
-                        PathRequest.toStaticResources().at(
-                                Set.of(
-                                        StaticResourceLocation.CSS,
-                                        StaticResourceLocation.JAVA_SCRIPT
-                                )
-                        )).permitAll()
-                .requestMatchers("/webfonts/**").permitAll()
-                .requestMatchers("/noti/{nickname}").permitAll()
-                .requestMatchers("/hx/home/posts").permitAll()
-                .requestMatchers("/banner/**").permitAll()
-                .requestMatchers("/blog/posts/{postId}").permitAll()
-                .requestMatchers(HttpMethod.GET, "/blog/posts/{postId}/comments").permitAll()
+                        // 과거 개발용 api
+                        .requestMatchers("/api/admin/**").hasRole(Role.Code.ADMIN.name())
+                        .requestMatchers("/api/user").permitAll()
+                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/reissue").permitAll()
+                        .requestMatchers("/api/auth/test").authenticated()
+                        .requestMatchers("/api/user/{id}/follow").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
+                        // admin
+                        .requestMatchers("/admin/**").hasRole(Role.Code.ADMIN.name())
+                        // error
+                        .requestMatchers("/error/**").permitAll()
+                        .requestMatchers("/errors").permitAll()
+                        // 실제 서비스
+                        .requestMatchers("/login").anonymous()
+                        .requestMatchers("/signup").anonymous()
+                        .requestMatchers("/signup/success").anonymous()
+                        .requestMatchers("/email-validation").anonymous()
+                        .requestMatchers(
+                                PathRequest.toStaticResources().at(
+                                        Set.of(
+                                                StaticResourceLocation.CSS,
+                                                StaticResourceLocation.JAVA_SCRIPT
+                                        )
+                                )).permitAll()
+                        .requestMatchers("/webfonts/**").permitAll()
+                        .requestMatchers("/noti/{nickname}").permitAll()
+                        .requestMatchers("/hx/home/posts").permitAll()
+                        .requestMatchers("/banner/**").permitAll()
+                        .requestMatchers("/blog/posts/{postId}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/blog/posts/{postId}/comments").permitAll()
 //                .requestMatchers("/blog/manage/banners/**").hasRole(Role.Code.ADVERTISER.name())
-                .requestMatchers("/blog/manage/**").authenticated()
-                .requestMatchers("/blog/{nickname}/{postId}").permitAll()
-                .requestMatchers("/blog/{nickname}").permitAll()
-                .requestMatchers("/blog/{nickname}/posts/**").permitAll()
-                .requestMatchers("/blog/{nickname}/category/**").permitAll()
-                .requestMatchers("/signup/success").anonymous()
-                .requestMatchers("/").permitAll()
-                .requestMatchers("/favicon.ico").permitAll()
-                .anyRequest().authenticated()
+                        // payment
+                        .requestMatchers(HttpMethod.GET, "/payment/**").authenticated()
+                        .requestMatchers("/blog/manage/**").authenticated()
+                        .requestMatchers("/blog/{nickname}/{postId}").permitAll()
+                        .requestMatchers("/blog/{nickname}").permitAll()
+                        .requestMatchers("/blog/{nickname}/posts/**").permitAll()
+                        .requestMatchers("/blog/{nickname}/category/**").permitAll()
+                        .requestMatchers("/signup/success").anonymous()
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/favicon.ico").permitAll()
+                        .anyRequest().authenticated()
         );
 
         http.addFilterAt(new TransactionFilter(), BasicAuthenticationFilter.class);

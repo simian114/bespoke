@@ -4,26 +4,22 @@
 
 >
 <div class="block is-flex" th:fragment="orderBy">
-    <!--           TODO: 정렬은 오른쪽 끝에 배치 -->
-    <!--    TODO: 선택된 값 헤더에 표시 및 active 표현.-->
-    <!--    TODO: 드랍다운 공통화가 필요할듯-->
-    <div class="dropdown is-hoverable ml-auto">
+    <div id="main-home-dropdown" class="dropdown is-hoverable ml-auto">
         <div class="dropdown-trigger">
-            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu" style="min-width: 133px;">
                 <span th:class="dropdown-header-text">
-                    order by
+                    ORDER BY
                     <script type="text/javascript">
-                        me().run(() => {
-                            const queryString = window.location.search;
-                            const params = new URLSearchParams(queryString);
-                            const orderBy = params.get("orderBy");
-                            const span = me();
-                            if (!orderBy) {
-                                span.innerText = "LIKE";
-                                return;
-                            }
+                        const queryString = window.location.search;
+                        const params = new URLSearchParams(queryString);
+                        const orderBy = params.get("orderBy");
+                        const span = me();
+                        if (!orderBy || !orderBy.length) {
+                            <!--default는 like-->
+                            span.innerText = "LIKE";
+                        } else {
                             span.innerText = orderBy;
-                        })
+                        }
                     </script>
                 </span>
                 <span class="icon is-small"><i class="fas fa-angle-down" aria-hidden="true"></i></span>
@@ -31,9 +27,39 @@
         </div>
         <div class="dropdown-menu" id="dropdown-menu" role="menu">
             <div class="dropdown-content">
-                <a href="?orderBy=LATEST" hx-boost="true" class="dropdown-item">Latest</a>
-                <a href="?orderBy=LIKE" hx-boost="true" class="dropdown-item">Like</a>
-                <a href="?orderBy=COMMENT" hx-boost="true" class="dropdown-item">Comment</a>
+                <button class="dropdown-item"
+                        hx:get="@{/(orderBy=LATEST)}"
+                        hx-target=".post-list"
+                        hx-swap="outerHTML"
+                        hx-push-url="true"
+                >
+                    Latest
+                </button>
+                <button class="dropdown-item"
+                        hx:get="@{/(orderBy=LIKE)}"
+                        hx-target=".post-list"
+                        hx-swap="outerHTML"
+                        hx-push-url="true"
+                >
+                    Like
+                </button>
+                <button class="dropdown-item"
+                        hx:get="@{/(orderBy=COMMENT)}"
+                        hx-target=".post-list"
+                        hx-swap="outerHTML"
+                        hx-push-url="true"
+                >
+                    Comment
+                </button>
+                <script type="text/javascript">
+                    me().on("click", (e) => {
+                        console.log(e.target);
+                        const a = e.target.innerText.toUpperCase();
+                        const triggerSpan = document.querySelector("#main-home-dropdown .dropdown-trigger > button > span");
+                        triggerSpan.innerText = a;
+                        console.log({a})
+                    })
+                </script>
             </div>
         </div>
     </div>

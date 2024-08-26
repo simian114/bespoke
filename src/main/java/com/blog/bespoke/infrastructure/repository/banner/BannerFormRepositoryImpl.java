@@ -3,8 +3,11 @@ package com.blog.bespoke.infrastructure.repository.banner;
 import com.blog.bespoke.application.exception.BusinessException;
 import com.blog.bespoke.application.exception.ErrorCode;
 import com.blog.bespoke.domain.model.banner.BannerForm;
+import com.blog.bespoke.domain.model.banner.BannerFormRelation;
 import com.blog.bespoke.domain.model.banner.BannerFormSearchCond;
 import com.blog.bespoke.domain.model.banner.QBannerForm;
+import com.blog.bespoke.domain.model.user.QS3UserAvatar;
+import com.blog.bespoke.domain.model.user.QUser;
 import com.blog.bespoke.domain.repository.banner.BannerFormRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
@@ -36,6 +39,24 @@ public class BannerFormRepositoryImpl implements BannerFormRepository {
     @Override
     public BannerForm getById(Long id) throws BusinessException {
         return bannerFormJpaRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND));
+    }
+
+    @Override
+    public Optional<BannerForm> findById(Long bannerFormId, BannerFormRelation relation) {
+        JPAQuery<BannerForm> query = queryFactory.selectFrom(QBannerForm.bannerForm)
+                .distinct()
+                .where(QBannerForm.bannerForm.id.eq(bannerFormId));
+        if (relation.isUser()) {
+            query.leftJoin(QBannerForm.bannerForm.user, QUser.user).fetchJoin();
+            query.leftJoin(QUser.user.avatar, QS3UserAvatar.s3UserAvatar).fetchJoin();
+        }
+        return Optional.ofNullable(query.fetchOne());
+    }
+
+    @Override
+    public BannerForm getById(Long id, BannerFormRelation relation) throws BusinessException {
+        return findById(id, relation)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND));
     }
 

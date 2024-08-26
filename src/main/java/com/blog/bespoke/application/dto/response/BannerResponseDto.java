@@ -3,9 +3,7 @@ package com.blog.bespoke.application.dto.response;
 import com.blog.bespoke.domain.model.banner.Banner;
 import com.blog.bespoke.domain.model.banner.BannerUiType;
 import com.blog.bespoke.domain.model.banner.S3BannerImage;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -14,6 +12,8 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class BannerResponseDto {
     private Long id;
     private String name;
