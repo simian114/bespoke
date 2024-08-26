@@ -194,11 +194,13 @@ public class UserUseCase {
     }
 
     @Transactional
-    public UserResponseDto addRole(Long id, Role.Code code) {
-        User user = userRepository.getById(id);
+    public UserResponseDto addRole(Long userId, Role.Code code) {
+        User user = userRepository.getById(userId);
         Role role = userRepository.getRoleByCode(code);
+        tokenRepository.deleteAllByRefIdAndType(userId, Token.Type.ADVERTISER_ROLE_REQUEST);
         UserRole userRole = new UserRole(user.getId(), role.getId(), user, role);
         user.addRole(userRole);
+        // TODO: 알림 주기
         return UserResponseDto.from(user);
     }
 }

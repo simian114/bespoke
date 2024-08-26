@@ -3,6 +3,7 @@ package com.blog.bespoke.presentation.web.view.admin;
 import com.blog.bespoke.application.dto.response.UserResponseDto;
 import com.blog.bespoke.application.usecase.user.UserUseCase;
 import com.blog.bespoke.domain.model.user.User;
+import com.blog.bespoke.domain.model.user.role.Role;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
 import com.blog.bespoke.infrastructure.web.htmx.Toast;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxRequest;
@@ -10,15 +11,7 @@ import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
-import java.util.Date;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/admin/user")
@@ -80,6 +73,17 @@ public class AdminUserController {
 
         userUseCase.deleteUser(userId, currentUser);
         return HtmxResponse.builder().build();
+    }
+
+    @PostMapping("/{userId}/role/advertiser")
+    public HtmxResponse addAdvertiserRole(@PathVariable("userId") Long userId) {
+        UserResponseDto userResponseDto = userUseCase.addRole(userId, Role.Code.ADVERTISER);
+        return HtmxResponse.builder()
+                .trigger(
+                        Toast.TRIGGER,
+                        Toast.success("hello world")
+                )
+                .build();
     }
 
 

@@ -64,7 +64,7 @@ public class RepositoryConfig {
 
     @Bean
     public TokenRepository tokenRepository() {
-        return new TokenRepositoryImpl(tokenJpaRepository);
+        return new TokenRepositoryImpl(jpaQueryFactory(), tokenJpaRepository);
     }
 
     @Bean

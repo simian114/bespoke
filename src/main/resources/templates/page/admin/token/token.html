@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/adminLayout}"
+>
+<head>
+    <title>Bespoke</title>
+</head>
+<body layout:fragment="content">
+<div class="">
+    <div class="p-4">
+        <div th:replace="~{page/admin/token/fragments :: filter}"></div>
+    </div>
+    <div th:replace="~{fragments/paginator :: table}"></div>
+    <div class="p-4">
+        <div th:replace="~{page/admin/token/fragments :: table}"></div>
+    </div>
+    <div th:replace="~{fragments/paginator :: table}"></div>
+</div>
+</body>
+</html>
