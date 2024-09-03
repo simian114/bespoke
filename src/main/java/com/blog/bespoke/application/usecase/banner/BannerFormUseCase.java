@@ -6,9 +6,7 @@ import com.blog.bespoke.application.dto.response.BannerFormResponseDto;
 import com.blog.bespoke.application.event.message.BannerAuditApproveMessage;
 import com.blog.bespoke.application.event.message.BannerAuditDenyMessage;
 import com.blog.bespoke.application.event.publisher.EventPublisher;
-import com.blog.bespoke.domain.model.banner.Banner;
-import com.blog.bespoke.domain.model.banner.BannerForm;
-import com.blog.bespoke.domain.model.banner.BannerFormRelation;
+import com.blog.bespoke.domain.model.banner.*;
 import com.blog.bespoke.domain.model.payment.Payment;
 import com.blog.bespoke.domain.model.payment.PaymentRefType;
 import com.blog.bespoke.domain.model.payment.PaymentStatus;
@@ -24,8 +22,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -128,4 +128,43 @@ public class BannerFormUseCase {
         }).findFirst().orElse(null);
     }
 
+    /**
+     * 결제가 완료된 상태면서 start date 된 banner 를 실제 게시하는 메서드
+     * 스케줄러 / 수동 실행 등 다양한 곳에서 사용될 수 있어야함.
+     */
+    @Transactional
+    public void publishPaymentCompleted() {
+        BannerFormSearchCond cond = new BannerFormSearchCond();
+        cond.setStatuses(List.of(BannerFormStatus.PAYMENT_COMPLETED));
+        cond.setPageSize(100);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startOfToday = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth() - 1, 23, 59, 59);
+        cond.setStartDate(startOfToday);
+        Page<BannerForm> searchRes = bannerFormRepository.search(cond);
+        List<BannerForm> bannerForms = searchRes.getContent();
+        bannerForms.forEach(BannerForm::publish);
+        System.out.println("publish banner");
+        bannerFormRepository.saveAll(bannerForms);
+        // TODO: banner Redis 초기화해야함
+    }
+
+    /**
+     * 기간 종료 된 배너 내리기
+     */
+    @Transactional
+    public void exitEndedBanner() {
+        BannerFormSearchCond cond = new BannerFormSearchCond();
+
+        cond.setStatuses(List.of(BannerFormStatus.PUBLISHED));
+        cond.setPageSize(100);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endDate = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 0, 0);
+        cond.setEndDate(endDate);
+
+        Page<BannerForm> searchRes = bannerFormRepository.search(cond);
+        List<BannerForm> bannerForms = searchRes.getContent();
+        bannerForms.forEach(BannerForm::end);
+        bannerFormRepository.saveAll(bannerForms);
+        // TODO: banner Redis 초기화해야함
+    }
 }

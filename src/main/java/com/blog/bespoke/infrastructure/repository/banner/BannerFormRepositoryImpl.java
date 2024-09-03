@@ -32,6 +32,11 @@ public class BannerFormRepositoryImpl implements BannerFormRepository {
     }
 
     @Override
+    public List<BannerForm> saveAll(List<BannerForm> bannerForms) {
+        return bannerFormJpaRepository.saveAll(bannerForms);
+    }
+
+    @Override
     public Optional<BannerForm> findById(Long id) {
         return bannerFormJpaRepository.findById(id);
     }
