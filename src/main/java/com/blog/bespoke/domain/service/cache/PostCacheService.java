@@ -1,16 +1,12 @@
 package com.blog.bespoke.domain.service.cache;
 
 import com.blog.bespoke.domain.model.post.PostSearchCond;
-import com.blog.bespoke.infrastructure.repository.redis.RedisUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import static java.lang.Boolean.TRUE;
 
-@Service
 @RequiredArgsConstructor
 public class PostCacheService {
-    private final RedisUtil redisUtil;
 
     public static String DETAIL_POST = "postDetail:%d";
 
@@ -39,11 +35,9 @@ public class PostCacheService {
     public static String SEARCH_MAIN_POSTS = "p:s:main:%s:%d";
 
 
-
     public boolean useMemoryCache(PostSearchCond cond) {
         return !TRUE.equals(cond.getManage());
     }
-
 
 
     public String getPostSearchCacheKey(PostSearchCond cond, PostSearchCacheType type) {

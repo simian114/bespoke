@@ -16,7 +16,6 @@ import java.util.Random;
 @Controller
 @RequiredArgsConstructor
 public class BannerController {
-    private final Integer topBannerSearchSize = 3;
     private final BannerFormSearchUseCase bannerFormSearchUseCase;
 
     /**
@@ -25,20 +24,17 @@ public class BannerController {
      */
     @GetMapping("/banner/top-banner")
     public HtmxResponse topBanner(Model model) {
-        CommonSearchResponseDto<BannerFormResponseDto> res = bannerFormSearchUseCase.getTopBanners(topBannerSearchSize);
-        if (res.getContent().isEmpty()) {
+        List<BannerResponseDto> banners = bannerFormSearchUseCase.getTopBanners();
+        if (banners.isEmpty()) {
             return HtmxResponse.builder()
                     .build();
         }
         Random random = new Random();
-        int i = random.nextInt(res.getContent().size());
+        int i = random.nextInt(banners.size());
 
-        List<BannerResponseDto> banners = res.getContent().stream()
-                .map(BannerFormResponseDto::getBannerSnapshot)
-                .toList();
+        BannerResponseDto banner = banners.get(i);
 
-        BannerFormResponseDto bannerForm = res.getContent().get(i);
-        model.addAttribute("banner", bannerForm.getBannerSnapshot());
+        model.addAttribute("banner", banner);
         model.addAttribute("banners", banners);
         return HtmxResponse.builder()
                 .view("fragments/banner/topBanner :: top-banner")

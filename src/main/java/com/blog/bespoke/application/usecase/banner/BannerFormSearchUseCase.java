@@ -10,7 +10,9 @@ import com.blog.bespoke.domain.model.banner.BannerFormStatus;
 import com.blog.bespoke.domain.model.banner.BannerUiType;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.banner.BannerFormRepository;
-import com.blog.bespoke.domain.repository.banner.BannerFormSearchRepository;
+import com.blog.bespoke.infrastructure.repository.redis.RedisCacheManager;
+import com.blog.bespoke.infrastructure.util.RedisUtil;
+import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,8 +23,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class BannerFormSearchUseCase {
-    private final BannerFormSearchRepository bannerFormSearchRepository;
+    static private final String REDIS_ENTITY_NAME = "banner";
     private final BannerFormRepository bannerFormRepository;
+    private final RedisCacheManager redisCacheManager;
 
     @Transactional
     public CommonSearchResponseDto<BannerFormResponseDto> searchBannerForm(CommonSearchRequestDto<BannerFormSearchCond> requestDto, User currentUser) {
@@ -33,7 +36,16 @@ public class BannerFormSearchUseCase {
     }
 
     @Transactional
-    public CommonSearchResponseDto<BannerFormResponseDto> getTopBanners(Integer pageSize) {
+    public List<BannerResponseDto> getTopBanners() {
+        List<String> usage = List.of("top");
+
+        String redisKey = RedisUtil.generateKey(REDIS_ENTITY_NAME, usage);
+        List<BannerResponseDto> cached = redisCacheManager.get(redisKey, new TypeReference<List<BannerResponseDto>>() {});
+        if (cached != null) {
+            return cached;
+        }
+
+        // TODO: template 화 할 수 있음.
         BannerFormSearchCond cond = new BannerFormSearchCond();
         cond.setStatuses(List.of(BannerFormStatus.PUBLISHED));
         cond.setUiType(BannerUiType.TOP_BAR);
@@ -41,8 +53,12 @@ public class BannerFormSearchUseCase {
         cond.setPage(0);
         cond.setPageSize(3);
         Page<BannerForm> res = bannerFormRepository.search(cond);
-        Page<BannerFormResponseDto> map = res.map(BannerFormResponseDto::from);
-        return (new CommonSearchResponseDto<BannerFormResponseDto>()).from(map);
+        List<BannerResponseDto> content = res.map(bf -> BannerFormResponseDto.from(bf).getBannerSnapshot())
+                .getContent();
+
+        redisCacheManager.set(redisKey, content);
+
+        return content;
     }
 
     /**
@@ -53,6 +69,14 @@ public class BannerFormSearchUseCase {
      */
     @Transactional
     public List<BannerResponseDto> getMainHeroBanner() {
+        List<String> usage = List.of("main", "hero");
+
+        String redisKey = RedisUtil.generateKey(REDIS_ENTITY_NAME, usage);
+        List<BannerResponseDto> cached = redisCacheManager.get(redisKey, new TypeReference<List<BannerResponseDto>>() {});
+        if (cached != null) {
+            return cached;
+        }
+
         BannerFormSearchCond cond = new BannerFormSearchCond();
         cond.setStatuses(List.of(BannerFormStatus.PUBLISHED));
         cond.setUiType(BannerUiType.MAIN_HERO);
@@ -60,12 +84,25 @@ public class BannerFormSearchUseCase {
         cond.setPage(0);
         cond.setPageSize(5);
         Page<BannerForm> res = bannerFormRepository.search(cond);
-        return res.map(bf -> BannerFormResponseDto.from(bf).getBannerSnapshot())
+        List<BannerResponseDto> content = res.map(bf -> BannerFormResponseDto.from(bf).getBannerSnapshot())
                 .getContent();
+
+        redisCacheManager.set(redisKey, content);
+
+        return content;
     }
 
     @Transactional
     public List<BannerResponseDto> getMainPopupBanner() {
+        List<String> usage = List.of("main", "popup");
+
+        String redisKey = RedisUtil.generateKey(REDIS_ENTITY_NAME, usage);
+        List<BannerResponseDto> cached = redisCacheManager.get(redisKey, new TypeReference<List<BannerResponseDto>>() {});
+        if (cached != null) {
+            return cached;
+        }
+
+        // todo: redis
         BannerFormSearchCond cond = new BannerFormSearchCond();
         cond.setStatuses(List.of(BannerFormStatus.PUBLISHED));
         cond.setUiType(BannerUiType.MAIN_POPUP);
@@ -73,8 +110,12 @@ public class BannerFormSearchUseCase {
         cond.setCount(false);
         cond.setPageSize(5);
         Page<BannerForm> res = bannerFormRepository.search(cond);
-        return res.map(bf -> BannerFormResponseDto.from(bf).getBannerSnapshot())
+        List<BannerResponseDto> content = res.map(bf -> BannerFormResponseDto.from(bf).getBannerSnapshot())
                 .getContent();
+
+        redisCacheManager.set(redisKey, content);
+
+        return content;
     }
 
 
