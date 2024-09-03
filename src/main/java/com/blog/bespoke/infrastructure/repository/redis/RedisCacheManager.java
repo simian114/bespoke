@@ -1,5 +1,6 @@
 package com.blog.bespoke.infrastructure.repository.redis;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,10 +13,24 @@ import java.util.concurrent.TimeUnit;
 @Slf4j(topic = "redis")
 @Component
 @RequiredArgsConstructor
-public class RedisUtil {
-    private static final Long TtlAsMilliSeconds = (long) (1000 * 60 * 60);
+public class RedisCacheManager {
+    // NOTE: 기본은 하루
+    private static final Long TtlAsMilliSeconds = (long) (1000 * 60 * 60 * 24);
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
+
+    public <T> T get(String key, TypeReference<T> typeReference ) {
+        try {
+            Object object = redisTemplate.opsForValue().get(key);
+            if (object == null) {
+                return null;
+            }
+            return objectMapper.convertValue(object, typeReference);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 
     public <T> T get(String key, Class<T> clazz) {
         try {
