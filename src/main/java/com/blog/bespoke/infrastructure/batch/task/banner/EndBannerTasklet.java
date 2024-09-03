@@ -1,4 +1,4 @@
-package com.blog.bespoke.infrastructure.batch.banner;
+package com.blog.bespoke.infrastructure.batch.task.banner;
 
 import com.blog.bespoke.application.usecase.banner.BannerFormUseCase;
 import lombok.RequiredArgsConstructor;

@@ -16,3 +16,7 @@ Content-Type: application/json
 ### ADMIN test
 GET localhost:8080/api/admin/users
 Authorization: Bearer {{admin_access_token}}
+
+### Banner Publish Job
+GET localhost:8080/admin/job/publish-banner
+
