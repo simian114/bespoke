@@ -141,6 +141,14 @@ public class BannerForm extends TimeStamp implements PaymentReferenceTypeObject 
         return endDate.compareTo(startDate);
     }
 
+    public void publish() {
+        this.status = BannerFormStatus.PUBLISHED;
+    }
+
+    public void end() {
+        this.status = BannerFormStatus.END;
+    }
+
     @Override
     public PaymentRefType getPaymentRefType() {
         return PaymentRefType.BANNER_FORM;
