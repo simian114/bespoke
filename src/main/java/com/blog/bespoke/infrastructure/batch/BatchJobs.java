@@ -12,6 +12,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+/**
+ * job 을 정의함.
+ * 재사용해야하는 step 이 나온다면 그때 step 분리하기. 현재는 그럴 일 없음
+ */
 @Configuration
 @RequiredArgsConstructor
 public class BatchJobs {
