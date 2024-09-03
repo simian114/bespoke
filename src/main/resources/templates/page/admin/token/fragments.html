@@ -34,25 +34,25 @@
                 </div>
             </div>
         </div>
-<!--        <div class="field is-horizontal">-->
-<!--            <div class="field-label is-normal">-->
-<!--                <label class="label">Date</label>-->
-<!--            </div>-->
-<!--            <div class="field-body">-->
-<!--                <div class="field">-->
-<!--                    <p class="control">-->
-<!--                        <input class="input" type="date" placeholder="start-date" th:field="*{startDate}">-->
-<!--                    </p>-->
-<!--                </div>-->
-<!--                <span>-->
-<!--                    </span>-->
-<!--                <div class="field">-->
-<!--                    <p class="control">-->
-<!--                        <input class="input" type="date" placeholder="end-date" th:field="*{endDate}">-->
-<!--                    </p>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
+        <!--        <div class="field is-horizontal">-->
+        <!--            <div class="field-label is-normal">-->
+        <!--                <label class="label">Date</label>-->
+        <!--            </div>-->
+        <!--            <div class="field-body">-->
+        <!--                <div class="field">-->
+        <!--                    <p class="control">-->
+        <!--                        <input class="input" type="date" placeholder="start-date" th:field="*{startDate}">-->
+        <!--                    </p>-->
+        <!--                </div>-->
+        <!--                <span>-->
+        <!--                    </span>-->
+        <!--                <div class="field">-->
+        <!--                    <p class="control">-->
+        <!--                        <input class="input" type="date" placeholder="end-date" th:field="*{endDate}">-->
+        <!--                    </p>-->
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--        </div>-->
 
         <div class="field is-horizontal">
             <div class="field-label">
@@ -101,30 +101,33 @@
             <th:block th:each="item: ${items}">
                 <!--                    delete 된 post 라면 ...-->
                 <tr th:fragment="post-item-row">
-                    <th><span th:text="${item.type}">type</span></th>
-                    <th><span th:text="${item.refId}">refId</span></th>
-                    <th><span th:text="${item.refType}">refType</span></th>
-                    <th><span th:text="${item.expiredAt}">expiredAt</span></th>
-                    <th><span th:text="${item.code}">code</span></th>
-                    <th class="buttons are-small">
-                        <th:block th:if="${item.type.name() == 'ADVERTISER_ROLE_REQUEST'}">
-                            <button class="button"
-                                    hx:post="@{/admin/user/{userId}/role/advertiser(userId=${item.refId})}"
+                    <td><span th:text="${item.type}">type</span></td>
+                    <td><span th:text="${item.refId}">refId</span></td>
+                    <td><span th:text="${item.refType}">refType</span></td>
+                    <td><span th:text="${item.expiredAt}">expiredAt</span></td>
+                    <td><span th:text="${item.code}">code</span></td>
+                    <td>
+                        <div class="buttons are-small">
+                            <th:block th:if="${item.type.name() == 'ADVERTISER_ROLE_REQUEST'}">
+                                <button class="button"
+                                        hx:post="@{/admin/user/{userId}/role/advertiser(userId=${item.refId})}"
+                                        hx-target="closest tr"
+                                        hx-swap="delete">
+                                    add role
+                                </button>
+                            </th:block>
+
+                            <button class="button is-danger"
+                                    hx-confirm="Are you sure?"
+                                    hx:delete="@{/admin/token/{tokenId}(tokenId=${item.id})}"
                                     hx-target="closest tr"
                                     hx-swap="delete">
-                                add role
+                                del
                             </button>
-                        </th:block>
+                        </div>
 
-                        <button class="button is-warning"
-                                hx-confirm="Are you sure?"
-                                hx:delete="@{/admin/token/{tokenId}(tokenId=${item.id})}"
-                                hx-target="closest tr"
-                                hx-swap="delete">
-                            del
-                        </button>
 
-                    </th>
+                    </td>
                 </tr>
             </th:block>
             </tbody>

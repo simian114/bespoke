@@ -115,18 +115,21 @@
                     <th><span th:text="${item.startDate}">startDate</span></th>
                     <th><span th:text="${item.endDate}">endDate</span></th>
                     <th><span th:text="${item.createdAt}">createdAt</span></th>
-                    <th class="buttons are-small">
-                        <a class="button"
-                           th:href="@{/admin/banner/{bannerId}(bannerId=${item.id})}"
-                        >
-                            <!--디테일한 정보를 볼 수 있게 됨.-->
-                            <!--해당 페이지에서만 승인 / 거절을 할 수 있음.-->
-                            <!---->
-                            <!---->
-                            <!---->
-                            <!---->
-                            audit
-                        </a>
+                    <th>
+                        <div class="buttons are-small">
+                            <a class="button"
+                               th:href="@{/admin/banner/{bannerId}(bannerId=${item.id})}"
+                            >
+                                <!--디테일한 정보를 볼 수 있게 됨.-->
+                                <!--해당 페이지에서만 승인 / 거절을 할 수 있음.-->
+                                <!---->
+                                <!---->
+                                <!---->
+                                <!---->
+                                audit
+                            </a>
+                        </div>
+
                     </th>
                 </tr>
             </th:block>
