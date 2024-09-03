@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
@@ -13,7 +12,6 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import redis.clients.jedis.Jedis;
 
 @RequiredArgsConstructor
 @Configuration
@@ -29,18 +27,24 @@ public class RedisConfig {
     @Value("${spring.data.redis.password}")
     private String password;
 
+    @Value("${spring.data.redis.ssl.enabled}")
+    private Boolean sslEnabled;
+
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host, port);
         config.setPassword(password);
-        JedisClientConfiguration clientConfig = JedisClientConfiguration.builder()
-                .useSsl()
-                .build();
+        if (sslEnabled) {
+            JedisClientConfiguration clientConfig = JedisClientConfiguration.builder()
+                    .useSsl()
+                    .build();
 
-        return new JedisConnectionFactory(config, clientConfig);
+            return new JedisConnectionFactory(config, clientConfig);
+        }
+
+        return new JedisConnectionFactory(config);
     }
-
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
