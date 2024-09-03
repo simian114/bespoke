@@ -72,31 +72,50 @@
                         <th:block th:each="item: ${items}">
                             <!--                    delete 된 post 라면 ...-->
                             <tr th:fragment="post-item-row">
-                                <th><span th:text="${item.status}">status</span></th>
-                                <th><span th:text="${item.startDate}">startDate</span></th>
-                                <th><span th:text="${item.endDate}">endDate</span></th>
-                                <th><span th:text="${item.createdAt}">createdAt</span></th>
-                                <th class="buttons are-small">
-<!--                                    <div id="payment-method"></div>-->
-<!--                                    &lt;!&ndash; 이용약관 UI &ndash;&gt;-->
-<!--                                    <div id="agreement"></div>-->
-<!--                                    <button id="payment-button" class="button is-primary">-->
-<!--                                        toss payments-->
-
-
-<!--                                    </button>-->
-
-                                    <th:block th:if="${item.status.name() == 'PAYMENT_WAITING'}">
-                                        <!--TODO: 지금은 임시로 버튼과 경로만 만들어놓음-->
-                                        <!--실제 결제 프로세스가 도입되면, 어드민에서 approve 하는 순간 payment 가 생기고, 아래의 경로에는 payment 에 대한 결제 경로가 생성이됨.-->
-                                        <a class="button is-primary"
-                                                th:href="@{/payment/{refId}(refId=${item.id},refType=BANNER_FORM)}"
-                                        >
-                                            pay(current free!)
-                                        </a>
-                                    </th:block>
-
-                                </th>
+                                <td><span th:text="${item.status}">status</span></td>
+                                <td><span th:text="${item.startDate}">startDate</span></td>
+                                <td><span th:text="${item.endDate}">endDate</span></td>
+                                <td><span th:text="${item.createdAt}">createdAt</span></td>
+                                <td >
+                                    <div class="buttons are-small">
+                                        <!--결제대기: 결제하기-->
+                                        <th:block th:if="${item.status.name() == 'PAYMENT_WAITING'}">
+                                            <a class="button is-primary"
+                                               th:href="@{/payment/{refId}(refId=${item.id},refType=BANNER_FORM)}"
+                                            >
+                                                pay
+                                            </a>
+                                        </th:block>
+                                        <!--결제실패: 다시 결제 버튼-->
+                                        <th:block th:if="${item.status.name() == 'PAYMENT_FAILED'}">
+                                            -
+                                        </th:block>
+                                        <!--결제완료: 전체환불 / 수정버튼은 없음. 수정하려면 그냥 환불 받고 다시 요청-->
+                                        <th:block th:if="${item.status.name() == 'PAYMENT_COMPLETED'}">
+                                            -
+                                        </th:block>
+                                        <!--게시됨: 부분환불 / 수정하려면 그냥 환불 받고 다시 요청-->
+                                        <th:block th:if="${item.status.name() == 'PUBLISHED'}">
+                                            <a class="button is-primary">
+                                                partial refund
+                                            </a>
+                                        </th:block>
+                                        <!--일시정지: 재시작-->
+                                        <th:block th:if="${item.status.name() == 'SUSPENDED'}">
+                                            <button class="button is-primary">
+                                                restart
+                                            </button>
+                                        </th:block>
+                                        <!--영구정지-->
+                                        <th:block th:if="${item.status.name() == 'TERMINATED'}">
+                                            -
+                                        </th:block>
+                                        <!--종료-->
+                                        <th:block th:if="${item.status.name() == 'END'}">
+                                            -
+                                        </th:block>
+                                    </div>
+                                </td>
                             </tr>
                         </th:block>
                         </tbody>
@@ -106,9 +125,6 @@
         </div>
     </div>
 </section>
-
-<script src="https://js.tosspayments.com/v2/standard" type="text/javascript"></script>
-
 
 </body>
 </html>
