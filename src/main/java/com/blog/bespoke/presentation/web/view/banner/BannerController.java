@@ -1,8 +1,6 @@
 package com.blog.bespoke.presentation.web.view.banner;
 
-import com.blog.bespoke.application.dto.response.BannerFormResponseDto;
 import com.blog.bespoke.application.dto.response.BannerResponseDto;
-import com.blog.bespoke.application.dto.response.search.CommonSearchResponseDto;
 import com.blog.bespoke.application.usecase.banner.BannerFormSearchUseCase;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxResponse;
 import lombok.RequiredArgsConstructor;
