@@ -1,7 +1,7 @@
 package com.blog.bespoke.infrastructure.batch.task.banner;
 
 import com.blog.bespoke.application.memorhcache.MemoryCacheKeyManager;
-import com.blog.bespoke.application.usecase.banner.BannerFormUseCase;
+import com.blog.bespoke.infrastructure.repository.redis.RedisCacheManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.StepContribution;
@@ -13,12 +13,12 @@ import org.springframework.stereotype.Component;
 @Slf4j(topic = "BATCH_PUBLISH_BANNER")
 @Component
 @RequiredArgsConstructor
-public class EndBannerTasklet implements Tasklet {
-    private final BannerFormUseCase bannerFormUseCase;
+public class InvalidateBannerCacheTasklet implements Tasklet {
+    private final RedisCacheManager redisCacheManager;
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        bannerFormUseCase.exitEndedBanner();
+        MemoryCacheKeyManager.Banner.getAllManagedKeys().forEach(redisCacheManager::invalidate);
         return RepeatStatus.FINISHED;
     }
 
