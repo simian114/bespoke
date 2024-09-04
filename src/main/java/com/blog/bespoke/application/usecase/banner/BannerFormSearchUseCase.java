@@ -4,6 +4,7 @@ import com.blog.bespoke.application.dto.request.search.CommonSearchRequestDto;
 import com.blog.bespoke.application.dto.response.BannerFormResponseDto;
 import com.blog.bespoke.application.dto.response.BannerResponseDto;
 import com.blog.bespoke.application.dto.response.search.CommonSearchResponseDto;
+import com.blog.bespoke.application.memorhcache.MemoryCacheKeyManager;
 import com.blog.bespoke.domain.model.banner.BannerForm;
 import com.blog.bespoke.domain.model.banner.BannerFormSearchCond;
 import com.blog.bespoke.domain.model.banner.BannerFormStatus;
@@ -11,7 +12,6 @@ import com.blog.bespoke.domain.model.banner.BannerUiType;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.domain.repository.banner.BannerFormRepository;
 import com.blog.bespoke.infrastructure.repository.redis.RedisCacheManager;
-import com.blog.bespoke.infrastructure.util.RedisUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class BannerFormSearchUseCase {
-    static private final String REDIS_ENTITY_NAME = "banner";
     private final BannerFormRepository bannerFormRepository;
     private final RedisCacheManager redisCacheManager;
 
@@ -37,10 +36,11 @@ public class BannerFormSearchUseCase {
 
     @Transactional
     public List<BannerResponseDto> getTopBanners() {
-        List<String> usage = List.of("top");
+        String redisKey = MemoryCacheKeyManager.Banner.getTopBanners();
 
-        String redisKey = RedisUtil.generateKey(REDIS_ENTITY_NAME, usage);
-        List<BannerResponseDto> cached = redisCacheManager.get(redisKey, new TypeReference<List<BannerResponseDto>>() {});
+        List<BannerResponseDto> cached = redisCacheManager.get(redisKey, new TypeReference<List<BannerResponseDto>>() {
+        });
+
         if (cached != null) {
             return cached;
         }
@@ -69,10 +69,9 @@ public class BannerFormSearchUseCase {
      */
     @Transactional
     public List<BannerResponseDto> getMainHeroBanner() {
-        List<String> usage = List.of("main", "hero");
-
-        String redisKey = RedisUtil.generateKey(REDIS_ENTITY_NAME, usage);
-        List<BannerResponseDto> cached = redisCacheManager.get(redisKey, new TypeReference<List<BannerResponseDto>>() {});
+        String redisKey = MemoryCacheKeyManager.Banner.getMainHeroBanner();
+        List<BannerResponseDto> cached = redisCacheManager.get(redisKey, new TypeReference<List<BannerResponseDto>>() {
+        });
         if (cached != null) {
             return cached;
         }
@@ -94,10 +93,9 @@ public class BannerFormSearchUseCase {
 
     @Transactional
     public List<BannerResponseDto> getMainPopupBanner() {
-        List<String> usage = List.of("main", "popup");
-
-        String redisKey = RedisUtil.generateKey(REDIS_ENTITY_NAME, usage);
-        List<BannerResponseDto> cached = redisCacheManager.get(redisKey, new TypeReference<List<BannerResponseDto>>() {});
+        String redisKey = MemoryCacheKeyManager.Banner.getMainPopupBanner();
+        List<BannerResponseDto> cached = redisCacheManager.get(redisKey, new TypeReference<List<BannerResponseDto>>() {
+        });
         if (cached != null) {
             return cached;
         }
