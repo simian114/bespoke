@@ -16,7 +16,7 @@ public class BannerScheduler {
      * 매일 새벽 3시에 실행됨.
      * 새벽 3시로 지정한 이유는 이 시간이 가장 사용자가 적을거라 판단했기 때문.
      */
-    @Scheduled(cron = "0 0 3 * * ?")
+    @Scheduled(cron = "0 0 3 * * ?", zone = "Asia/Seoul")
     public void run() {
         jobLauncher.launchDailyBannerJob();
     }
