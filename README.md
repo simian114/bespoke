@@ -86,18 +86,12 @@ User / Post / Banner / Token 을 관리할 수 있습니다. 각 엔터티는 �
 # Technical Documentation
 > 개발중에 있으므로 계속 변경될 수 있습니다.
 
-<details>
+## ERD
 ![ERD](https://github.com/user-attachments/assets/6528b1a9-b8e6-446b-ac42-59fabe53a8ca)
-<summary>
-ERD DIAGRAM
-</summary>
-</details>
-<details>
+
+## Architecture
 ![bespoke architecture](https://github.com/user-attachments/assets/40c98391-5192-4922-a256-e411ad77d30d)
-<summary>
-아키텍쳐
-</summary>
-</details>
+
 
 
 
