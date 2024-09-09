@@ -10,10 +10,10 @@
                 <span th:class="dropdown-header-text">
                     ORDER BY
                     <script type="text/javascript">
-                        const queryString = window.location.search;
-                        const params = new URLSearchParams(queryString);
-                        const orderBy = params.get("orderBy");
-                        const span = me();
+                        var queryString = window.location.search;
+                        var params = new URLSearchParams(queryString);
+                        var orderBy = params.get("orderBy");
+                        var span = me();
                         if (!orderBy || !orderBy.length) {
                             <!--default는 like-->
                             span.innerText = "LIKE";
@@ -53,11 +53,9 @@
                 </button>
                 <script type="text/javascript">
                     me().on("click", (e) => {
-                        console.log(e.target);
                         const a = e.target.innerText.toUpperCase();
                         const triggerSpan = document.querySelector("#main-home-dropdown .dropdown-trigger > button > span");
                         triggerSpan.innerText = a;
-                        console.log({a})
                     })
                 </script>
             </div>
