@@ -9,7 +9,7 @@
 
     <meta name="title" th:content="${post.title}">
     <meta name="description" th:content="${post.description}">
-    <meta name="image" th:content="${post.cover != null ? post.cover.url : 'https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png'}">
+    <meta name="image" th:content="${post.cover != null ? cdnUrl + post.cover.filename : 'https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png'}">
     <meta name="keywords" content="blog platform, simple, comfortable, diverse, fast, write stories, share stories, discover stories, velog, inblog, medium, wix, wordpress, tistory, naver blog, 벨로그, 블로그, 인블로그, 워드프레스, 티스토리, 네이버블로그">
 
     <meta property="og:type" content="article">
@@ -17,13 +17,13 @@
     <meta property="og:url" content="아직url 없음">
     <meta property="og:title" th:content="${post.title}">
     <meta property="og:description" th:content="${post.description}">
-    <meta property="og:image" th:content="${post.cover != null ? post.cover.url : 'https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png'}">
+    <meta property="og:image" th:content="${post.cover != null ? cdnUrl + post.cover.filename : 'https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png'}">
 
-    <meta property="twitter:card" content="${post.cover != null ? post.cover.url : 'https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png'}">
+    <meta property="twitter:card" content="${post.cover != null ? cdnUrl + post.cover.filename : 'https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png'}">
     <meta property="twitter:url" content="아직url 없음">
     <meta property="twitter:title" th:content="${post.title}">
     <meta property="twitter:description" th:content="${post.description}">
-    <meta property="twitter:image" th:content="${post.cover != null ? post.cover.url : 'https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png'}">
+    <meta property="twitter:image" th:content="${post.cover != null ? cdnUrl + post.cover.filename : 'https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png'}">
 </head>
 <body layout:fragment="content">
 
@@ -31,7 +31,7 @@
     <div class="container">
         <div th:if="${post.cover != null}">
             <figure class="image is-16by9 has-radius-normal">
-                <img th:src="${post.cover.url}" class="post-detail-page__cover-img has-radius-large">
+                <img th:src="${cdnUrl + post.cover.filename}" class="post-detail-page__cover-img has-radius-large">
             </figure>
         </div>
 
