@@ -3,6 +3,7 @@ package com.blog.bespoke.infrastructure.web.advice;
 import com.blog.bespoke.domain.model.user.User;
 import com.blog.bespoke.infrastructure.web.argumentResolver.annotation.LoginUser;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,6 +15,9 @@ import java.util.UUID;
 @ControllerAdvice
 public class GlobalModelAttributeAdvice {
     private String randomValue;
+
+    @Value("${aws.cdn.url}")
+    public String cdnUrl;
 
     @PostConstruct
     public void init() {
@@ -28,6 +32,7 @@ public class GlobalModelAttributeAdvice {
     @ModelAttribute
     public void setGlobalModelAttribute(Model model,
                                         @LoginUser User currentUser) {
+        model.addAttribute("cdnUrl", cdnUrl);
         model.addAttribute("randomValue", randomValue);
         model.addAttribute("me", currentUser);
         if (currentUser != null) {
