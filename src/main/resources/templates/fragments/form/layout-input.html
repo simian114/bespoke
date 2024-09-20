@@ -40,7 +40,7 @@
     </div>
 </th:block>
 
-<th:block layout:fragment="tinymce(field, label, placeholder, required, uploadUrl, id)">
+<th:block layout:fragment="tinymce(field, label, placeholder, required, uploadUrl, id, cdnUrl)">
     <div class="field" th:with="fieldName=${field}" style="min-height: 600px;">
         <label class="label" th:text="${label}">Introduce</label>
         <div class="control has-icons-left has-icons-right">
@@ -71,10 +71,12 @@
                     const id = `[[${id}]]`;
                     const textarea = document.getElementById(id);
                     const uploadUrl = '[[${uploadUrl}]]';
+                    const cdnUrl = '[[${cdnUrl}]]';
+
                     if (textarea) {
                         tinymce.remove();
                         setTimeout(() => {
-                            initPostTinyMceEditor(uploadUrl)
+                            initPostTinyMceEditor(uploadUrl, cdnUrl)
                         }, 0);
                     }
                 })
@@ -83,10 +85,12 @@
                 const id = '[[${id}]]';
                 const textarea = document.getElementById(id);
                 const uploadUrl = '[[${uploadUrl}]]';
+                const cdnUrl = '[[${cdnUrl}]]';
+
                 if (textarea) {
                     tinymce.remove();
                     setTimeout(() => {
-                        initPostTinyMceEditor(uploadUrl)
+                        initPostTinyMceEditor(uploadUrl, cdnUrl)
                     }, 0);
                 }
             })

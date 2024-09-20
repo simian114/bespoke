@@ -201,7 +201,7 @@
         </div>
 
         <div th:classappend="mt-2"></div>
-        <div layout:replace="fragments/form/layout-input :: tinymce('content', 'Content','hello world!', true, ${imageUploadUrl}, 'post-editor')"></div>
+        <div layout:replace="fragments/form/layout-input :: tinymce('content', 'Content','hello world!', true, ${imageUploadUrl}, 'post-editor', ${cdnUrl})"></div>
 
         <!--  NOTE: hidden 데이터 전송. -->
         <th:block th:if="${post.categories != null}">
