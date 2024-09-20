@@ -40,12 +40,18 @@ function initProfileIntroduceEditor() {
         toolbar: "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | align numlist bullist | link image | table media | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons |  pagebreak anchor codesample codeinline",
         menubar: 'edit view insert format table help',
         menu: {
-            edit: { title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall | searchreplace' },
-            view: { title: 'View', items: 'visualaid visualchars visualblocks' },
-            insert: { title: 'Insert', items: 'image link media codesample inserttable | math | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime' },
-            format: { title: 'Format', items: 'bold italic underline strikethrough codeinline superscript subscript codeformat | styles blocks fontfamily fontsize align lineheight | forecolor backcolor | language | removeformat' },
-            table: { title: 'Table', items: 'inserttable' },
-            help: { title: 'Help', items: 'help' }
+            edit: {title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall | searchreplace'},
+            view: {title: 'View', items: 'visualaid visualchars visualblocks'},
+            insert: {
+                title: 'Insert',
+                items: 'image link media codesample inserttable | math | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime'
+            },
+            format: {
+                title: 'Format',
+                items: 'bold italic underline strikethrough codeinline superscript subscript codeformat | styles blocks fontfamily fontsize align lineheight | forecolor backcolor | language | removeformat'
+            },
+            table: {title: 'Table', items: 'inserttable'},
+            help: {title: 'Help', items: 'help'}
         },
         quickbars_insert_toolbar: '',
         quickbars_selection_toolbar: 'italic bold  | h2 h3 blockquote code codeinline',
@@ -65,7 +71,7 @@ function initProfileIntroduceEditor() {
     });
 }
 
-function initPostTinyMceEditor(uploadUrl) {
+function initPostTinyMceEditor(uploadUrl, cdnUrl) {
     async function imagesUploadHandler(blobInfo, progress) {
         try {
             const xhr = new XMLHttpRequest();
@@ -79,7 +85,7 @@ function initPostTinyMceEditor(uploadUrl) {
 
                 xhr.onload = () => {
                     if (xhr.status === 403) {
-                        reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
+                        reject({message: 'HTTP Error: ' + xhr.status, remove: true});
                         return;
                     }
 
@@ -90,12 +96,11 @@ function initPostTinyMceEditor(uploadUrl) {
 
                     const json = JSON.parse(xhr.responseText);
 
-                    if (!json || !json.data || typeof json.data.url != 'string') {
+                    if (!json || !json.data || typeof json.data.filename != 'string') {
                         reject('Invalid JSON: ' + xhr.responseText);
                         return;
                     }
-
-                    resolve(json.data.url);
+                    resolve(cdnUrl + json.data.filename);
                 };
 
                 xhr.onerror = () => {
@@ -109,26 +114,31 @@ function initPostTinyMceEditor(uploadUrl) {
             xhr.send(formData);
 
             // xhr.send() 이후 uploadPromise가 완료될 때까지 대기
-            const url = await uploadPromise;
-            return url;
-
+            return await uploadPromise;
         } catch (error) {
             console.error('Image upload failed:', error);
             throw error;
         }
     }
+
     tinymce.init({
         selector: 'textarea',
         plugins: 'searchreplace autolink autosave visualblocks image link media codesample table charmap pagebreak nonbreaking anchor insertdatetime lists wordcount help quickbars emoticons accordion',
         toolbar: "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | align numlist bullist | link image | table media | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons |  pagebreak anchor codesample codeinline",
         menubar: 'edit view insert format table help',
         menu: {
-            edit: { title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall | searchreplace' },
-            view: { title: 'View', items: 'visualaid visualchars visualblocks' },
-            insert: { title: 'Insert', items: 'image link media codesample inserttable | math | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime' },
-            format: { title: 'Format', items: 'bold italic underline strikethrough codeinline superscript subscript codeformat | styles blocks fontfamily fontsize align lineheight | forecolor backcolor | language | removeformat' },
-            table: { title: 'Table', items: 'inserttable' },
-            help: { title: 'Help', items: 'help' }
+            edit: {title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall | searchreplace'},
+            view: {title: 'View', items: 'visualaid visualchars visualblocks'},
+            insert: {
+                title: 'Insert',
+                items: 'image link media codesample inserttable | math | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime'
+            },
+            format: {
+                title: 'Format',
+                items: 'bold italic underline strikethrough codeinline superscript subscript codeformat | styles blocks fontfamily fontsize align lineheight | forecolor backcolor | language | removeformat'
+            },
+            table: {title: 'Table', items: 'inserttable'},
+            help: {title: 'Help', items: 'help'}
         },
         content_css: ['/css/application.css'],
         body_class: 'content',
@@ -147,5 +157,4 @@ function initPostTinyMceEditor(uploadUrl) {
             tinymceCodeinline(editor)
         }
     });
-
 }
