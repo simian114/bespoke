@@ -1,9 +1,8 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      th:fragment="header"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
 >
-<header class="container is-position-relative">
+<header class="container is-position-relative" th:fragment="header">
     <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item has-text-weight-bold is-size-3" href="/" hx-boost="true">
@@ -81,7 +80,7 @@
                             </a>
                         </th:block>
                         <!--  NOTE: theme toggler-->
-                        <div th:replace="~{fragments/themeSelector}"></div>
+                        <div th:replace="~{fragments/themeSelector :: theme-toggler}"></div>
                     </div>
                 </div>
             </div>

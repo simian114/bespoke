@@ -3,13 +3,13 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 >
-<script>
-    const theme = localStorage.getItem('theme');
-    if (theme) {
-        document.documentElement.classList.add(theme);
-    }
-</script>
 <head>
+    <script>
+        const theme = localStorage.getItem('theme');
+        if (theme) {
+            document.documentElement.classList.add(theme);
+        }
+    </script>
     <!--Common Head-->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -78,6 +78,58 @@
 <div id="toast"></div>
 <!--surreal-->
 <script type="text/javascript" th:src="@{/js/modal.js(v=${randomValue})}" defer></script>
+<script type="text/javascript">
+    document.addEventListener("htmx:afterOnLoad", handleAfterOnLoad)
+
+    document.addEventListener("DOMContentLoaded", () => {
+        document.body.addEventListener("htmx:responseError", function (res) {
+            let response = res.detail?.xhr?.response;
+            let parsedResponse = JSON.parse(response);
+
+            Toastify({
+                text: parsedResponse.message,
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "center",
+                stopOnFocus: true,
+                className: "error"
+            }).showToast();
+        })
+
+        document.body.addEventListener("toast", function (res) {
+            const level = res.detail.level;
+            const message = res.detail.message;
+
+            Toastify({
+                text: message,
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "center",
+                stopOnFocus: true,
+                className: level,
+            }).showToast();
+
+        })
+
+        NProgress.configure({showSpinner: false});
+
+        window.addEventListener('htmx:beforeRequest', (event) => {
+            if (event.detail.boosted) {
+                NProgress.start();
+            }
+        });
+        window.addEventListener('htmx:afterRequest', (event) => {
+            if (event.detail.boosted) {
+                NProgress.done();
+            }
+        });
+        window.addEventListener('htmx:historyRestore', (event) => {
+            NProgress.remove();
+        });
+    })
+</script>
 </body>
 <!-- 한번만 실행되어야한다. -->
 <script type="text/javascript">
