@@ -1,0 +1,16 @@
+{
+  "name": "Bespoke",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "https://bespoke-blog.s3.ap-northeast-2.amazonaws.com/seo/bespoke.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "display": "standalone",
+  "display_override": [
+    "window-control-overlay"
+  ],
+  "description": "당신을 위한 블로그, Bespoke"
+}

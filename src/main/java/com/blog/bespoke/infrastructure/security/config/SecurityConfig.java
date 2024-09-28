@@ -94,6 +94,7 @@ public class SecurityConfig {
                         .requestMatchers("/signup").anonymous()
                         .requestMatchers("/signup/success").anonymous()
                         .requestMatchers("/email-validation").anonymous()
+                        .requestMatchers("/pwa/**").permitAll()
                         .requestMatchers(
                                 PathRequest.toStaticResources().at(
                                         Set.of(
