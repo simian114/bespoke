@@ -43,6 +43,22 @@ public class Notification {
     // 실제 코드에서는 아래의 extraInfo 를 사용하도록한다.
     @Transient
     private ExtraInfo extraInfo;
+    @CreatedDate
+    @Column(updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime createdAt;
+    /**
+     * recipient 와 publisher 를 넣어줄 때
+     * 굳이 user = userRepository.findById(id) 로 가져올 필요 없이
+     * User.builder.id(id).build() 로 생성하고
+     * notification.save() 에 넣어도 될듯?
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recipient_id")
+    private User recipient;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "publisher_id")
+    private User publisher;
 
     /**
      * db 에서 가져올 때
@@ -51,7 +67,7 @@ public class Notification {
     public void loadExtraInfo() {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-             this.extraInfo = objectMapper.readValue(extra, ExtraInfo.class);
+            this.extraInfo = objectMapper.readValue(extra, ExtraInfo.class);
         } catch (IOException e) {
             this.extraInfo = null;
         }
@@ -71,29 +87,36 @@ public class Notification {
         }
     }
 
-
-    @CreatedDate
-    @Column(updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime createdAt;
-
-    /**
-     * recipient 와 publisher 를 넣어줄 때
-     * 굳이 user = userRepository.findById(id) 로 가져올 필요 없이
-     * User.builder.id(id).build() 로 생성하고
-     * notification.save() 에 넣어도 될듯?
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipient_id")
-    private User recipient;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "publisher_id")
-    private User publisher;
-
     @Transient
     public String getContent() {
-        return "publisher is " + extraInfo.getPublisher() + " and recipient is " + extraInfo.getRecipient() + " and type is " + type.name();
+        // String recipient = extraInfo.getRecipient();
+        String publisher = extraInfo.getPublisher();
+        switch (this.type) {
+            case FOLLOW -> {
+                return publisher + " is following you";
+            }
+            case COMMENT_LIKE -> {
+                return publisher + " likes your comment";
+            }
+            case POST_LIKE -> {
+                return publisher + " likes your post";
+            }
+            case POST_PUBLISHED -> {
+                return publisher + " published new post";
+            }
+            case COMMENT_CREATED -> {
+                return publisher + " comments on your post";
+            }
+            case BANNER_FORM_DENIED -> {
+                return "Your banner form has declined";
+            }
+            case BANNER_FORM_APPROVED -> {
+                return "Your banner form has approved";
+            }
+            default -> {
+                return "publisher is " + extraInfo.getPublisher() + " and recipient is " + extraInfo.getRecipient() + " and type is " + type.name();
+            }
+        }
     }
 
     public enum NotificationType {

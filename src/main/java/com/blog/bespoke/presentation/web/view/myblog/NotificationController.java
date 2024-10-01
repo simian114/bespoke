@@ -33,7 +33,6 @@ public class NotificationController {
                                    @LoginUser User currentUser,
                                    Model model) {
         cond.setRecipientId(currentUser.getId());
-        model.addAttribute("me", currentUser);
 
         Page<NotificationResponseDto> res = notificationUseCase.search(cond, currentUser);
         model.addAttribute("notifications", res.getContent());

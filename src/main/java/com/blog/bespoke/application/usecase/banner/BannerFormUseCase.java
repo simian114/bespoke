@@ -97,11 +97,13 @@ public class BannerFormUseCase {
             System.out.println(e);
         }
         if (isApprove) {
+            // TODO: extra 설정을 안해줌
             eventPublisher.publishBannerAuditApproveEvent(
                     BannerAuditApproveMessage.builder()
                             .bannerFormResponseDtoAsString(bannerFormAsString)
                             .build());
         } else {
+            // TODO: extra 설정을 안해줌
             eventPublisher.publishBannerAuditDenyEvent(
                     BannerAuditDenyMessage.builder()
                             .bannerFormResponseDtoAsString(bannerFormAsString)

@@ -135,7 +135,7 @@ public class CommonQueueConsumer {
     public void receiveBannerAuditApproveMessage(BannerAuditApproveMessage message) {
         try {
             BannerFormResponseDto bannerFormResponseDto = objectMapper.readValue(message.getBannerFormResponseDtoAsString(), BannerFormResponseDto.class);
-            notificationUseCase.createNotification(BannerFormApprovedDto.builder()
+            notificationUseCase.createNotification(BannerFormApprovedNotificationDto.builder()
                     .bannerFormResponseDto(bannerFormResponseDto)
                     .build());
         } catch (JsonProcessingException e) {
@@ -147,7 +147,7 @@ public class CommonQueueConsumer {
     public void receiveBannerAuditDenyMessage(BannerAuditDenyMessage message) {
         try {
             BannerFormResponseDto bannerFormResponseDto = objectMapper.readValue(message.getBannerFormResponseDtoAsString(), BannerFormResponseDto.class);
-            notificationUseCase.createNotification(BannerFormDeniedDto.builder()
+            notificationUseCase.createNotification(BannerFormDeniedNotificationDto.builder()
                     .bannerFormResponseDto(bannerFormResponseDto)
                     .build());
         } catch (JsonProcessingException e) {

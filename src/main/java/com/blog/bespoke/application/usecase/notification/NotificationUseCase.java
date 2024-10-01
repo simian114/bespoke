@@ -27,7 +27,6 @@ public class NotificationUseCase {
     private final NotificationRepository notificationRepository;
     private final NotificationService notificationService;
     private final UserRepository userRepository;
-    // TODO: SSE 리스트를 주입 받아서, 이벤트 생성 후 연결 된 emitter 가 있다면 데이터 전송하기
 
     @Transactional
     public Page<NotificationResponseDto> search(NotificationSearchCond cond, User currentUser) {
@@ -39,75 +38,6 @@ public class NotificationUseCase {
                 map(NotificationResponseDto::from);
     }
 
-    // TODO: message 타입 말고, 새로운 타입 만들기
-    @Transactional
-    public void createNotification(PostLikeNotificationDto dto) {
-        ExtraInfo extraInfo = ExtraInfo.builder()
-                .recipient(dto.getAuthorNickname())
-                .postTitle(dto.getPostTitle())
-                .publisher(dto.getUserNickname())
-                .build();
-        notificationRepository.save(Notification.builder()
-                .type(Notification.NotificationType.POST_LIKE)
-                .refId(dto.getPostId())
-                .extraInfo(extraInfo)
-                .recipient(User.builder().id(dto.getAuthorId()).build())
-                .publisher(User.builder().id(dto.getUserId()).build())
-                .build());
-    }
-
-    @Transactional
-    public void createNotification(CommentAddNotificationDto dto) {
-        ExtraInfo extraInfo = ExtraInfo.builder()
-                .recipient(dto.getRecipientNickname())
-                .postTitle(dto.getPostTitle())
-                .publisher(dto.getPublisherNickname())
-                .build();
-        notificationRepository.save(Notification.builder()
-                .type(Notification.NotificationType.COMMENT_CREATED)
-                .refId(dto.getPostId())
-                .extraInfo(extraInfo)
-                .recipient(User.builder().id(dto.getRecipientId()).build())
-                .publisher((User.builder().id(dto.getPublisherId()).build()))
-                .build());
-
-    }
-
-    @Transactional
-    public void createNotification(FollowNotificationDto dto) {
-        ExtraInfo extraInfo = ExtraInfo.builder()
-                .recipient(dto.getRecipientNickname())
-                .publisher(dto.getPublisherNickname())
-                .build();
-        notificationRepository.save(Notification.builder()
-                .type(Notification.NotificationType.FOLLOW)
-                .refId(null)
-                .extraInfo(extraInfo)
-                .recipient(User.builder().id(dto.getRecipientId()).build())
-                .publisher(User.builder().id(dto.getPublisherId()).build())
-                .build());
-    }
-
-    @Transactional
-    public void createNotification(BannerFormApprovedDto dto) {
-        notificationRepository.save(Notification.builder()
-                .type(Notification.NotificationType.BANNER_FORM_APPROVED)
-                .refId(dto.getBannerFormResponseDto().getId())
-                .recipient(User.builder().id(dto.getBannerFormResponseDto().getUser().getId()).build())
-                .publisher(null)
-                .build());
-    }
-
-    @Transactional
-    public void createNotification(BannerFormDeniedDto dto) {
-        notificationRepository.save(Notification.builder()
-                .type(Notification.NotificationType.BANNER_FORM_APPROVED)
-                .refId(dto.getBannerFormResponseDto().getId())
-                .recipient(User.builder().id(dto.getBannerFormResponseDto().getUser().getId()).build())
-                .publisher(null)
-                .build());
-    }
-
     @Transactional
     public void createNotifications(PublishNotificationDto dto) {
         User userWithFollowers = userRepository.findUserWithFollowers(dto.getPublisherId())
@@ -116,23 +46,17 @@ public class NotificationUseCase {
             return;
         }
         Set<Notification> notifications = userWithFollowers.followers.stream()
-                .map(f -> {
-                    ExtraInfo extra = ExtraInfo.builder()
-                            .publisher(userWithFollowers.getNickname())
-                            .postTitle(dto.getPostTittle())
-                            .build();
-                    return Notification.builder()
-                            .refId(dto.getPostId())
-                            .publisher(User.builder().id(dto.getPublisherId()).build())
-                            .recipient(User.builder().id(f.getFollowerId()).build())
-                            .extraInfo(extra)
-                            .type(Notification.NotificationType.POST_PUBLISHED)
-                            .build();
-                })
+                .map(f -> dto.toModel(userWithFollowers, f.getFollowerId()))
                 .collect(Collectors.toSet());
 
         notificationRepository.saveAll(notifications);
     }
+
+    @Transactional
+    public void createNotification(NotificationDto dto) {
+        notificationRepository.save(dto.toModel());
+    }
+
 
     @Transactional
     public void readNotification(Long notificationId) {

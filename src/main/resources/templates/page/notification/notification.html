@@ -114,6 +114,32 @@
                                       th:text="|${#temporals.format(notification.createdAt, 'yyyy.MM.dd')}|"></span>
                             </a>
                         </th:block>
+                        <th:block th:case="BANNER_FORM_APPROVED">
+                            <a th:href="@{/blog/{nickname}(nickname=${notification.publisher})}"
+                               class="is-flex is-justify-content-space-between is-gap-2 is-color-black box"
+                               th:classappend="${notification.readed ? '' : 'has-background-primary-light'}"
+                            >
+                                    <span class="tag is-flex-shrink-0" th:text="${notification.type}"
+                                          th:classappend="is-danger"></span>
+                                <p th:text="${notification.content}"></p>
+                                <span class="is-flex-shrink-0"
+                                      th:text="|${#temporals.format(notification.createdAt, 'yyyy.MM.dd')}|"></span>
+                            </a>
+                        </th:block>
+                        <th:block th:case="BANNER_FORM_DENIED">
+                            <a th:href="@{/blog/{nickname}(nickname=${notification.publisher})}"
+                               class="is-flex is-justify-content-space-between is-gap-2 is-color-black box"
+                               th:classappend="${notification.readed ? '' : 'has-background-primary-light'}"
+                            >
+                                    <span class="tag is-flex-shrink-0" th:text="${notification.type}"
+                                          th:classappend="is-danger"></span>
+                                <p th:text="${notification.content}"></p>
+                                <span class="is-flex-shrink-0"
+                                      th:text="|${#temporals.format(notification.createdAt, 'yyyy.MM.dd')}|"></span>
+                            </a>
+                        </th:block>
+
+
                     </th:block>
                 </li>
                 <!--   NOTE: notification list    -->
